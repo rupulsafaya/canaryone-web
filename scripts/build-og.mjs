@@ -10,30 +10,40 @@ const OUT = resolve(ROOT, 'public/og.png');
 
 const W = 1200;
 const H = 630;
-const BG = '#fafaf7';
-const ACCENT = '#FDE047';
-const TEXT = '#0f172a';
-const MUTED = '#6b7280';
 
+// Match the site's own dark hero panel — neutral near-black + canary yellow.
+const BG_DARK = '#0f0f10';
+const ACCENT = '#FDE047';
+const TEXT_ON_DARK = '#fef9c3';
+const MUTED_ON_DARK = '#a8a29e';
+
+// Scale the receipt PNG down for the bottom half of the card.
 const receiptTargetWidth = 1040;
 const receipt = await sharp(IN)
   .resize({ width: receiptTargetWidth, withoutEnlargement: false })
   .toBuffer({ resolveWithObject: true });
 
-const receiptY = 300;
+const receiptY = 340;
 
 const overlaySvg = `
 <svg width="${W}" height="${H}" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="100%" r="70%">
+      <stop offset="0%" stop-color="${ACCENT}" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="${ACCENT}" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
   <style>
-    .brand { font: 700 68px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: ${TEXT}; }
-    .tag   { font: 500 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: ${MUTED}; }
-    .cap   { font: 500 22px ui-monospace, "SF Mono", Menlo, monospace; fill: ${MUTED}; }
+    .brand { font: 700 44px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: ${TEXT_ON_DARK}; }
+    .h1    { font: 500 56px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: ${TEXT_ON_DARK}; letter-spacing: -1.5px; }
+    .tag   { font: 500 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; fill: ${MUTED_ON_DARK}; }
   </style>
-  <text x="80" y="120" class="brand">canaryone</text>
-  <rect x="80" y="130" width="270" height="10" fill="${ACCENT}"/>
-  <text x="80" y="200" class="tag">Benchmark your AI agent across every route it could run on.</text>
-  <text x="80" y="240" class="tag">Locally. Open source.</text>
-  <text x="80" y="600" class="cap">Kimi K3 · 10 routes · 3.9× cost spread</text>
+  <rect x="0" y="0" width="${W}" height="${H}" fill="url(#glow)"/>
+  <text x="80" y="100" class="brand">CanaryOne</text>
+  <rect x="80" y="112" width="176" height="4" fill="${ACCENT}"/>
+  <text x="80" y="200" class="h1">Test AI providers on</text>
+  <text x="80" y="264" class="h1">your own test workloads.</text>
+  <text x="80" y="304" class="tag">Local. Open source.</text>
 </svg>
 `;
 
@@ -42,14 +52,14 @@ await sharp({
     width: W,
     height: H,
     channels: 4,
-    background: BG,
+    background: BG_DARK,
   },
 })
   .composite([
-    { input: receipt.data, top: receiptY, left: Math.round((W - receipt.info.width) / 2) },
+    { input: receipt.data, top: receiptY, left: Math.round((W - receipt.info.width) / 2), blend: 'over' },
     { input: Buffer.from(overlaySvg), top: 0, left: 0 },
   ])
-  .png()
+  .png({ compressionLevel: 9 })
   .toFile(OUT);
 
 console.log(`OG image written: ${OUT} (${W}×${H})`);
