@@ -99,20 +99,34 @@ code, pre, .mono {
 
 .topnav .links {
   display: flex;
-  gap: 24px;
+  gap: 20px;
   font-family: var(--font-mono);
   font-size: 14px;
   color: var(--muted);
 }
 
 .topnav .links a {
-  border-bottom: 1px solid transparent;
-  padding-bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  transition: color 120ms ease, border-color 120ms ease, background 120ms ease;
 }
 
 .topnav .links a:hover {
   color: var(--text);
-  border-bottom-color: var(--accent-deep);
+  border-color: var(--line);
+  background: var(--panel);
+}
+
+.topnav .links .icon,
+.footer .icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  display: block;
 }
 
 /* ---------- HERO — full-bleed dark panel ---------- */
@@ -869,13 +883,18 @@ code, pre, .mono {
 
 .footer a {
   color: var(--muted);
-  border-bottom: 1px solid transparent;
-  padding-bottom: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: color 120ms ease;
 }
 
 .footer a:hover {
   color: var(--text);
-  border-bottom-color: var(--accent-deep);
+}
+
+.footer a:hover .icon {
+  color: var(--accent-deep);
 }
 
 .footer .spacer { flex: 1; }
