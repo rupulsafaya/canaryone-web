@@ -61,8 +61,11 @@ Rupul to edit in-place during build:
 
 ### Palette
 
-Source of truth: the product's tweet-card generator, adjusted for a brighter
-yellow accent.
+Family reference: [figma.com/colors/canary](https://www.figma.com/colors/canary/).
+Canonical brand palette (locked hex values + rules for downstream repos) lives in
+[`README.md` § Brand palette](./README.md#brand-palette-source-of-truth) — other
+CanaryOne repos (canaryone, canaryone-cloud, canaryone-demo) should inherit from
+that section rather than declare their own values.
 
 ```
 --bg:          #fafaf7   /* warm off-white page background */
