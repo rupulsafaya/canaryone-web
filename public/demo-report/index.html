@@ -6,7 +6,7 @@
 <title>canaryone · Run report · e860167a</title>
 <meta name="generator" content="canaryone report generator (phase 1)">
 <meta name="generated-at" content="2026-07-29T21:12:17.558Z">
-<meta name="target-dir" content="/Users/rupulsafaya/Documents/GitHub/canaryone-demo">
+<meta name="target-dir" content="&lt;repo&gt;">
 <style>
 :root {
   --bg: #ffffff;
@@ -686,13 +686,14 @@ details.session > .body {
   </div>
 
   <table class="meta-table">
-    <tr><td class="label">Target</td><td><code>/Users/rupulsafaya/Documents/GitHub/canaryone-demo</code></td></tr>
+    <tr><td class="label">Target</td><td><code>&lt;repo&gt;</code></td></tr>
     <tr><td class="label">Model(s)</td><td><code>accounts/fireworks/routers/kimi-k3-fast, kimi-k3, moonshotai/Kimi-K3, moonshotai/kimi-k3</code></td></tr>
     <tr><td class="label">Lanes</td><td>10 (<code>accounts/fireworks/routers/kimi-k3-fast@direct:fireworks</code>, <code>kimi-k3@direct:moonshot-intl</code>, <code>moonshotai/Kimi-K3@direct:nebius</code>, <code>moonshotai/kimi-k3@vercel:baseten</code>, <code>moonshotai/kimi-k3@vercel:fireworks</code>, <code>moonshotai/kimi-k3@vercel:moonshotai</code>, <code>moonshotai/kimi-k3@vercel:nebius</code>, <code>moonshotai/kimi-k3@openrouter:moonshotai/mxfp4</code>, <code>moonshotai/kimi-k3@openrouter:fireworks/fast</code>, <code>moonshotai/kimi-k3@openrouter:nebius/fp4</code>)</td></tr>
     <tr><td class="label">Sessions</td><td>120 <span class="muted">= 4 tasks × 10 lanes × 3 repeats</span></td></tr>
     <tr><td class="label">Pass rate</td><td><strong>86/120</strong> <span class="muted">(72%)</span> <span class="muted"> · 15 failed</span></td></tr>
     <tr><td class="label">Total spend</td><td><strong>$10.53</strong></td></tr>
-  </table>
+      <tr data-published-copy><td class="label">Published copy</td><td class="muted">Prepared for publication: absolute paths replaced with <code>&lt;repo&gt;</code>, and one sentence about outbound traffic corrected. No measured value was changed. See <code>scripts/redact-report.mjs</code> in canaryone-web.</td></tr>
+</table>
 
   <details open class="metric-primer" style="display: block; padding: 0;">
     <summary style="cursor: pointer; padding: 14px 18px; font-weight: 600; list-style: none; outline: none;">
@@ -701,10 +702,10 @@ details.session > .body {
       <span class="muted" style="font-weight: 400; font-size: 12.5px;">— read this first</span>
     </summary>
     <div style="padding: 0 18px 14px 18px;">
-      <p style="margin: 0 0 10px 0;"><strong>canaryone</strong> is a local CLI. Point it at your codebase, and it runs your own tests against multiple LLM providers to compare cost and quality on <em>real work</em> — the LLM your test would normally call gets swapped for whichever provider we're benchmarking. Nothing leaves your machine.</p>
+      <p style="margin: 0 0 10px 0;"><strong>canaryone</strong> is a local CLI. Point it at your codebase, and it runs your own tests against multiple LLM providers to compare cost and quality on <em>real work</em> — the LLM your test would normally call gets swapped for whichever provider we're benchmarking. The judge is an outbound call: it sends each session transcript to a gateway to be scored, and <code>--disable-judge</code> turns it off.</p>
       <p style="margin: 0 0 10px 0;">For this run, canaryone:</p>
       <ol style="margin: 0 0 12px 20px; padding: 0; line-height: 1.7;">
-        <li>Read your target repo at <code>/Users/rupulsafaya/Documents/GitHub/canaryone-demo</code>.</li>
+        <li>Read your target repo at <code>&lt;repo&gt;</code>.</li>
         <li>Ran 4 tests <strong>3 times each</strong> against 10 lanes:
           <ul style="margin: 6px 0 6px 0; padding-left: 20px; line-height: 1.6;">
             <li><code>accounts/fireworks/routers/kimi-k3-fast@direct:fireworks</code></li><li><code>kimi-k3@direct:moonshot-intl</code></li><li><code>moonshotai/Kimi-K3@direct:nebius</code></li><li><code>moonshotai/kimi-k3@vercel:baseten</code></li><li><code>moonshotai/kimi-k3@vercel:fireworks</code></li><li><code>moonshotai/kimi-k3@vercel:moonshotai</code></li><li><code>moonshotai/kimi-k3@vercel:nebius</code></li><li><code>moonshotai/kimi-k3@openrouter:moonshotai/mxfp4</code></li><li><code>moonshotai/kimi-k3@openrouter:fireworks/fast</code></li><li><code>moonshotai/kimi-k3@openrouter:nebius/fp4</code></li>
@@ -7036,7 +7037,7 @@ details.session > .body {
 test at tests/t4-super.test.js:37:1
 ✖ [super] fix src/churn.js — full read/run/diagnose/write/verify loop (52662.248625ms)
   AssertionError [ERR_ASSERTION]: must call write_file to persist a fix
-      at TestContext.&lt;anonymous&gt; (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/5302e087-552a-437f-b955-06c959f62f84/tests/t4-super.test.js:53:10)
+      at TestContext.&lt;anonymous&gt; (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/5302e087-552a-437f-b955-06c959f62f84/tests/t4-super.test.js:53:10)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1102:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
@@ -7120,7 +7121,7 @@ test at tests/t4-super.test.js:37:1
 test at tests/t4-super.test.js:37:1
 ✖ [super] fix src/churn.js — full read/run/diagnose/write/verify loop (70287.957833ms)
   AssertionError [ERR_ASSERTION]: must call write_file to persist a fix
-      at TestContext.&lt;anonymous&gt; (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/ff22c858-77ce-4638-a2dc-67f0a825ba77/tests/t4-super.test.js:53:10)
+      at TestContext.&lt;anonymous&gt; (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/ff22c858-77ce-4638-a2dc-67f0a825ba77/tests/t4-super.test.js:53:10)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1102:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
@@ -7204,7 +7205,7 @@ test at tests/t4-super.test.js:37:1
 test at tests/t4-super.test.js:37:1
 ✖ [super] fix src/churn.js — full read/run/diagnose/write/verify loop (87069.185917ms)
   AssertionError [ERR_ASSERTION]: must call write_file to persist a fix
-      at TestContext.&lt;anonymous&gt; (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/a06d80ad-de41-4dcf-914b-f66a72715aa8/tests/t4-super.test.js:53:10)
+      at TestContext.&lt;anonymous&gt; (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/a06d80ad-de41-4dcf-914b-f66a72715aa8/tests/t4-super.test.js:53:10)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1102:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
@@ -7288,7 +7289,7 @@ test at tests/t4-super.test.js:37:1
 test at tests/t4-super.test.js:37:1
 ✖ [super] fix src/churn.js — full read/run/diagnose/write/verify loop (80339.3125ms)
   AssertionError [ERR_ASSERTION]: must call write_file to persist a fix
-      at TestContext.&lt;anonymous&gt; (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/7d553a3b-4c2b-440c-ad34-d21696a64d60/tests/t4-super.test.js:53:10)
+      at TestContext.&lt;anonymous&gt; (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/7d553a3b-4c2b-440c-ad34-d21696a64d60/tests/t4-super.test.js:53:10)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1102:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
@@ -7372,7 +7373,7 @@ test at tests/t4-super.test.js:37:1
 test at tests/t4-super.test.js:37:1
 ✖ [super] fix src/churn.js — full read/run/diagnose/write/verify loop (45383.951833ms)
   AssertionError [ERR_ASSERTION]: must call write_file to persist a fix
-      at TestContext.&lt;anonymous&gt; (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/f9e2c483-2bbd-4e02-9b7e-1a5cf8cf390f/tests/t4-super.test.js:53:10)
+      at TestContext.&lt;anonymous&gt; (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/f9e2c483-2bbd-4e02-9b7e-1a5cf8cf390f/tests/t4-super.test.js:53:10)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1102:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
@@ -7456,7 +7457,7 @@ test at tests/t4-super.test.js:37:1
 test at tests/t3-difficult.test.js:20:1
 ✖ [difficult] Q3 churn count + primary reason — multi-tool investigation (40378.192917ms)
   AssertionError [ERR_ASSERTION]: answer must include the count 7. Got: I&#39;ve identified that churned users are those active immediately before Q3 (June 2026 events) with zero events during Q3. Now I&#39;ll verify this definition against the database.
-      at TestContext.&lt;anonymous&gt; (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/ee2cb854-0868-41a1-ac7e-cc66d4ca3c0a/tests/t3-difficult.test.js:47:10)
+      at TestContext.&lt;anonymous&gt; (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/ee2cb854-0868-41a1-ac7e-cc66d4ca3c0a/tests/t3-difficult.test.js:47:10)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1102:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
@@ -7540,7 +7541,7 @@ test at tests/t3-difficult.test.js:20:1
 test at tests/t4-super.test.js:37:1
 ✖ [super] fix src/churn.js — full read/run/diagnose/write/verify loop (65583.871625ms)
   AssertionError [ERR_ASSERTION]: must call write_file to persist a fix
-      at TestContext.&lt;anonymous&gt; (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/7c30bb2a-1c13-4f82-9747-2a2eb25779d5/tests/t4-super.test.js:53:10)
+      at TestContext.&lt;anonymous&gt; (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/7c30bb2a-1c13-4f82-9747-2a2eb25779d5/tests/t4-super.test.js:53:10)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1102:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
@@ -7625,7 +7626,7 @@ test at tests/t3-difficult.test.js:20:1
 ✖ [difficult] Q3 churn count + primary reason — multi-tool investigation (82733.089791ms)
   AssertionError [ERR_ASSERTION]: answer must include the count 7. Got: &lt;|open|&gt;tools&lt;|sep|&gt;&lt;|open|&gt;call tool=&quot;sqlite_query&quot; index=&quot;1&quot;&lt;|sep|&gt;&lt;|open|&gt;argument key=&quot;db&quot; type=&quot;string&quot;&lt;|sep|&gt;data/analytics.db&lt;|close|&gt;argument&lt;|sep|&gt;&lt;|open|&gt;argument key=&quot;sql&quot; type=&quot;string&quot;&lt;|sep|&gt;SELECT COUNT(*) AS churned
   FROM
-      at TestContext.&lt;anonymous&gt; (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/0f12ddf6-6b4c-49ba-aaf5-200b8355af2e/tests/t3-difficult.test.js:47:10)
+      at TestContext.&lt;anonymous&gt; (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/0f12ddf6-6b4c-49ba-aaf5-200b8355af2e/tests/t3-difficult.test.js:47:10)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
       at async Test.run (node:internal/test_runner/test:1102:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3) {
@@ -7709,12 +7710,12 @@ test at tests/t3-difficult.test.js:20:1
 test at tests/t1-easy.test.js:8:1
 ✖ [easy] active-user definition — one read, one fact (61.039292ms)
   Error: 412 Account rsafaya-85e270 is suspended, possibly due to reaching the monthly spending limit or failure to pay past invoices. Please go to https://fireworks.ai/account/billing for more information.
-      at APIError.generate (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/error.mjs:64:16)
-      at OpenAI.makeStatusError (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/core.mjs:295:25)
-      at OpenAI.makeRequest (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/core.mjs:339:30)
+      at APIError.generate (file://&lt;repo&gt;/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/error.mjs:64:16)
+      at OpenAI.makeStatusError (file://&lt;repo&gt;/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/core.mjs:295:25)
+      at OpenAI.makeRequest (file://&lt;repo&gt;/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/core.mjs:339:30)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-      at async ask (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/433b7ff5-63ed-4392-89d0-151739f0516d/src/agent.js:278:17)
-      at async TestContext.&lt;anonymous&gt; (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/433b7ff5-63ed-4392-89d0-151739f0516d/tests/t1-easy.test.js:9:45)
+      at async ask (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/433b7ff5-63ed-4392-89d0-151739f0516d/src/agent.js:278:17)
+      at async TestContext.&lt;anonymous&gt; (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/433b7ff5-63ed-4392-89d0-151739f0516d/tests/t1-easy.test.js:9:45)
       at async Test.run (node:internal/test_runner/test:1102:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)</div>
     
@@ -7848,12 +7849,12 @@ test at tests/t1-easy.test.js:8:1
 test at tests/t1-easy.test.js:8:1
 ✖ [easy] active-user definition — one read, one fact (2289.997208ms)
   Error: 412 Account rsafaya-85e270 is suspended, possibly due to reaching the monthly spending limit or failure to pay past invoices. Please go to https://fireworks.ai/account/billing for more information.
-      at APIError.generate (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/error.mjs:64:16)
-      at OpenAI.makeStatusError (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/core.mjs:295:25)
-      at OpenAI.makeRequest (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/core.mjs:339:30)
+      at APIError.generate (file://&lt;repo&gt;/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/error.mjs:64:16)
+      at OpenAI.makeStatusError (file://&lt;repo&gt;/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/core.mjs:295:25)
+      at OpenAI.makeRequest (file://&lt;repo&gt;/.c1/deps-cache/1432fe0222908641/node_modules/.pnpm/openai@4.104.0/node_modules/openai/core.mjs:339:30)
       at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
-      at async ask (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/7b14bf8e-535f-4470-8dac-9e9dee18bf21/src/agent.js:278:17)
-      at async TestContext.&lt;anonymous&gt; (file:///Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/7b14bf8e-535f-4470-8dac-9e9dee18bf21/tests/t1-easy.test.js:9:45)
+      at async ask (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/7b14bf8e-535f-4470-8dac-9e9dee18bf21/src/agent.js:278:17)
+      at async TestContext.&lt;anonymous&gt; (file://&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d6/7b14bf8e-535f-4470-8dac-9e9dee18bf21/tests/t1-easy.test.js:9:45)
       at async Test.run (node:internal/test_runner/test:1102:7)
       at async startSubtestAfterBootstrap (node:internal/test_runner/harness:358:3)</div>
     
@@ -8723,7 +8724,7 @@ test at tests/t1-easy.test.js:8:1
         <tr class="">
           <td class="col-name">target_dir</td>
           <td class="col-dist">1 rows · avg length 50 chars</td>
-          <td class="col-sample">/Users/rupulsafaya/Documents/GitHub/canaryone-demo</td>
+          <td class="col-sample">&lt;repo&gt;</td>
         </tr>
         <tr class="">
           <td class="col-name">meta_json</td>
@@ -8821,7 +8822,7 @@ test at tests/t1-easy.test.js:8:1
         <tr class="">
           <td class="col-name">worktree_path</td>
           <td class="col-dist">101 rows · avg length 138 chars <span class="muted">(19 null)</span></td>
-          <td class="col-sample">/Users/rupulsafaya/Documents/GitHub/canaryone-demo/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d…</td>
+          <td class="col-sample">&lt;repo&gt;/.c1/worktrees/e860167a-2cfb-4415-a19c-86b476b2a1d…</td>
         </tr>
         <tr class="">
           <td class="col-name">proxy_port</td>

@@ -7,6 +7,9 @@
   --line-strong: #d1d5db;
   --line-dark: #262626;
   --muted: #6b7280;
+  /* --muted only reaches 4.32:1 on --bg-tint, which fails WCAG AA for small text. Warm
+     stone-600 is the palette-consistent replacement for muted type on a tinted surface. */
+  --muted-strong: #57534e;
   --muted-on-dark: #a8a29e;
   --text: #0f172a;
   --text-on-dark: #fef9c3;
@@ -72,29 +75,17 @@ code, pre, .mono {
   align-items: center;
 }
 
+/* The lockup is public/c1-logo.svg: the mark plus the CanaryOne wordmark. Width and
+   height are set on the element so the nav never reflows once the SVG lands. */
 .wordmark {
   display: inline-flex;
-  align-items: baseline;
-  gap: 8px;
-  font-weight: 700;
-  font-size: 22px;
-  letter-spacing: -0.01em;
-  color: var(--text);
-  padding-bottom: 2px;
+  align-items: center;
 }
 
-.wordmark .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 3px rgba(253, 224, 71, 0.28);
-  transform: translateY(-2px);
-}
-
-.wordmark .canary {
-  border-bottom: 3px solid var(--accent);
-  padding-bottom: 1px;
+.wordmark img {
+  display: block;
+  width: 153px;
+  height: 28px;
 }
 
 .topnav .links {
@@ -494,7 +485,7 @@ code, pre, .mono {
   font-weight: 600;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--muted);
+  color: var(--muted-strong);
   padding: 14px 16px;
   border-bottom: 1px solid var(--line);
   background: var(--bg-tint);
@@ -671,7 +662,7 @@ code, pre, .mono {
   border-bottom: 1px solid var(--line);
   font-family: var(--font-mono);
   font-size: 12px;
-  color: var(--muted);
+  color: var(--muted-strong);
 }
 
 .report-section .report-toolbar .dot {
@@ -687,7 +678,7 @@ code, pre, .mono {
 
 .report-section .report-toolbar .path {
   margin-left: 8px;
-  color: var(--muted);
+  color: var(--muted-strong);
 }
 
 .report-section .report-toolbar .open {
@@ -871,14 +862,25 @@ code, pre, .mono {
 }
 
 .footer {
-  padding: 24px 0 56px;
+  padding: 28px 0 56px;
   border-top: 1px solid var(--line);
-  display: flex;
-  gap: 24px;
-  align-items: center;
   color: var(--muted);
   font-family: var(--font-mono);
   font-size: 13px;
+}
+
+.footer .inner {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* 109x20 keeps the lockup's own 5.4504:1 aspect ratio, so the mark is not stretched. */
+.footer .footer-logo img {
+  display: block;
+  width: 109px;
+  height: 20px;
 }
 
 .footer a {
@@ -951,4 +953,547 @@ code, pre, .mono {
   .hub-center .core .glyph { width: 34px; height: 34px; font-size: 18px; }
   .install .terminal-body { font-size: 18px; padding: 24px 20px; }
   #hub-lines { display: none; }
+}
+
+/* ---------- Run kind badges ---------- */
+
+/* The kind decides what a run can support, so it is the first thing on every card and
+   every run page. A commissioned sweep is checkable by an outsider; a local tool run is
+   demonstration material; a metadata scan is free and verifiable but goes stale fast. */
+.kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--line-strong);
+  color: var(--muted);
+  background: var(--panel);
+  white-space: nowrap;
+}
+
+.kind::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.kind.commissioned-sweep {
+  color: #15803d;
+  border-color: rgba(22, 163, 74, 0.42);
+  background: rgba(22, 163, 74, 0.07);
+}
+.kind.commissioned-sweep::before { background: var(--good); }
+
+.kind.local-tool-run {
+  color: #a16207;
+  border-color: rgba(234, 179, 8, 0.5);
+  background: rgba(253, 224, 71, 0.16);
+}
+.kind.local-tool-run::before { background: var(--accent-deep); }
+
+/* ---------- Run cards, on the home page and the /runs index ---------- */
+
+.run-cards {
+  display: grid;
+  gap: 16px;
+}
+
+.run-card {
+  display: block;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 22px 24px;
+  transition: transform 120ms ease, border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.run-card:hover,
+.run-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: var(--accent-deep);
+  box-shadow: 0 14px 34px -22px rgba(234, 179, 8, 0.55);
+}
+
+.run-card .meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.run-card time {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
+.run-card h2,
+.run-card h3 {
+  margin: 0 0 8px;
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+  color: var(--text);
+}
+
+.run-card p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+.run-card .facts {
+  margin: 14px 0 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.run-card .facts b {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.runs-more {
+  margin-top: 28px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.runs-more a {
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 2px;
+  color: var(--text);
+}
+
+.runs-more a:hover {
+  border-bottom-color: var(--accent-deep);
+  color: var(--accent-deep);
+}
+
+/* ---------- /runs index ---------- */
+
+.page-head {
+  padding: clamp(48px, 7vw, 88px) 0 clamp(32px, 4vw, 48px);
+}
+
+.page-head h1 {
+  font-size: clamp(34px, 5vw, 56px);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  margin: 0 0 20px;
+  max-width: 24ch;
+}
+
+.page-head .lede {
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--muted);
+  max-width: 66ch;
+  margin: 0;
+}
+
+.crumb {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+  margin: 0 0 22px;
+}
+
+.crumb a {
+  border-bottom: 1px solid var(--line-strong);
+  padding-bottom: 1px;
+}
+
+.crumb a:hover {
+  color: var(--text);
+  border-bottom-color: var(--accent-deep);
+}
+
+.runs-list {
+  padding-bottom: clamp(64px, 9vw, 120px);
+}
+
+/* ---------- A single run report ---------- */
+
+.run {
+  padding: clamp(40px, 6vw, 72px) 0 clamp(64px, 9vw, 120px);
+}
+
+.run .narrow {
+  max-width: 78ch;
+}
+
+.run h1 {
+  font-size: clamp(30px, 4.2vw, 46px);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  margin: 0 0 18px;
+}
+
+.run .summary {
+  font-size: 19px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 32px;
+}
+
+/* The identity strip: the facts that make the report citable rather than marketing. */
+.run .identity {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  margin: 0 0 28px;
+}
+
+.run .identity div {
+  background: var(--panel);
+  padding: 16px 18px;
+}
+
+.run .identity dt {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+
+.run .identity dd {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+}
+
+/* The publication status, which is the first thing a reader should see. */
+.run .status-note {
+  border: 1px solid var(--line-strong);
+  border-left: 4px solid var(--accent-deep);
+  border-radius: 10px;
+  background: var(--bg-tint);
+  padding: 18px 22px;
+  margin: 0 0 40px;
+}
+
+.run .status-note p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.run .status-note .label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-strong);
+  margin-bottom: 7px;
+}
+
+.run .provenance {
+  margin: 48px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+.run .provenance code {
+  font-size: 13px;
+  background: var(--bg-tint);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 5px;
+  color: var(--muted-strong);
+}
+
+/* ---------- Imported markdown ---------- */
+
+.prose > :first-child {
+  margin-top: 0;
+}
+
+/* The source files open with an H1 that the page header already carries. */
+.prose > h1 {
+  display: none;
+}
+
+.prose h2 {
+  font-size: clamp(24px, 2.6vw, 30px);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 56px 0 18px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+
+.prose h3 {
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 38px 0 14px;
+}
+
+.prose p,
+.prose li {
+  font-size: 17px;
+  line-height: 1.68;
+  color: var(--text);
+}
+
+.prose p {
+  margin: 0 0 18px;
+}
+
+.prose ul,
+.prose ol {
+  margin: 0 0 22px;
+  padding-left: 22px;
+}
+
+.prose li {
+  margin-bottom: 10px;
+}
+
+.prose li > p {
+  margin-bottom: 8px;
+}
+
+.prose strong {
+  font-weight: 650;
+  color: var(--text);
+}
+
+.prose a {
+  color: var(--text);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.prose a:hover {
+  color: var(--accent-deep);
+  border-bottom-color: var(--accent-deep);
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--bg-tint);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 5px;
+}
+
+.prose blockquote {
+  margin: 0 0 22px;
+  padding: 4px 0 4px 22px;
+  border-left: 3px solid var(--accent);
+  color: var(--muted);
+}
+
+.prose blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--line);
+  margin: 44px 0;
+}
+
+/* Results tables. They are the point of the page, so they get to be wider than the
+   prose column and they scroll on their own rather than stretching the page. */
+.prose .table-scroll {
+  margin: 0 0 26px;
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+  -webkit-overflow-scrolling: touch;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+}
+
+.prose thead th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-strong);
+  background: var(--bg-tint);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.prose tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.prose tbody td strong {
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .prose h2 { font-size: 22px; margin-top: 40px; }
+  .prose p, .prose li { font-size: 16px; }
+  .run .identity { grid-template-columns: 1fr 1fr; }
+}
+
+/* ---------- Section jump list on a run page ---------- */
+
+.run .jump {
+  margin: 0 0 44px;
+  padding: 20px 22px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--panel);
+}
+
+.run .jump .label {
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.run .jump ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
+}
+
+.run .jump li a {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--muted);
+  padding: 5px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--bg);
+}
+
+.run .jump li a:hover {
+  color: var(--text);
+  border-color: var(--accent-deep);
+}
+
+/* Anchored headings should not land under nothing; give them breathing room. */
+.prose h2,
+.prose h3 {
+  scroll-margin-top: 24px;
+}
+
+/* ---------- Small utilities added with the multi-page build ---------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Provenance line under an on-page results table. Every figure on this site should be
+   one click from the artefact it came out of. */
+.table-source {
+  margin: 18px 0 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+
+.table-source code {
+  font-size: 12px;
+  background: var(--bg-tint);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 5px;
+  color: var(--muted-strong);
+}
+
+.table-source a {
+  color: var(--text);
+  border-bottom: 1px solid var(--line-strong);
+  white-space: nowrap;
+}
+
+.table-source a:hover {
+  color: var(--accent-deep);
+  border-bottom-color: var(--accent-deep);
+}
+
+/* The outbound line has to name what actually leaves the machine, so it needs room for
+   a second line rather than a single label. */
+.boundary .egress-note {
+  display: block;
+  margin-top: 10px;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--muted);
+  text-align: center;
+}
+
+.boundary .egress-note code {
+  font-size: 12px;
+  background: var(--bg-tint);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 5px;
+  color: var(--muted-strong);
+}
+
+/* The reports teaser on the home page is a list of links, so it stays narrow. */
+.runs-teaser .run-cards {
+  max-width: 860px;
 }

@@ -1,0 +1,35 @@
+---
+import { KIND_SHORT, formatDate, routeCount, type Run } from '../lib/runs';
+
+interface Props {
+  run: Run;
+  /** The index has room for the route matrix and the spend; the home page does not. */
+  showFacts?: boolean;
+  /**
+   * Heading level for the run title. The /runs index puts these directly under its h1, so
+   * they are h2 there; on the home page they sit inside a section that already has an h2.
+   * Skipping a level fails the heading-order check either way, so it has to be a prop.
+   */
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { run, showFacts = false, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+const { date, title, summary, kind, routes, spend } = run.data;
+const routeN = routeCount(routes);
+---
+
+<a class="run-card" href={`/runs/${run.id}/`}>
+  <div class="meta">
+    <time datetime={date}>{formatDate(date)}</time>
+    <span class={`kind ${kind}`}>{KIND_SHORT[kind]}</span>
+  </div>
+  <Heading>{title}</Heading>
+  <p>{summary}</p>
+  {showFacts && (routeN || spend) && (
+    <p class="facts">
+      {routeN && <span>routes <b>{routeN}</b></span>}
+      {spend && <span>spend <b>{spend}</b></span>}
+    </p>
+  )}
+</a>

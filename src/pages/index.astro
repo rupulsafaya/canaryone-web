@@ -1,12 +1,26 @@
 ---
-import '../styles/global.css';
+import { Image } from 'astro:assets';
+import Layout, { GITHUB_URL } from '../layouts/Layout.astro';
+import RunCard from '../components/RunCard.astro';
+import { getRuns } from '../lib/runs';
 
-const GITHUB_URL = 'https://github.com/rupulsafaya/canaryone';
-const TWITTER_URL = 'https://twitter.com/CanaryOneOSS';
-const TWITTER_HANDLE = '@CanaryOneOSS';
-const SITE_URL = 'https://canaryone.ai';
+// These live in src/assets rather than public so Astro emits sized WebP at build time.
+// The receipt is a 1.8 MB PNG at source and was the page's LCP element before this.
+import { getImage } from 'astro:assets';
+import receipt from '../assets/receipt-kimi-k3.png';
+import reportLeaderboard from '../assets/report-leaderboard.png';
+import reportHeatmap from '../assets/report-heatmap.png';
+
+/** Full-size receipt for the lightbox, fetched only when the reader opens it. */
+const receiptFull = await getImage({ src: receipt, format: 'webp', width: receipt.width });
+
 const TITLE = 'CanaryOne — test AI providers on your own test workloads';
 const DESCRIPTION = 'Point CanaryOne at your repo. It runs your tests against every provider you could ship on and reports real cost and quality — not a leaderboard someone else built.';
+
+/** The report for the run the scoreboard below is taken from, shipped in public/. */
+const DEMO_REPORT = '/demo-report/index.html';
+
+const latestRuns = (await getRuns()).slice(0, 3);
 
 const routers = [
   { name: 'OpenRouter', file: 'openrouter.svg' },
@@ -28,412 +42,407 @@ const directB = [
   { name: 'Cerebras', file: 'cerebras.svg' },
 ];
 
+/**
+ * All ten lanes of run e860167a, copied from the report at public/demo-report/index.html.
+ * Sorted as the report sorts them, by weighted cost per pass. Weighted is the column the
+ * headline figure comes from: $0.0683 to $0.2428 is 3.6x.
+ *
+ * No row is marked as the winner on purpose. The report's own leaderboard calls
+ * vercel:nebius "best value" because it is cheapest on the weighted metric, but it is
+ * also 6 of 12 on passes and the only lane flagged for narrating. Highlighting it would
+ * have the table endorsing exactly the lane this section warns against.
+ */
 const scoreboard = [
-  { model: 'Kimi K3', provider: 'Moonshot AI', via: 'OpenRouter',  pass: '12/12', cost: '$0.1852', traj: '88', winner: false, narrator: false, star: false },
-  { model: 'Kimi K3', provider: 'Fireworks',   via: 'Vercel',      pass:  '9/12', cost: '$0.0921', traj: '86', winner: true,  narrator: false, star: true },
-  { model: 'Kimi K3', provider: 'baseten',     via: 'Vercel',      pass: '11/12', cost: '$0.0967', traj: '84', winner: false, narrator: false, star: false },
-  { model: 'Kimi K3', provider: 'moonshot-intl', via: 'direct',    pass:  '9/12', cost: '$0.0686', traj: '87', winner: false, narrator: false, star: false },
-  { model: 'Kimi K3', provider: 'nebius',      via: 'Vercel',      pass:  '6/12', cost: '$0.0472', traj: '69 ⚠', winner: false, narrator: true, star: false },
+  { provider: 'nebius',        via: 'Vercel',     pass:  '6/12', cost: '$0.0472', weighted: '$0.0683', traj: '69 ⚠', winner: false, narrator: true  },
+  { provider: 'moonshot-intl', via: 'direct',     pass:  '9/12', cost: '$0.0686', weighted: '$0.0789', traj: '87',   winner: false, narrator: false },
+  { provider: 'moonshotai',    via: 'Vercel',     pass:  '9/12', cost: '$0.0957', weighted: '$0.1064', traj: '90',   winner: false, narrator: false },
+  { provider: 'Fireworks',     via: 'Vercel',     pass:  '9/12', cost: '$0.0921', weighted: '$0.1071', traj: '86',   winner: false, narrator: false },
+  { provider: 'baseten',       via: 'Vercel',     pass: '11/12', cost: '$0.0967', weighted: '$0.1151', traj: '84',   winner: false, narrator: false },
+  { provider: 'nebius',        via: 'direct',     pass:  '6/12', cost: '$0.1052', weighted: '$0.1224', traj: '86',   winner: false, narrator: false },
+  { provider: 'fireworks',     via: 'direct',     pass:  '7/12', cost: '$0.1315', weighted: '$0.1664', traj: '79',   winner: false, narrator: false },
+  { provider: 'nebius, fp4',   via: 'OpenRouter', pass:  '8/12', cost: '$0.1578', weighted: '$0.1973', traj: '80',   winner: false, narrator: false },
+  { provider: 'moonshotai, mxfp4', via: 'OpenRouter', pass: '12/12', cost: '$0.1852', weighted: '$0.2104', traj: '88', winner: false, narrator: false },
+  { provider: 'Fireworks, fast', via: 'OpenRouter', pass: '9/12', cost: '$0.2040', weighted: '$0.2428', traj: '84',  winner: false, narrator: false },
 ];
 ---
 
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{TITLE}</title>
-    <meta name="description" content={DESCRIPTION} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="canonical" href={SITE_URL} />
+<Layout title={TITLE} description={DESCRIPTION} path="/">
+  <section class="hero">
+    <div class="container">
+      <h1>
+        Test AI providers on<br />
+        <span class="em">your own test workloads</span>.
+      </h1>
 
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content={SITE_URL} />
-    <meta property="og:title" content={TITLE} />
-    <meta property="og:description" content={DESCRIPTION} />
-    <meta property="og:image" content={`${SITE_URL}/og.png`} />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+      <p class="sub">
+        Point CanaryOne at your repo. It runs your tests against every
+        provider you could ship on. Results specific to your workload — not
+        a leaderboard someone else built.
+      </p>
 
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content={SITE_URL} />
-    <meta name="twitter:title" content={TITLE} />
-    <meta name="twitter:description" content={DESCRIPTION} />
-    <meta name="twitter:image" content={`${SITE_URL}/og.png`} />
-
-    <meta name="theme-color" content="#0f0f10" />
-  </head>
-  <body>
-    <nav class="topnav">
-      <div class="container inner">
-        <a class="wordmark" href="/" aria-label="CanaryOne home">
-          <span class="dot" aria-hidden="true"></span>
-          <span><span class="canary">Canary</span>One</span>
+      <div class="ctas">
+        <a class="btn primary" href={GITHUB_URL}>
+          View on GitHub  →
         </a>
-        <div class="links">
-          <a href={GITHUB_URL} aria-label="CanaryOne on GitHub">
-            <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2c-3.19.69-3.86-1.35-3.86-1.35-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.73.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.35.78 1.05.78 2.12v3.14c0 .3.21.66.79.55A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
-            <span>github</span>
-          </a>
-          <a href={TWITTER_URL} aria-label="CanaryOne on X (formerly Twitter)">
-            <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.153h7.594l5.243 6.932L18.9 1.153zm-1.291 19.502h2.039L6.486 3.239H4.298L17.61 20.655z"/></svg>
-            <span>{TWITTER_HANDLE}</span>
-          </a>
-        </div>
-      </div>
-    </nav>
-
-    <section class="hero">
-      <div class="container">
-        <h1>
-          Test AI providers on<br />
-          <span class="em">your own test workloads</span>.
-        </h1>
-
-        <p class="sub">
-          Point CanaryOne at your repo. It runs your tests against every
-          provider you could ship on. Results specific to your workload — not
-          a leaderboard someone else built.
-        </p>
-
-        <div class="ctas">
-          <a class="btn primary" href={GITHUB_URL}>
-            View on GitHub  →
-          </a>
-          <a class="btn ghost" href="#install" aria-label="Jump to install">
-            <span>$&nbsp;npx&nbsp;canaryone</span>
-          </a>
-        </div>
-
-        <div class="receipt">
-          <div class="receipt-frame" id="receipt-frame" role="button" tabindex="0" aria-label="Enlarge receipt image">
-            <img
-              src="/receipt-kimi-k3.png"
-              alt="canaryone running Kimi K3 across 10 routes — 3.9× cost spread, one route silently narrating"
-              loading="eager"
-              decoding="async"
-            />
-          </div>
-          <p class="receipt-caption">
-            Kimi K3 · 10 routes · launch day · 3.9× cost spread · one narrator <span class="warn">⚠</span>
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <p class="kicker">01 · COVERAGE</p>
-        <h2>Every router.<br />Every direct provider.</h2>
-        <p class="lede">
-          CanaryOne benchmarks the same model across three routers plus nine
-          direct provider APIs — every route your production traffic could take.
-        </p>
-
-        <div class="hub" id="hub">
-          <svg id="hub-lines" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"></svg>
-
-          <div class="hub-row routers">
-            {routers.map((r) => (
-              <div class="hub-card" data-node="router" data-label={r.name}>
-                <img src={`/logos/${r.file}`} alt={r.name} title={r.name} width="120" height="26" />
-              </div>
-            ))}
-          </div>
-
-          <div class="hub-center" data-node="center">
-            <div class="core">
-              <span class="glyph" aria-hidden="true">c</span>
-              <span>CanaryOne</span>
-            </div>
-          </div>
-
-          <div class="hub-row direct-a">
-            {directA.map((p) => (
-              <div class="hub-card small" data-node="direct" data-label={p.name}>
-                <img src={`/logos/${p.file}`} alt={p.name} title={p.name} width="100" height="22" />
-              </div>
-            ))}
-          </div>
-
-          <div class="hub-row direct-b">
-            {directB.map((p) => (
-              <div class="hub-card small" data-node="direct" data-label={p.name}>
-                <img src={`/logos/${p.file}`} alt={p.name} title={p.name} width="100" height="22" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <p class="kicker">02 · THE ROUTE MATTERS</p>
-        <h2><span class="em">3.9×</span> cost spread<br />on the identical model.</h2>
-        <p class="lede">
-          Same model. Different routes. Different answers. Two lanes even
-          silently narrated instead of doing the work. CanaryOne lets you pick
-          the cheapest <em>grounded</em> lane, not the cheapest lane.
-        </p>
-
-        <div class="scoreboard" role="table" aria-label="Kimi K3 launch day results">
-          <table>
-            <thead>
-              <tr>
-                <th>Route</th>
-                <th class="num">Pass</th>
-                <th class="num">$/pass</th>
-                <th class="num">Trajectory</th>
-              </tr>
-            </thead>
-            <tbody>
-              {scoreboard.map((row) => (
-                <tr class={`${row.winner ? 'winner' : ''} ${row.narrator ? 'narrator' : ''}`}>
-                  <td>
-                    {row.provider} <span class="via">· {row.via}</span>
-                    {row.star && <span class="star" aria-label="best weighted $/pass"> ★</span>}
-                  </td>
-                  <td class="num">{row.pass}</td>
-                  <td class="num">{row.cost}</td>
-                  <td class="num">{row.traj}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <p class="kicker">03 · LOCAL</p>
-        <h2>Nothing leaves<br />your machine.</h2>
-        <p class="lede">
-          API keys sit in <code>~/.c1/.env</code> at mode <code>0600</code>. The
-          proxy runs on localhost. Reports are static HTML files under
-          <code>&lt;repo&gt;/.c1/runs/</code>. The only outbound traffic goes to
-          the LLM providers you configured.
-        </p>
-
-        <div class="boundary">
-          <div class="row">
-            <div class="node">
-              your app
-              <span class="sub">tests + eval harness</span>
-            </div>
-            <span class="arrow" aria-hidden="true">→</span>
-            <div class="node">
-              localhost:port
-              <span class="sub">per-lane proxy</span>
-            </div>
-            <span class="arrow" aria-hidden="true">→</span>
-            <div class="node">
-              ~/.c1/runs
-              <span class="sub">sqlite + report</span>
-            </div>
-          </div>
-
-          <div class="egress">
-            <span class="kv">outbound →</span>
-            configured LLM providers only
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section report-section">
-      <div class="container">
-        <p class="kicker">04 · THE REPORT</p>
-        <h2>A static HTML report,<br />dropped in your repo.</h2>
-        <p class="lede">
-          Every run writes a self-contained <code>report/index.html</code> under
-          <code>&lt;repo&gt;/.c1/runs/&lt;runId&gt;/</code>. Leaderboard cards,
-          lane table, heatmap, session drilldown — no dashboard, no login, no
-          cloud.
-        </p>
-
-        <a class="report-frame" href="/demo-report/index.html" target="_blank" rel="noopener" aria-label="Open the full demo report">
-          <div class="report-toolbar">
-            <span class="dot r"></span>
-            <span class="dot y"></span>
-            <span class="dot g"></span>
-            <span class="path">/.c1/runs/e860167a/report/index.html</span>
-            <span class="open">open full report →</span>
-          </div>
-          <div class="report-shots">
-            <figure class="shot">
-              <img
-                src="/report-leaderboard.png"
-                alt="CanaryOne report leaderboard — Best Value, Cheapest Raw, Pass Rate, Total Spend."
-                loading="lazy"
-                width="2438"
-                height="1034"
-              />
-              <figcaption>Leaderboard — every lane, ranked by weighted $/pass.</figcaption>
-            </figure>
-            <figure class="shot">
-              <img
-                src="/report-heatmap.png"
-                alt="CanaryOne report heatmap — pass/fail per lane × task."
-                loading="lazy"
-                width="1772"
-                height="1200"
-              />
-              <figcaption>Heatmap — every lane × task cell, at a glance.</figcaption>
-            </figure>
-          </div>
+        <a class="btn ghost" href="#install">
+          <span>$&nbsp;npx&nbsp;canaryone</span>
         </a>
       </div>
-    </section>
 
-    <section class="section install" id="install">
-      <div class="container">
-        <p class="kicker">GET STARTED</p>
-        <h2>One command.</h2>
-
-        <div class="terminal">
-          <div class="terminal-bar" aria-hidden="true">
-            <span class="dot r"></span>
-            <span class="dot y"></span>
-            <span class="dot g"></span>
-            <span class="label">~/your-repo</span>
-          </div>
-          <div class="terminal-body">
-            <span class="prompt">$</span>
-            <code id="install-cmd">npx canaryone</code>
-            <button class="copy" id="copy-btn" type="button" aria-label="Copy command">copy</button>
-          </div>
+      <div class="receipt">
+        <div class="receipt-frame" id="receipt-frame" role="button" tabindex="0" aria-label="Enlarge receipt image">
+          <Image
+            src={receipt}
+            alt="CanaryOne benchmarking Kimi K3 across ten routes, twenty minutes into a sixty-seven minute run"
+            widths={[760, 1140, 1600, receipt.width]}
+            sizes="(max-width: 700px) 92vw, min(1136px, 92vw)"
+            loading="eager"
+            decoding="async"
+          />
         </div>
-
-        <p class="hint">
-          Point it at any repo whose tests call an LLM.
-          See the <a href={GITHUB_URL}>README</a> for the walk-through.
+        <p class="receipt-caption">
+          Kimi K3 · ten routes · 120 sessions · twenty minutes into the run
         </p>
       </div>
-    </section>
-
-    <section class="status">
-      <div class="container">
-        <p>
-          v0.1 in development. Bugs, provider adds, and reproducible failure
-          patterns welcome as issues.
-        </p>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div class="container" style="display: flex; gap: 24px; width: 100%; align-items: center;">
-        <a href={GITHUB_URL} aria-label="CanaryOne on GitHub">
-          <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-2c-3.19.69-3.86-1.35-3.86-1.35-.52-1.33-1.28-1.68-1.28-1.68-1.05-.72.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.74.4-1.25.73-1.54-2.55-.29-5.23-1.28-5.23-5.7 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.63 1.59.23 2.76.11 3.05.73.81 1.18 1.84 1.18 3.1 0 4.43-2.69 5.4-5.25 5.69.41.35.78 1.05.78 2.12v3.14c0 .3.21.66.79.55A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
-          <span>github</span>
-        </a>
-        <a href={TWITTER_URL} aria-label="CanaryOne on X (formerly Twitter)">
-          <svg class="icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.9 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.153h7.594l5.243 6.932L18.9 1.153zm-1.291 19.502h2.039L6.486 3.239H4.298L17.61 20.655z"/></svg>
-          <span>{TWITTER_HANDLE}</span>
-        </a>
-        <span class="spacer"></span>
-        <span>MIT</span>
-      </div>
-    </footer>
-
-    <div class="lightbox" id="lightbox" aria-hidden="true">
-      <img src="/receipt-kimi-k3.png" alt="" />
     </div>
+  </section>
 
-    <script is:inline>
-      (function () {
-        // ---------- Copy button ----------
-        const btn = document.getElementById('copy-btn');
-        const cmd = document.getElementById('install-cmd');
-        if (btn && cmd) {
-          btn.addEventListener('click', async () => {
-            try {
-              await navigator.clipboard.writeText(cmd.textContent.trim());
-              btn.textContent = 'copied';
-              btn.classList.add('copied');
-              setTimeout(() => {
-                btn.textContent = 'copy';
-                btn.classList.remove('copied');
-              }, 1600);
-            } catch (e) {
-              btn.textContent = 'select all';
-              const sel = window.getSelection();
-              const range = document.createRange();
-              range.selectNodeContents(cmd);
-              sel.removeAllRanges();
-              sel.addRange(range);
-              setTimeout(() => (btn.textContent = 'copy'), 2000);
-            }
-          });
-        }
+  <section class="section">
+    <div class="container">
+      <p class="kicker">01 · COVERAGE</p>
+      <h2>Every router.<br />Every direct provider.</h2>
+      <p class="lede">
+        CanaryOne benchmarks the same model across three routers plus nine
+        direct provider APIs — every route your production traffic could take.
+      </p>
 
-        // ---------- Lightbox ----------
-        const frame = document.getElementById('receipt-frame');
-        const lightbox = document.getElementById('lightbox');
-        const openLightbox = () => {
-          lightbox.classList.add('open');
-          lightbox.setAttribute('aria-hidden', 'false');
-        };
-        const closeLightbox = () => {
-          lightbox.classList.remove('open');
-          lightbox.setAttribute('aria-hidden', 'true');
-        };
-        if (frame && lightbox) {
-          frame.addEventListener('click', openLightbox);
-          frame.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(); }
-          });
-          lightbox.addEventListener('click', closeLightbox);
-          document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
-        }
+      <div class="hub" id="hub">
+        <svg id="hub-lines" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"></svg>
 
-        // ---------- Hub-and-spoke connectors ----------
-        const hub = document.getElementById('hub');
-        const svg = document.getElementById('hub-lines');
-        if (hub && svg && window.matchMedia('(min-width: 640px)').matches) {
-          const draw = () => {
-            const cards = hub.querySelectorAll('.hub-card');
-            const center = hub.querySelector('.hub-center .core');
-            if (!center || !cards.length) return;
+        <div class="hub-row routers">
+          {routers.map((r) => (
+            <div class="hub-card" data-node="router" data-label={r.name}>
+              <img src={`/logos/${r.file}`} alt={r.name} title={r.name} width="120" height="26" />
+            </div>
+          ))}
+        </div>
 
-            const hubRect = hub.getBoundingClientRect();
-            svg.setAttribute('viewBox', `0 0 ${hubRect.width} ${hubRect.height}`);
-            svg.setAttribute('width', hubRect.width);
-            svg.setAttribute('height', hubRect.height);
+        <div class="hub-center" data-node="center">
+          <div class="core">
+            <span class="glyph" aria-hidden="true">c</span>
+            <span>CanaryOne</span>
+          </div>
+        </div>
 
-            const c = center.getBoundingClientRect();
-            const cx = c.left + c.width / 2 - hubRect.left;
-            const cy = c.top + c.height / 2 - hubRect.top;
+        <div class="hub-row direct-a">
+          {directA.map((p) => (
+            <div class="hub-card small" data-node="direct" data-label={p.name}>
+              <img src={`/logos/${p.file}`} alt={p.name} title={p.name} width="100" height="22" />
+            </div>
+          ))}
+        </div>
 
-            let paths = '';
-            cards.forEach((card) => {
-              const r = card.getBoundingClientRect();
-              const rx = r.left + r.width / 2 - hubRect.left;
-              const ry = r.top + r.height / 2 - hubRect.top;
+        <div class="hub-row direct-b">
+          {directB.map((p) => (
+            <div class="hub-card small" data-node="direct" data-label={p.name}>
+              <img src={`/logos/${p.file}`} alt={p.name} title={p.name} width="100" height="22" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
 
-              // Anchor to nearest edge of the card (top or bottom) so lines don't overlap the label.
-              const anchorY = ry < cy ? r.bottom - hubRect.top : r.top - hubRect.top;
-              // Anchor to nearest edge of the hub (top or bottom).
-              const hubY = ry < cy ? c.top - hubRect.top : c.bottom - hubRect.top;
+  <section class="section">
+    <div class="container">
+      <p class="kicker">02 · THE ROUTE MATTERS</p>
+      <h2><span class="em">3.6×</span> spread in weighted<br />cost per pass.</h2>
+      <p class="lede">
+        Ten ways to buy Kimi K3. Identical weights, the same four tasks, three
+        repeats each — twelve sessions per route. Weighted cost per pass ran
+        from $0.0683 to $0.2428, and the cheapest route on raw cost was also
+        the worst on pass rate and the only one flagged for narrating an answer
+        instead of grounding it in what its tools returned. CanaryOne lets you
+        pick the cheapest <em>grounded</em> lane, not the cheapest lane.
+      </p>
 
-              // Curved cubic path: start at card, control points bend toward the hub.
-              const midY = (anchorY + hubY) / 2;
-              paths += `<path d="M ${rx} ${anchorY} C ${rx} ${midY}, ${cx} ${midY}, ${cx} ${hubY}" />`;
-            });
-            svg.innerHTML = paths;
-          };
-          const rafDraw = () => requestAnimationFrame(draw);
-          rafDraw();
-          window.addEventListener('resize', rafDraw, { passive: true });
-          // Redraw after fonts + images settle
-          window.addEventListener('load', () => setTimeout(rafDraw, 50));
-          if (typeof ResizeObserver !== 'undefined') {
-            const ro = new ResizeObserver(rafDraw);
-            ro.observe(hub);
+      <div class="scoreboard">
+        <table>
+          <caption class="sr-only">
+            Kimi K3 across ten routes, sorted by weighted cost per pass
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Route</th>
+              <th scope="col" class="num">Pass</th>
+              <th scope="col" class="num">Raw $/pass</th>
+              <th scope="col" class="num">Weighted $/pass</th>
+              <th scope="col" class="num">Trajectory</th>
+            </tr>
+          </thead>
+          <tbody>
+            {scoreboard.map((row) => (
+              <tr class={`${row.winner ? 'winner' : ''} ${row.narrator ? 'narrator' : ''}`}>
+                <td>
+                  {row.provider} <span class="via">· {row.via}</span>
+                </td>
+                <td class="num">{row.pass}</td>
+                <td class="num">{row.cost}</td>
+                <td class="num">{row.weighted}</td>
+                <td class="num">{row.traj}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="table-source">
+        Run <code>e860167a</code>, 29 July 2026. Ten lanes, four tasks, three
+        repeats, 120 sessions, $10.53. Judged by Claude Haiku 4.5.
+        <a href={DEMO_REPORT} target="_blank" rel="noopener">Read the full report →</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="kicker">03 · LOCAL</p>
+      <h2>Runs on your machine,<br />against your own tests.</h2>
+      <p class="lede">
+        API keys sit in <code>~/.c1/.env</code> at mode <code>0600</code>. The
+        proxy runs on localhost. Reports are static HTML files under
+        <code>&lt;repo&gt;/.c1/runs/</code>. Nothing sits in your request path,
+        and no dashboard or login stands between you and the result.
+      </p>
+
+      <div class="boundary">
+        <div class="row">
+          <div class="node">
+            your app
+            <span class="sub">tests + eval harness</span>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="node">
+            localhost:port
+            <span class="sub">per-lane proxy</span>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="node">
+            ~/.c1/runs
+            <span class="sub">sqlite + report</span>
+          </div>
+        </div>
+
+        <div class="egress">
+          <span class="kv">outbound →</span>
+          the providers you configured, plus the judge and the scan summariser
+          <span class="egress-note">
+            The judge sends each session transcript to a gateway to be scored, and
+            the scan summariser sends your test files there to be classified.
+            <code>--disable-judge</code> turns the judge off.
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section report-section">
+    <div class="container">
+      <p class="kicker">04 · THE REPORT</p>
+      <h2>A static HTML report,<br />dropped in your repo.</h2>
+      <p class="lede">
+        Every run writes a self-contained <code>report/index.html</code> under
+        <code>&lt;repo&gt;/.c1/runs/&lt;runId&gt;/</code>. Leaderboard cards,
+        lane table, heatmap, session drilldown — no dashboard, no login, no
+        cloud.
+      </p>
+
+      <a class="report-frame" href={DEMO_REPORT} target="_blank" rel="noopener">
+        <div class="report-toolbar">
+          <span class="dot r"></span>
+          <span class="dot y"></span>
+          <span class="dot g"></span>
+          <span class="path">/.c1/runs/e860167a/report/index.html</span>
+          <span class="open">open full report →</span>
+        </div>
+        <div class="report-shots">
+          <figure class="shot">
+            <Image
+              src={reportLeaderboard}
+              alt="CanaryOne report leaderboard — Best Value, Cheapest Raw, Pass Rate, Total Spend."
+              widths={[760, 1100, reportLeaderboard.width]}
+              sizes="min(1100px, 88vw)"
+              loading="lazy"
+            />
+            <figcaption>Leaderboard — every lane, ranked by weighted $/pass.</figcaption>
+          </figure>
+          <figure class="shot">
+            <Image
+              src={reportHeatmap}
+              alt="CanaryOne report heatmap — pass/fail per lane × task."
+              widths={[760, 1100, reportHeatmap.width]}
+              sizes="min(1100px, 88vw)"
+              loading="lazy"
+            />
+            <figcaption>Heatmap — every lane × task cell, at a glance.</figcaption>
+          </figure>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <section class="section runs-teaser">
+    <div class="container">
+      <p class="kicker">05 · THE RUNS</p>
+      <h2>Every number here<br />has a run behind it.</h2>
+      <p class="lede">
+        Each report carries its method, its route matrix, what was held
+        constant, and an explicit note on what it does not support. The last
+        one is the important one: a result without its limits is marketing.
+      </p>
+
+      <div class="run-cards">
+        {latestRuns.map((run) => <RunCard run={run} />)}
+      </div>
+
+      <p class="runs-more"><a href="/runs">All run reports →</a></p>
+    </div>
+  </section>
+
+  <section class="section install" id="install">
+    <div class="container">
+      <p class="kicker">GET STARTED</p>
+      <h2>One command.</h2>
+
+      <div class="terminal">
+        <div class="terminal-bar" aria-hidden="true">
+          <span class="dot r"></span>
+          <span class="dot y"></span>
+          <span class="dot g"></span>
+          <span class="label">~/your-repo</span>
+        </div>
+        <div class="terminal-body">
+          <span class="prompt">$</span>
+          <code id="install-cmd">npx canaryone</code>
+          <button class="copy" id="copy-btn" type="button" aria-label="Copy command">copy</button>
+        </div>
+      </div>
+
+      <p class="hint">
+        Point it at any repo whose tests call an LLM.
+        See the <a href={GITHUB_URL}>README</a> for the walk-through.
+      </p>
+    </div>
+  </section>
+
+  <section class="status">
+    <div class="container">
+      <p>
+        v0.1 in development. Bugs, provider adds, and reproducible failure
+        patterns welcome as issues.
+      </p>
+    </div>
+  </section>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true" data-src={receiptFull.src}>
+    <img alt="" width={receipt.width} height={receipt.height} />
+  </div>
+
+  <script is:inline>
+    (function () {
+      // ---------- Copy button ----------
+      const btn = document.getElementById('copy-btn');
+      const cmd = document.getElementById('install-cmd');
+      if (btn && cmd) {
+        btn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(cmd.textContent.trim());
+            btn.textContent = 'copied';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = 'copy';
+              btn.classList.remove('copied');
+            }, 1600);
+          } catch (e) {
+            btn.textContent = 'select all';
+            const sel = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(cmd);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            setTimeout(() => (btn.textContent = 'copy'), 2000);
           }
+        });
+      }
+
+      // ---------- Lightbox ----------
+      const frame = document.getElementById('receipt-frame');
+      const lightbox = document.getElementById('lightbox');
+      const openLightbox = () => {
+        // The full-size image is only fetched the first time it is asked for.
+        const img = lightbox.querySelector('img');
+        if (img && !img.getAttribute('src')) img.setAttribute('src', lightbox.dataset.src);
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+      };
+      const closeLightbox = () => {
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
+      };
+      if (frame && lightbox) {
+        frame.addEventListener('click', openLightbox);
+        frame.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(); }
+        });
+        lightbox.addEventListener('click', closeLightbox);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+      }
+
+      // ---------- Hub-and-spoke connectors ----------
+      const hub = document.getElementById('hub');
+      const svg = document.getElementById('hub-lines');
+      if (hub && svg && window.matchMedia('(min-width: 640px)').matches) {
+        const draw = () => {
+          const cards = hub.querySelectorAll('.hub-card');
+          const center = hub.querySelector('.hub-center .core');
+          if (!center || !cards.length) return;
+
+          const hubRect = hub.getBoundingClientRect();
+          svg.setAttribute('viewBox', `0 0 ${hubRect.width} ${hubRect.height}`);
+          svg.setAttribute('width', hubRect.width);
+          svg.setAttribute('height', hubRect.height);
+
+          const c = center.getBoundingClientRect();
+          const cx = c.left + c.width / 2 - hubRect.left;
+          const cy = c.top + c.height / 2 - hubRect.top;
+
+          let paths = '';
+          cards.forEach((card) => {
+            const r = card.getBoundingClientRect();
+            const rx = r.left + r.width / 2 - hubRect.left;
+            const ry = r.top + r.height / 2 - hubRect.top;
+
+            // Anchor to nearest edge of the card (top or bottom) so lines don't overlap the label.
+            const anchorY = ry < cy ? r.bottom - hubRect.top : r.top - hubRect.top;
+            // Anchor to nearest edge of the hub (top or bottom).
+            const hubY = ry < cy ? c.top - hubRect.top : c.bottom - hubRect.top;
+
+            // Curved cubic path: start at card, control points bend toward the hub.
+            const midY = (anchorY + hubY) / 2;
+            paths += `<path d="M ${rx} ${anchorY} C ${rx} ${midY}, ${cx} ${midY}, ${cx} ${hubY}" />`;
+          });
+          svg.innerHTML = paths;
+        };
+        const rafDraw = () => requestAnimationFrame(draw);
+        rafDraw();
+        window.addEventListener('resize', rafDraw, { passive: true });
+        // Redraw after fonts + images settle
+        window.addEventListener('load', () => setTimeout(rafDraw, 50));
+        if (typeof ResizeObserver !== 'undefined') {
+          const ro = new ResizeObserver(rafDraw);
+          ro.observe(hub);
         }
-      })();
-    </script>
-  </body>
-</html>
+      }
+    })();
+  </script>
+</Layout>

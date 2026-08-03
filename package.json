@@ -8,7 +8,11 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "import:runs": "node scripts/import-runs.mjs",
+    "build:logo": "node scripts/build-logo.mjs",
+    "build:og": "node scripts/build-og.mjs",
+    "redact:report": "node scripts/redact-report.mjs"
   },
   "dependencies": {
     "astro": "^5.14.0"
