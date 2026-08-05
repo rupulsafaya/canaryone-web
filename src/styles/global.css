@@ -684,6 +684,64 @@ code, pre, .mono {
 
 /* ---------- Scoreboard (route matters) ---------- */
 
+/* =============================================================================
+   TABLE CONTRACT
+
+   Three tables on this site — the home page scoreboard, the imported-markdown results
+   tables on a run page, and the Time Machine data table — and they had three different
+   header treatments, three paddings and three font sizes. Data density is the point of
+   this product, so they now share one contract and only differ where they must.
+
+   The rules: header rows are tinted, uppercase mono at --text-2xs, and separated from the
+   body by --line-strong rather than --line, so the head reads as a head. Body cells are
+   --text-sm mono with horizontal rules only — no vertical grid lines. Every cell carries
+   tabular-nums so digits sit in columns; without it, proportional digits make a column of
+   prices visibly ragged, which is the one thing a cost table must not be.
+   ============================================================================= */
+
+.scoreboard table,
+.prose table,
+.tm-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+}
+
+.scoreboard thead th,
+.prose thead th,
+.tm-data-table thead th {
+  background: var(--bg-tint);
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  text-align: left;
+  white-space: nowrap;
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.scoreboard tbody td,
+.scoreboard tbody th,
+.prose tbody td,
+.prose tbody th,
+.tm-data-table tbody td,
+.tm-data-table tbody th {
+  padding: var(--space-3) var(--space-4);
+  border-bottom: 1px solid var(--line);
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.scoreboard tbody tr:last-child td,
+.prose tbody tr:last-child td,
+.tm-data-table tbody tr:last-child td,
+.tm-data-table tbody tr:last-child th {
+  border-bottom: 0;
+}
+
 .scoreboard {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -694,46 +752,28 @@ code, pre, .mono {
   box-shadow: var(--shadow-md);
 }
 
-.scoreboard table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.scoreboard thead th {
-  text-align: left;
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--muted);
-  padding: var(--space-4) var(--space-4);
-  border-bottom: 1px solid var(--line);
-  background: var(--bg-tint);
-}
-
+/* Numeric columns right-align so the decimal points stack. Combined with tabular-nums from
+   the contract above, a column of prices becomes directly comparable by eye. */
 .scoreboard thead th.num,
 .scoreboard tbody td.num {
   text-align: right;
 }
 
 .scoreboard tbody td {
-  padding: var(--space-4) var(--space-4);
-  border-bottom: 1px solid var(--line);
   color: var(--text);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
   vertical-align: middle;
+  white-space: nowrap;
 }
-
-.scoreboard tbody tr:last-child td { border-bottom: 0; }
 
 .scoreboard tbody td .via {
   color: var(--muted);
 }
 
+/* A flat 8% tint rather than a 34%-to-14% gradient wash. At 34% the yellow competed with
+   the text sitting on it, and a gradient implied a direction the data does not have. The
+   left bar below carries the emphasis; the fill only has to say "this row". */
 .scoreboard tbody tr.winner td {
-  background: linear-gradient(90deg, rgba(253, 224, 71, 0.34), rgba(253, 224, 71, 0.14));
+  background: rgba(253, 224, 71, 0.08);
 }
 
 .scoreboard tbody tr.winner td:first-child {
@@ -744,9 +784,9 @@ code, pre, .mono {
 .scoreboard tbody tr.winner td:first-child::before {
   content: "";
   position: absolute;
-  left: 8px;
+  left: var(--space-2);
   top: 50%;
-  width: 4px;
+  width: 3px;
   height: 60%;
   background: var(--accent-deep);
   border-radius: var(--radius-sm);
@@ -1598,35 +1638,13 @@ code, pre, .mono {
   -webkit-overflow-scrolling: touch;
 }
 
-.prose table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-}
 
-.prose thead th {
-  text-align: left;
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--muted);
-  background: var(--bg-tint);
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--line);
-  white-space: nowrap;
-}
+
+
 
 .prose tbody td {
-  padding: var(--space-3) var(--space-4);
-  border-bottom: 1px solid var(--line);
   vertical-align: top;
   line-height: var(--leading-normal);
-}
-
-.prose tbody tr:last-child td {
-  border-bottom: 0;
 }
 
 .prose tbody td strong {
@@ -1764,11 +1782,14 @@ code, pre, .mono {
   padding-bottom: clamp(64px, 9vw, 120px);
 }
 
+/* flex-start, not flex-end. The metric toggle is written by the client script after the
+   fetch resolves, so while prices are loading it has no height and flex-end dropped the
+   "Price" label below the "Axis" label — a visible misalignment on first paint. */
 .tm-controls {
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-7);
-  align-items: flex-end;
+  align-items: flex-start;
   margin-bottom: var(--space-5);
 }
 
@@ -2008,11 +2029,7 @@ code, pre, .mono {
   margin-top: var(--space-3);
 }
 
-.tm-data-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: var(--text-sm);
-}
+
 
 .tm-data-table caption {
   caption-side: top;
@@ -2024,20 +2041,16 @@ code, pre, .mono {
   border-bottom: 1px solid var(--line);
 }
 
+/* Every column but the first is a price, so the whole table right-aligns and never wraps;
+   the row header re-aligns left below. */
 .tm-data-table th,
 .tm-data-table td {
-  padding: var(--space-3) var(--space-4);
   text-align: right;
   white-space: nowrap;
-  border-bottom: 1px solid var(--line);
 }
 
 .tm-data-table thead th {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  color: var(--muted);
-  background: var(--bg-tint);
+  text-align: right;
 }
 
 .tm-data-table th[scope='row'] {
