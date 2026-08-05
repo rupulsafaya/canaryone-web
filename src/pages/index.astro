@@ -202,6 +202,26 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
         </div>
       </div>
 
+      <div class="deploy-targets">
+        <div class="partner-row">
+          <span class="partner-label">EU</span>
+          <div class="partner-logos">
+            <img src="/logos/nebius.svg"   alt="Nebius"   title="Nebius"   class="dt-logo" />
+            <img src="/logos/nscale.svg"   alt="nscale"   title="nscale"   class="dt-logo dt-logo--invert" />
+            <img src="/logos/scaleway.svg" alt="Scaleway" title="Scaleway" class="dt-logo" />
+          </div>
+        </div>
+        <div class="partner-row">
+          <span class="partner-label">US</span>
+          <div class="partner-logos">
+            <img src="/logos/coreweave.svg" alt="CoreWeave" title="CoreWeave" class="dt-logo" />
+            <img src="/logos/nebius.svg"    alt="Nebius"    title="Nebius"    class="dt-logo" />
+            <img src="/logos/vultr.svg"     alt="Vultr"     title="Vultr"     class="dt-logo" />
+            <img src="/logos/models/lambda.svg" alt="Lambda Labs" title="Lambda Labs" class="dt-logo" />
+          </div>
+        </div>
+      </div>
+
       <div class="waitlist-row">
         <a class="btn primary" href="#waitlist">Get early access →</a>
         <span class="waitlist-note">canary deploy in private beta</span>
@@ -577,6 +597,28 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   color: var(--muted);
   margin: 0;
   line-height: var(--leading-normal);
+}
+
+/* ─── Deploy target logo strips ─── */
+.deploy-targets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin-bottom: var(--space-12);
+}
+.dt-logo {
+  height: 22px;
+  width: auto;
+  opacity: 0.8;
+  transition: opacity var(--dur-base);
+}
+.dt-logo:hover { opacity: 1; }
+/* nscale wordmark is white-fill — invert to dark on cream */
+.dt-logo--invert {
+  filter: brightness(0) opacity(0.75);
+}
+.dt-logo--invert:hover {
+  filter: brightness(0) opacity(1);
 }
 
 /* ─── Waitlist CTA row ─── */
