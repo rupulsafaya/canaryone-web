@@ -207,16 +207,15 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
           <span class="partner-label">EU</span>
           <div class="partner-logos">
             <img src="/logos/nebius.svg"   alt="Nebius"   title="Nebius"   class="dt-logo" />
-            <img src="/logos/nscale.svg"   alt="nscale"   title="nscale"   class="dt-logo dt-logo--invert" />
+            <img src="/logos/nscale.svg"   alt="nscale"   title="nscale"   class="dt-logo" />
             <img src="/logos/scaleway.svg" alt="Scaleway" title="Scaleway" class="dt-logo" />
           </div>
         </div>
         <div class="partner-row">
           <span class="partner-label">US</span>
           <div class="partner-logos">
-            <img src="/logos/coreweave.svg" alt="CoreWeave" title="CoreWeave" class="dt-logo" />
-            <img src="/logos/nebius.svg"    alt="Nebius"    title="Nebius"    class="dt-logo" />
-            <img src="/logos/vultr.svg"     alt="Vultr"     title="Vultr"     class="dt-logo" />
+            <img src="/logos/coreweave.svg"     alt="CoreWeave"  title="CoreWeave"  class="dt-logo" />
+            <img src="/logos/vultr.svg"         alt="Vultr"      title="Vultr"      class="dt-logo" />
             <img src="/logos/models/lambda.svg" alt="Lambda Labs" title="Lambda Labs" class="dt-logo" />
           </div>
         </div>
@@ -603,23 +602,23 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
 .deploy-targets {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-4);
   margin-bottom: var(--space-12);
 }
+/* Override partner-row label width for deploy section — keep it tight */
+.deploy-targets .partner-label {
+  min-width: 3ch;
+}
 .dt-logo {
-  height: 22px;
+  height: 20px;
+  max-width: 110px;
   width: auto;
-  opacity: 0.8;
+  object-fit: contain;
+  opacity: 0.75;
   transition: opacity var(--dur-base);
 }
 .dt-logo:hover { opacity: 1; }
-/* nscale wordmark is white-fill — invert to dark on cream */
-.dt-logo--invert {
-  filter: brightness(0) opacity(0.75);
-}
-.dt-logo--invert:hover {
-  filter: brightness(0) opacity(1);
-}
+/* nscale now uses the proper black SVG — no filter needed */
 
 /* ─── Waitlist CTA row ─── */
 .waitlist-row {
