@@ -1,448 +1,607 @@
 ---
-import { Image } from 'astro:assets';
 import Layout, { GITHUB_URL } from '../layouts/Layout.astro';
-import RunCard from '../components/RunCard.astro';
-import { getRuns } from '../lib/runs';
 
-// These live in src/assets rather than public so Astro emits sized WebP at build time.
-// The receipt is a 1.8 MB PNG at source and was the page's LCP element before this.
-import { getImage } from 'astro:assets';
-import receipt from '../assets/receipt-kimi-k3.png';
-import reportLeaderboard from '../assets/report-leaderboard.png';
-import reportHeatmap from '../assets/report-heatmap.png';
-
-/** Full-size receipt for the lightbox, fetched only when the reader opens it. */
-const receiptFull = await getImage({ src: receipt, format: 'webp', width: receipt.width });
-
-const TITLE = 'CanaryOne — test AI providers on your own test workloads';
-const DESCRIPTION = 'Point CanaryOne at your repo. It runs your tests against every provider you could ship on and reports real cost and quality — not a leaderboard someone else built.';
-
-/** The report for the run the scoreboard below is taken from, shipped in public/. */
-const DEMO_REPORT = '/demo-report/index.html';
-
-const latestRuns = (await getRuns()).slice(0, 3);
-
-const routers = [
-  { name: 'OpenRouter', file: 'openrouter.svg' },
-  { name: 'Vercel AI Gateway', file: 'vercel.svg' },
-  { name: 'AWS Bedrock', file: 'bedrock.svg' },
-];
-
-const directA = [
-  { name: 'Moonshot', file: 'moonshot.svg' },
-  { name: 'Nebius', file: 'nebius.svg' },
-  { name: 'Fireworks', file: 'fireworks.svg' },
-  { name: 'Together', file: 'together.svg' },
-];
-
-const directB = [
-  { name: 'Baseten', file: 'baseten.svg' },
-  { name: 'Groq', file: 'groq.svg' },
-  { name: 'DeepSeek', file: 'deepseek.svg' },
-  { name: 'Cerebras', file: 'cerebras.svg' },
-];
-
-/**
- * All ten lanes of run e860167a, copied from the report at public/demo-report/index.html.
- * Sorted as the report sorts them, by weighted cost per pass. Weighted is the column the
- * headline figure comes from: $0.0683 to $0.2428 is 3.6x.
- *
- * No row is marked as the winner on purpose. The report's own leaderboard calls
- * vercel:nebius "best value" because it is cheapest on the weighted metric, but it is
- * also 6 of 12 on passes and the only lane flagged for narrating. Highlighting it would
- * have the table endorsing exactly the lane this section warns against.
- */
-const scoreboard = [
-  { provider: 'nebius',        via: 'Vercel',     pass:  '6/12', cost: '$0.0472', weighted: '$0.0683', traj: '69 ⚠', winner: false, narrator: true  },
-  { provider: 'moonshot-intl', via: 'direct',     pass:  '9/12', cost: '$0.0686', weighted: '$0.0789', traj: '87',   winner: false, narrator: false },
-  { provider: 'moonshotai',    via: 'Vercel',     pass:  '9/12', cost: '$0.0957', weighted: '$0.1064', traj: '90',   winner: false, narrator: false },
-  { provider: 'Fireworks',     via: 'Vercel',     pass:  '9/12', cost: '$0.0921', weighted: '$0.1071', traj: '86',   winner: false, narrator: false },
-  { provider: 'baseten',       via: 'Vercel',     pass: '11/12', cost: '$0.0967', weighted: '$0.1151', traj: '84',   winner: false, narrator: false },
-  { provider: 'nebius',        via: 'direct',     pass:  '6/12', cost: '$0.1052', weighted: '$0.1224', traj: '86',   winner: false, narrator: false },
-  { provider: 'fireworks',     via: 'direct',     pass:  '7/12', cost: '$0.1315', weighted: '$0.1664', traj: '79',   winner: false, narrator: false },
-  { provider: 'nebius, fp4',   via: 'OpenRouter', pass:  '8/12', cost: '$0.1578', weighted: '$0.1973', traj: '80',   winner: false, narrator: false },
-  { provider: 'moonshotai, mxfp4', via: 'OpenRouter', pass: '12/12', cost: '$0.1852', weighted: '$0.2104', traj: '88', winner: false, narrator: false },
-  { provider: 'Fireworks, fast', via: 'OpenRouter', pass: '9/12', cost: '$0.2040', weighted: '$0.2428', traj: '84',  winner: false, narrator: false },
-];
+const TITLE = 'CanaryOne — open-weight model platform';
+const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your own data. End-to-end — from eval to fine-tune to production.';
 ---
 
 <Layout title={TITLE} description={DESCRIPTION} path="/">
+  <!-- ─── HERO ─── -->
   <section class="hero">
     <div class="container">
-      <h1>
-        Test AI providers on<br />
-        <span class="em">your own test workloads</span>.
-      </h1>
+      <div class="hero__inner">
+        <div class="hero__copy">
+          <p class="kicker">OPEN-WEIGHT MODEL PLATFORM</p>
+          <h1>
+            Transition your AI workloads<br />
+            to <span class="em">open-weight models.</span>
+          </h1>
+          <div class="hero-models" aria-label="Supported open-weight models">
+            <img src="/logos/models/meta.svg"     alt="Llama"    title="Meta / Llama" width="32" height="32" />
+            <img src="/logos/models/mistral.svg"  alt="Mistral"  title="Mistral"      width="32" height="32" />
+            <img src="/logos/models/qwen.svg"     alt="Qwen"     title="Qwen"         width="32" height="32" />
+            <img src="/logos/models/deepseek.svg" alt="DeepSeek" title="DeepSeek"     width="32" height="32" />
+            <img src="/logos/models/gemma.svg"    alt="Gemma"    title="Gemma"        width="32" height="32" />
+            <img src="/logos/models/chatglm.svg"  alt="ChatGLM"  title="ChatGLM"      width="32" height="32" />
+          </div>
 
-      <p class="sub">
-        Point CanaryOne at your repo. It runs your tests against every
-        provider you could ship on. Results specific to your workload — not
-        a leaderboard someone else built.
-      </p>
-
-      <div class="ctas">
-        <a class="btn primary" href={GITHUB_URL} target="_blank" rel="noopener">
-          View on GitHub  →
-        </a>
-        <a class="btn ghost" href="#install">
-          <span>$&nbsp;npx&nbsp;canaryone</span>
-        </a>
-      </div>
-
-      <div class="receipt">
-        <div class="receipt-frame" id="receipt-frame" role="button" tabindex="0" aria-label="Enlarge receipt image">
-          <Image
-            src={receipt}
-            alt="CanaryOne benchmarking Kimi K3 across ten routes, twenty minutes into a sixty-seven minute run"
-            widths={[760, 1140, 1600, receipt.width]}
-            sizes="(max-width: 700px) 92vw, min(1136px, 92vw)"
-            loading="eager"
-            decoding="async"
-          />
+          <p class="sub">
+            Test every provider on your own workload. Fine-tune the best model.
+            Deploy it alongside your current stack. Catch drift before your users do.
+          </p>
+          <div class="ctas">
+            <a class="btn primary" href={GITHUB_URL} target="_blank" rel="noopener">
+              View on GitHub →
+            </a>
+            <a class="btn ghost" href="#install">
+              <span>$&nbsp;npx&nbsp;canaryone</span>
+            </a>
+          </div>
         </div>
-        <p class="receipt-caption">
-          Kimi K3 · ten routes · 120 sessions · twenty minutes into the run
-        </p>
-      </div>
-    </div>
-  </section>
 
-  <section class="section">
-    <div class="container">
-      <p class="kicker">01 · COVERAGE</p>
-      <h2>Every router.<br />Every direct provider.</h2>
-      <p class="lede">
-        CanaryOne benchmarks the same model across three routers plus nine
-        direct provider APIs — every route your production traffic could take.
-      </p>
-
-      <div class="hub" id="hub">
-        <svg id="hub-lines" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"></svg>
-
-        <div class="hub-row routers">
-          {routers.map((r) => (
-            <div class="hub-card" data-node="router" data-label={r.name}>
-              <img src={`/logos/${r.file}`} alt={r.name} title={r.name} width="120" height="26" />
+        <div class="hero__visual">
+          <div class="flywheel" aria-hidden="true">
+            <svg class="flywheel__svg" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <path id="fw-circuit" d="
+                  M 240  60
+                  L 360  60  Q 420  60, 420 120
+                  L 420 150
+                  L 420 180  Q 420 240, 360 240
+                  L 240 240
+                  L 120 240  Q  60 240,  60 180
+                  L  60 150
+                  L  60 120  Q  60  60, 120  60
+                  Z
+                "/>
+              </defs>
+              <use href="#fw-circuit" class="circuit-bg" />
+              <use href="#fw-circuit" class="circuit-travel" />
+            </svg>
+            <!-- TEST — top center: 50% / 20% -->
+            <div class="fw-node fw-node--top">
+              <div class="fw-pill">Test</div>
             </div>
-          ))}
-        </div>
-
-        <div class="hub-center" data-node="center">
-          <div class="core">
-            <span class="glyph" aria-hidden="true">c</span>
-            <span>CanaryOne</span>
-          </div>
-        </div>
-
-        <div class="hub-row direct-a">
-          {directA.map((p) => (
-            <div class="hub-card small" data-node="direct" data-label={p.name}>
-              <img src={`/logos/${p.file}`} alt={p.name} title={p.name} width="100" height="22" />
+            <!-- TUNE — right: 87.5% / 50% -->
+            <div class="fw-node fw-node--right">
+              <div class="fw-pill">Tune</div>
             </div>
-          ))}
-        </div>
-
-        <div class="hub-row direct-b">
-          {directB.map((p) => (
-            <div class="hub-card small" data-node="direct" data-label={p.name}>
-              <img src={`/logos/${p.file}`} alt={p.name} title={p.name} width="100" height="22" />
+            <!-- DEPLOY — bottom center: 50% / 80% -->
+            <div class="fw-node fw-node--bottom">
+              <div class="fw-pill">Deploy</div>
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <p class="kicker">02 · THE ROUTE MATTERS</p>
-      <h2><span class="em">3.6×</span> spread in weighted<br />cost per pass.</h2>
-      <p class="lede">
-        Ten ways to buy Kimi K3. Identical weights, the same four tasks, three
-        repeats each — twelve sessions per route. Weighted cost per pass ran
-        from $0.0683 to $0.2428, and the cheapest route on raw cost was also
-        the worst on pass rate and the only one flagged for narrating an answer
-        instead of grounding it in what its tools returned. CanaryOne lets you
-        pick the cheapest <em>grounded</em> lane, not the cheapest lane.
-      </p>
-
-      <div class="scoreboard">
-        <table>
-          <caption class="sr-only">
-            Kimi K3 across ten routes, sorted by weighted cost per pass
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Route</th>
-              <th scope="col" class="num">Pass</th>
-              <th scope="col" class="num">Raw $/pass</th>
-              <th scope="col" class="num">Weighted $/pass</th>
-              <th scope="col" class="num">Trajectory</th>
-            </tr>
-          </thead>
-          <tbody>
-            {scoreboard.map((row) => (
-              <tr class={`${row.winner ? 'winner' : ''} ${row.narrator ? 'narrator' : ''}`}>
-                <td>
-                  {row.provider} <span class="via">· {row.via}</span>
-                </td>
-                <td class="num">{row.pass}</td>
-                <td class="num">{row.cost}</td>
-                <td class="num">{row.weighted}</td>
-                <td class="num">{row.traj}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <p class="table-source">
-        Run <code>e860167a</code>, 29 July 2026. Ten lanes, four tasks, three
-        repeats, 120 sessions, $10.53. Judged by Claude Haiku 4.5.
-        <a href={DEMO_REPORT} target="_blank" rel="noopener">Read the full report →</a>
-      </p>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="container">
-      <p class="kicker">03 · LOCAL</p>
-      <h2>Runs on your machine,<br />against your own tests.</h2>
-      <p class="lede">
-        API keys sit in <code>~/.c1/.env</code> at mode <code>0600</code>. The
-        proxy runs on localhost. Reports are static HTML files under
-        <code>&lt;repo&gt;/.c1/runs/</code>. Nothing sits in your request path,
-        and no dashboard or login stands between you and the result.
-      </p>
-
-      <div class="boundary">
-        <div class="row">
-          <div class="node">
-            your app
-            <span class="sub">tests + eval harness</span>
-          </div>
-          <span class="arrow" aria-hidden="true">→</span>
-          <div class="node">
-            localhost:port
-            <span class="sub">per-lane proxy</span>
-          </div>
-          <span class="arrow" aria-hidden="true">→</span>
-          <div class="node">
-            ~/.c1/runs
-            <span class="sub">sqlite + report</span>
+            <!-- IMPROVE — left: 12.5% / 50% -->
+            <div class="fw-node fw-node--left">
+              <div class="fw-pill">Improve</div>
+            </div>
+            <div class="fw-center">CanaryOne</div>
           </div>
         </div>
-
-        <div class="egress">
-          <span class="kv">outbound →</span>
-          the providers you configured, plus the judge and the scan summariser
-          <span class="egress-note">
-            The judge sends each session transcript to a gateway to be scored, and
-            the scan summariser sends your test files there to be classified.
-            <code>--disable-judge</code> turns the judge off.
-          </span>
-        </div>
       </div>
     </div>
   </section>
 
-  <section class="section report-section">
+  <!-- ─── PILLARS ─── -->
+  <section class="section pillar-cards-section">
     <div class="container">
-      <p class="kicker">04 · THE REPORT</p>
-      <h2>A static HTML report,<br />dropped in your repo.</h2>
+      <div class="pillar-cards">
+
+        <div class="pillar-card">
+          <p class="kicker">TEST</p>
+          <h2 class="pillar-card__h">Benchmark every provider<br />on your own workload.</h2>
+          <p class="pillar-card__body">Point CanaryOne at your repo. It runs your tests against every route your production traffic could take — real cost and quality, not a leaderboard someone else built.</p>
+          <a class="btn primary" href="/evals">Run your evals →</a>
+        </div>
+
+        <div class="pillar-card">
+          <p class="kicker">TUNE</p>
+          <h2 class="pillar-card__h">Turn your traces into<br />a model you own.</h2>
+          <p class="pillar-card__body">We capture your production data, prepare the training set, and run the fine-tuning. You get a model built on your use case — no ML expertise required.</p>
+          <a class="btn primary" href="#waitlist">Get early access →</a>
+        </div>
+
+        <div class="pillar-card">
+          <p class="kicker">DEPLOY</p>
+          <h2 class="pillar-card__h">Ship the fine-tuned model<br />without rewriting your app.</h2>
+          <p class="pillar-card__body">Canary-split traffic between your current model and the fine-tuned one. Measure quality and cost in production. Roll back in one command.</p>
+          <a class="btn primary" href="#waitlist">Get early access →</a>
+        </div>
+
+        <div class="pillar-card">
+          <p class="kicker">IMPROVE</p>
+          <h2 class="pillar-card__h">Models drift.<br />Catch it before your users do.</h2>
+          <p class="pillar-card__body">Any change in quality, behaviour, data distribution, or cost triggers a new cycle automatically.</p>
+          <a class="btn primary" href="#waitlist">Get early access →</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 02 · TUNE ─── -->
+  <section class="section" id="tune">
+    <div class="container">
+      <p class="kicker">TUNE</p>
+      <h2>Turn your traces into<br /><span class="em">a model you own.</span></h2>
       <p class="lede">
-        Every run writes a self-contained <code>report/index.html</code> under
-        <code>&lt;repo&gt;/.c1/runs/&lt;runId&gt;/</code>. Leaderboard cards,
-        lane table, heatmap, session drilldown — no dashboard, no login, no
-        cloud.
+        We capture your production data, prepare the training set, and manage the
+        fine-tuning process end to end. You get a model built on your use case —
+        no ML expertise required.
       </p>
 
-      <a class="report-frame" href={DEMO_REPORT} target="_blank" rel="noopener">
-        <div class="report-toolbar">
-          <span class="dot r"></span>
-          <span class="dot y"></span>
-          <span class="dot g"></span>
-          <span class="path">/.c1/runs/e860167a/report/index.html</span>
-          <span class="open">open full report →</span>
+      <div class="tune-steps">
+        <div class="tune-step">
+          <h3 class="tune-step__title">Capture Traces</h3>
+          <p class="tune-step__desc">
+            The proxy records every request and response from your production
+            workload automatically.
+          </p>
         </div>
-        <div class="report-shots">
-          <figure class="shot">
-            <Image
-              src={reportLeaderboard}
-              alt="CanaryOne report leaderboard — Best Value, Cheapest Raw, Pass Rate, Total Spend."
-              widths={[760, 1100, reportLeaderboard.width]}
-              sizes="min(1100px, 88vw)"
-              loading="lazy"
-            />
-            <figcaption>Leaderboard — every lane, ranked by weighted $/pass.</figcaption>
-          </figure>
-          <figure class="shot">
-            <Image
-              src={reportHeatmap}
-              alt="CanaryOne report heatmap — pass/fail per lane × task."
-              widths={[760, 1100, reportHeatmap.width]}
-              sizes="min(1100px, 88vw)"
-              loading="lazy"
-            />
-            <figcaption>Heatmap — every lane × task cell, at a glance.</figcaption>
-          </figure>
+        <div class="tune-step">
+          <h3 class="tune-step__title">Prepare Dataset</h3>
+          <p class="tune-step__desc">
+            We filter by outcome, deduplicate, and curate a clean training set —
+            no data wrangling on your end.
+          </p>
         </div>
-      </a>
+        <div class="tune-step">
+          <h3 class="tune-step__title">Fine-tune</h3>
+          <p class="tune-step__desc">
+            We run and manage the training job. A production-ready model tuned
+            to your workload comes back.
+          </p>
+        </div>
+      </div>
+
+      <div class="tune-partners">
+        <div class="partner-row">
+          <span class="partner-label">Ingests traces from</span>
+          <div class="partner-logos">
+            <img src="/logos/models/langchain.svg"  alt="LangChain"  title="LangChain"  />
+            <img src="/logos/models/llamaindex.svg" alt="LlamaIndex" title="LlamaIndex" />
+          </div>
+        </div>
+        <div class="partner-row">
+          <span class="partner-label">Fine-tunes via</span>
+          <div class="partner-logos">
+            <img src="/logos/together.svg"  alt="Together AI"  title="Together AI"  />
+            <img src="/logos/fireworks.svg" alt="Fireworks AI" title="Fireworks AI" />
+            <img src="/logos/baseten.svg"   alt="Baseten"      title="Baseten"      />
+          </div>
+        </div>
+      </div>
+
+      <div class="waitlist-row">
+        <a class="btn primary" href="#waitlist">Get early access →</a>
+        <span class="waitlist-note">fine-tuning pipeline in private beta</span>
+      </div>
     </div>
   </section>
 
-  <section class="section runs-teaser">
+  <!-- ─── 03 · DEPLOY ─── -->
+  <section class="section" id="deploy">
     <div class="container">
-      <p class="kicker">05 · THE RUNS</p>
-      <h2>Every number here<br />has a run behind it.</h2>
+      <p class="kicker">DEPLOY</p>
+      <h2>Ship the fine-tuned model<br /><span class="em">without rewriting your app.</span></h2>
       <p class="lede">
-        Each report carries its method, its route matrix, what was held
-        constant, and an explicit note on what it does not support. The last
-        one is the important one: a result without its limits is marketing.
+        Canary-split traffic between your current model and the fine-tuned one.
+        Measure quality and cost in production. Roll back in one command.
       </p>
 
-      <div class="run-cards">
-        {latestRuns.map((run) => <RunCard run={run} />)}
-      </div>
-
-      <p class="runs-more"><a href="/runs">All run reports →</a></p>
-    </div>
-  </section>
-
-  <section class="section install" id="install">
-    <div class="container">
-      <p class="kicker">06 · GET STARTED</p>
-      <h2>One command.</h2>
-
-      <div class="terminal">
-        <div class="terminal-bar" aria-hidden="true">
-          <span class="dot r"></span>
-          <span class="dot y"></span>
-          <span class="dot g"></span>
-          <span class="label">~/your-repo</span>
-        </div>
-        <div class="terminal-body">
-          <span class="prompt">$</span>
-          <code id="install-cmd">npx canaryone</code>
-          <button class="copy" id="copy-btn" type="button" aria-label="Copy command">copy</button>
+      <div class="deploy-diagram">
+        <p class="app-label"><strong>your app</strong> → traffic split</p>
+        <div class="deploy-lanes">
+          <div class="deploy-lane">
+            <div class="deploy-lane__pct">90% · current model</div>
+            <div class="deploy-lane__label">gpt-4o-mini · OpenAI</div>
+          </div>
+          <div class="deploy-lane deploy-lane--yours">
+            <div class="deploy-lane__pct">10% · your model</div>
+            <div class="deploy-lane__label">glm-5.2 · fine-tuned</div>
+          </div>
         </div>
       </div>
 
-      <p class="hint">
-        Point it at any repo whose tests call an LLM.
-        See the <a href={GITHUB_URL} target="_blank" rel="noopener">README</a> for the walk-through.
-      </p>
+      <div class="waitlist-row">
+        <a class="btn primary" href="#waitlist">Get early access →</a>
+        <span class="waitlist-note">canary deploy in private beta</span>
+      </div>
     </div>
   </section>
 
-  <section class="status">
+  <!-- ─── 04 · IMPROVE ─── -->
+  <section class="section" id="improve">
     <div class="container">
-      <p>
-        v0.1 in development. Bugs, provider adds, and reproducible failure
-        patterns welcome as issues.
+      <p class="kicker">IMPROVE</p>
+      <h2>Models drift.<br /><span class="em">Catch it before your users do.</span></h2>
+      <p class="lede">
+        Any change in quality, behaviour, data distribution, or cost triggers
+        a new cycle automatically.
       </p>
+
+      <div class="drift-signals">
+        <div class="drift-signal">
+          <h3 class="drift-signal__title">Quality drift</h3>
+          <p class="drift-signal__desc">Output scores fall below threshold</p>
+        </div>
+        <div class="drift-signal">
+          <h3 class="drift-signal__title">Behavioral drift</h3>
+          <p class="drift-signal__desc">Provider silently updates the model</p>
+        </div>
+        <div class="drift-signal">
+          <h3 class="drift-signal__title">Data drift</h3>
+          <p class="drift-signal__desc">New inputs the fine-tune hasn't seen</p>
+        </div>
+        <div class="drift-signal">
+          <h3 class="drift-signal__title">Cost drift</h3>
+          <p class="drift-signal__desc">Spend per correct answer rises</p>
+        </div>
+      </div>
+
+      <div class="waitlist-row">
+        <a class="btn primary" href="#waitlist">Get early access →</a>
+        <span class="waitlist-note">drift detection in private beta</span>
+      </div>
     </div>
   </section>
 
-  <div class="lightbox" id="lightbox" aria-hidden="true" data-src={receiptFull.src}>
-    <img alt="" width={receipt.width} height={receipt.height} />
-  </div>
-
-  <script is:inline>
-    (function () {
-      // ---------- Copy button ----------
-      const btn = document.getElementById('copy-btn');
-      const cmd = document.getElementById('install-cmd');
-      if (btn && cmd) {
-        btn.addEventListener('click', async () => {
-          try {
-            await navigator.clipboard.writeText(cmd.textContent.trim());
-            btn.textContent = 'copied';
-            btn.classList.add('copied');
-            setTimeout(() => {
-              btn.textContent = 'copy';
-              btn.classList.remove('copied');
-            }, 1600);
-          } catch (e) {
-            btn.textContent = 'select all';
-            const sel = window.getSelection();
-            const range = document.createRange();
-            range.selectNodeContents(cmd);
-            sel.removeAllRanges();
-            sel.addRange(range);
-            setTimeout(() => (btn.textContent = 'copy'), 2000);
-          }
-        });
-      }
-
-      // ---------- Lightbox ----------
-      const frame = document.getElementById('receipt-frame');
-      const lightbox = document.getElementById('lightbox');
-      const openLightbox = () => {
-        // The full-size image is only fetched the first time it is asked for.
-        const img = lightbox.querySelector('img');
-        if (img && !img.getAttribute('src')) img.setAttribute('src', lightbox.dataset.src);
-        lightbox.classList.add('open');
-        lightbox.setAttribute('aria-hidden', 'false');
-      };
-      const closeLightbox = () => {
-        lightbox.classList.remove('open');
-        lightbox.setAttribute('aria-hidden', 'true');
-      };
-      if (frame && lightbox) {
-        frame.addEventListener('click', openLightbox);
-        frame.addEventListener('keydown', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(); }
-        });
-        lightbox.addEventListener('click', closeLightbox);
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
-      }
-
-      // ---------- Hub-and-spoke connectors ----------
-      const hub = document.getElementById('hub');
-      const svg = document.getElementById('hub-lines');
-      if (hub && svg && window.matchMedia('(min-width: 640px)').matches) {
-        const draw = () => {
-          const cards = hub.querySelectorAll('.hub-card');
-          const center = hub.querySelector('.hub-center .core');
-          if (!center || !cards.length) return;
-
-          const hubRect = hub.getBoundingClientRect();
-          svg.setAttribute('viewBox', `0 0 ${hubRect.width} ${hubRect.height}`);
-          svg.setAttribute('width', hubRect.width);
-          svg.setAttribute('height', hubRect.height);
-
-          const c = center.getBoundingClientRect();
-          const cx = c.left + c.width / 2 - hubRect.left;
-          const cy = c.top + c.height / 2 - hubRect.top;
-
-          let paths = '';
-          cards.forEach((card) => {
-            const r = card.getBoundingClientRect();
-            const rx = r.left + r.width / 2 - hubRect.left;
-            const ry = r.top + r.height / 2 - hubRect.top;
-
-            // Anchor to nearest edge of the card (top or bottom) so lines don't overlap the label.
-            const anchorY = ry < cy ? r.bottom - hubRect.top : r.top - hubRect.top;
-            // Anchor to nearest edge of the hub (top or bottom).
-            const hubY = ry < cy ? c.top - hubRect.top : c.bottom - hubRect.top;
-
-            // Curved cubic path: start at card, control points bend toward the hub.
-            const midY = (anchorY + hubY) / 2;
-            paths += `<path d="M ${rx} ${anchorY} C ${rx} ${midY}, ${cx} ${midY}, ${cx} ${hubY}" />`;
-          });
-          svg.innerHTML = paths;
-        };
-        const rafDraw = () => requestAnimationFrame(draw);
-        rafDraw();
-        window.addEventListener('resize', rafDraw, { passive: true });
-        // Redraw after fonts + images settle
-        window.addEventListener('load', () => setTimeout(rafDraw, 50));
-        if (typeof ResizeObserver !== 'undefined') {
-          const ro = new ResizeObserver(rafDraw);
-          ro.observe(hub);
-        }
-      }
-    })();
-  </script>
 </Layout>
+
+<style is:global>
+
+/* ─── Hero model logo strip ─── */
+.hero-models {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+.hero-models img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  opacity: 0.85;
+  transition: opacity var(--dur-base);
+  filter: drop-shadow(0 0 2px rgba(0,0,0,0.4));
+}
+.hero-models img:hover {
+  opacity: 1;
+}
+
+/* ─── Hero: two-column layout ─── */
+.hero__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+  align-items: center;
+}
+.hero__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+.hero__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Flywheel ─── */
+.flywheel {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 8 / 5;
+}
+.flywheel__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.circuit-bg {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: 0.18;
+  stroke-width: 1.5;
+}
+.circuit-travel {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 22 1075;
+  stroke-dashoffset: 0;
+  animation: fw-travel 4s linear infinite;
+  filter: drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 16px var(--accent-soft));
+}
+@keyframes fw-travel {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -1097; }
+}
+/* reduced-motion: freeze animation */
+@media (prefers-reduced-motion: reduce) {
+  .circuit-travel { animation: none; }
+}
+
+.fw-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+.fw-node--top    { left: 50%;    top: 20%; }
+.fw-node--right  { left: 87.5%; top: 50%; }
+.fw-node--bottom { left: 50%;   top: 80%; }
+.fw-node--left   { left: 12.5%; top: 50%; }
+
+.fw-pill {
+  background: var(--accent);
+  color: var(--dark);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  transition: background var(--dur-base), box-shadow var(--dur-base);
+}
+
+/* Staggered glow: each pill lights up as the dot passes */
+.fw-node--top    .fw-pill { animation: fw-glow 4s  0s   ease-in-out infinite; }
+.fw-node--right  .fw-pill { animation: fw-glow 4s  1s   ease-in-out infinite; }
+.fw-node--bottom .fw-pill { animation: fw-glow 4s  2s   ease-in-out infinite; }
+.fw-node--left   .fw-pill { animation: fw-glow 4s  3s   ease-in-out infinite; }
+@keyframes fw-glow {
+  0%, 14%, 100% { background: var(--accent); box-shadow: none; }
+  7% { background: var(--accent-soft); box-shadow: 0 0 0 3px rgba(253,224,71,0.2), 0 0 24px var(--accent); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fw-node--top .fw-pill,
+  .fw-node--right .fw-pill,
+  .fw-node--bottom .fw-pill,
+  .fw-node--left .fw-pill { animation: none; }
+}
+
+.fw-center {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: rgba(253,224,71,0.14);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* ─── Pillar cards grid ─── */
+.pillar-cards-section {
+  background: var(--bg-tint);
+}
+.pillar-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+.pillar-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-slow), box-shadow var(--dur-slow), border-color var(--dur-slow);
+}
+.pillar-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+}
+.pillar-card .kicker {
+  margin: 0;
+  color: var(--accent-deep);
+}
+.pillar-card__h {
+  font-size: var(--display-md);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  margin: 0;
+  max-width: 20ch;
+}
+.pillar-card__body {
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--muted);
+  margin: 0;
+  flex: 1;
+}
+.pillar-card .btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+@media (max-width: 900px) {
+  .pillar-cards { grid-template-columns: 1fr; }
+}
+
+/* ─── TUNE step cards ─── */
+.tune-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+}
+.tune-step {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+}
+.tune-step__num {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+.tune-step__title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
+  margin: 0;
+}
+.tune-step__desc {
+  font-size: var(--text-base);
+  color: var(--muted);
+  line-height: var(--leading-normal);
+  margin: 0;
+}
+
+.tune-partners {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin-bottom: var(--space-12);
+}
+.partner-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+.partner-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  color: var(--muted);
+  white-space: nowrap;
+  min-width: 14ch;
+}
+.partner-logos {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+.partner-logos img {
+  height: 24px;
+  width: auto;
+  opacity: 0.75;
+  filter: none;
+}
+
+/* ─── DEPLOY diagram ─── */
+.deploy-diagram {
+  background: var(--dark);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line-dark);
+  box-shadow: var(--shadow-dark);
+  padding: var(--space-10) var(--space-8);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-on-dark);
+  max-width: 640px;
+  margin-bottom: var(--space-12);
+}
+.deploy-diagram .app-label {
+  color: var(--muted-on-dark);
+  margin-bottom: var(--space-6);
+}
+.deploy-diagram .app-label strong {
+  color: var(--text-on-dark);
+  font-weight: var(--weight-semibold);
+}
+.deploy-lanes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+.deploy-lane {
+  border: 1px solid var(--line-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+.deploy-lane__pct {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--muted-on-dark);
+  margin-bottom: var(--space-2);
+}
+.deploy-lane__label {
+  color: var(--text-on-dark);
+  font-weight: var(--weight-semibold);
+}
+.deploy-lane--yours {
+  border-color: rgba(253,224,71,0.25);
+  background: rgba(253,224,71,0.04);
+}
+.deploy-lane--yours .deploy-lane__pct { color: var(--accent-deep); }
+.deploy-lane--yours .deploy-lane__label { color: var(--accent); }
+
+/* ─── IMPROVE drift signals ─── */
+.drift-signals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+}
+.drift-signal {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+.drift-signal__title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  margin: 0 0 var(--space-2);
+}
+.drift-signal__desc {
+  font-size: var(--text-base);
+  color: var(--muted);
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+
+/* ─── Waitlist CTA row ─── */
+.waitlist-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.waitlist-note {
+  font-size: var(--text-base);
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .hero__inner { grid-template-columns: 1fr; }
+  .hero__visual { display: none; }
+  .tune-steps { grid-template-columns: 1fr; }
+  .drift-signals { grid-template-columns: 1fr; }
+  .deploy-lanes { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .partner-row { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+}
+
+</style>

@@ -5,8 +5,16 @@ Marketing site for [canaryone](https://github.com/rupulsafaya/canaryone) — ser
 CanaryOne brand palette** — other repos (canaryone, canaryone-cloud, canaryone-demo)
 should inherit their colors from here rather than reinvent them.
 
-Astro, no Tailwind, no analytics, no web fonts. A home page, the price chart at `/prices`,
-and the run reports at `/runs`.
+Astro, no Tailwind, no analytics, no web fonts. Four pages:
+
+| Path | What it is |
+|---|---|
+| `/` | Platform landing page — hero with animated flywheel, four pillar cards (Test / Tune / Deploy / Improve), detail sections for Tune / Deploy / Improve, early-access waitlist popup |
+| `/evals` | Your Evals — full benchmark detail: provider hub, route scoreboard, local-proxy diagram, report screenshots, run cards, install command |
+| `/prices` | Model Market — listed token prices for every tracked model, snapshotted nightly and plotted over time |
+| `/runs` | Run reports index — every commissioned sweep published here |
+
+The homepage no longer carries the scoreboard or install terminal directly; those live at `/evals`. The early-access waitlist submits to a Supabase `waitlist` table (`ghkebzdbexoqxuzneayk`, us-east-1) using the anon key with INSERT-only RLS — no credentials are exposed to the browser.
 
 See [`DESIGN.md`](./DESIGN.md) for the design system: the token scales, where canary yellow
 is and is not allowed, the header band, the table contract and the focus rules. Read it
@@ -57,7 +65,7 @@ caveat. Those caveats are the reason a run page is citable rather than marketing
 build prints a warning if a run arrives without one.
 
 **Every number on this site has to trace to `outreach/numbers.md` in fantastic-dollop, or
-to an artefact published here.** The scoreboard on the home page is run `e860167a`, whose
+to an artefact published here.** The scoreboard on `/evals` is run `e860167a`, whose
 full report ships at [`public/demo-report/`](./public/demo-report/) so a reader can check
 it.
 

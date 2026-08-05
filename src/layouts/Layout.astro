@@ -61,11 +61,9 @@ const canonical = `${SITE_URL}${path}`;
           <img src="/c1-logo-dark.svg" alt="CanaryOne" width="153" height="28" />
         </a>
         <div class="links">
+          <a href="/evals"><span>evals</span></a>
           <a href="/prices">
-            <span>prices</span>
-          </a>
-          <a href="/runs">
-            <span>runs</span>
+            <span>model market</span>
           </a>
           <!-- Icon-only in the nav. `aria-label` carries the accessible name that the
                removed <span> used to provide, and `title` gives a sighted reader the same
@@ -89,7 +87,8 @@ const canonical = `${SITE_URL}${path}`;
           <img src="/c1-logo.svg" alt="CanaryOne" width="109" height="20" />
         </a>
         <span class="spacer"></span>
-        <a href="/prices">prices</a>
+        <a href="/evals">evals</a>
+        <a href="/prices">model market</a>
         <a href="/runs">runs</a>
         <!-- Icon-only, same as the nav. `aria-label` carries the accessible name the removed
              <span> used to provide, and `title` gives a sighted reader the same name on
@@ -103,5 +102,273 @@ const canonical = `${SITE_URL}${path}`;
         <span>MIT</span>
       </div>
     </footer>
+
+    <!-- ─── Early access waitlist dialog ─── -->
+    <dialog id="waitlist-dialog" aria-labelledby="waitlist-title">
+      <div class="wl-inner">
+        <button class="wl-close" id="wl-close" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+
+        <div class="wl-body" id="wl-body">
+          <p class="wl-kicker">EARLY ACCESS</p>
+          <h2 class="wl-title" id="waitlist-title">Get early access.</h2>
+          <p class="wl-sub">We'll reach out when early access opens.</p>
+
+          <form class="wl-form" id="wl-form" novalidate>
+            <div class="wl-field">
+              <label for="wl-name">Name</label>
+              <input id="wl-name" name="name" type="text" placeholder="Your name" autocomplete="name" required />
+            </div>
+            <div class="wl-field">
+              <label for="wl-email">Email</label>
+              <input id="wl-email" name="email" type="email" placeholder="you@company.com" autocomplete="email" required />
+            </div>
+            <button class="wl-submit btn primary" type="submit">
+              <span class="wl-submit-label">Join the waitlist →</span>
+              <span class="wl-submit-loading" aria-hidden="true" hidden>Submitting…</span>
+            </button>
+            <p class="wl-error" id="wl-error" role="alert" hidden></p>
+          </form>
+        </div>
+
+        <div class="wl-success" id="wl-success" hidden>
+          <div class="wl-check" aria-hidden="true">✓</div>
+          <h2 class="wl-title">You're on the list.</h2>
+          <p class="wl-sub">We'll be in touch soon.</p>
+        </div>
+      </div>
+    </dialog>
+
+    <style>
+      /* ─── Dialog / backdrop ─── */
+      #waitlist-dialog {
+        background: transparent;
+        border: none;
+        padding: 0;
+        width: min(480px, calc(100vw - 32px));
+        max-height: calc(100dvh - 32px);
+        overflow: visible;
+        /* centre in viewport */
+        position: fixed;
+        inset: 0;
+        margin: auto;
+      }
+      #waitlist-dialog::backdrop {
+        background: rgba(0, 0, 0, 0.72);
+        backdrop-filter: blur(4px);
+      }
+      #waitlist-dialog:not([open]) { display: none; }
+
+      /* ─── Card ─── */
+      .wl-inner {
+        position: relative;
+        background: var(--dark);
+        border: 1px solid rgba(253, 224, 71, 0.25);
+        border-radius: var(--radius-xl);
+        box-shadow: 0 0 0 1px rgba(253,224,71,0.08) inset, var(--shadow-dark), 0 0 40px rgba(253,224,71,0.06);
+        padding: var(--space-10) var(--space-10) var(--space-10);
+        color: var(--text-on-dark);
+      }
+
+      /* ─── Close button ─── */
+      .wl-close {
+        position: absolute;
+        top: var(--space-5);
+        right: var(--space-5);
+        background: transparent;
+        border: 1px solid var(--line-dark);
+        border-radius: var(--radius-md);
+        padding: var(--space-2);
+        color: var(--muted-on-dark);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color var(--dur-base), border-color var(--dur-base);
+      }
+      .wl-close:hover {
+        color: var(--text-on-dark);
+        border-color: rgba(255,255,255,0.2);
+      }
+
+      /* ─── Content ─── */
+      .wl-kicker {
+        font-family: var(--font-mono);
+        font-size: var(--text-2xs);
+        font-weight: var(--weight-semibold);
+        letter-spacing: var(--tracking-label);
+        color: var(--accent-deep);
+        margin: 0 0 var(--space-4);
+      }
+      .wl-title {
+        font-size: var(--display-md);
+        font-weight: var(--weight-medium);
+        line-height: var(--leading-tight);
+        letter-spacing: var(--tracking-display);
+        color: var(--text-on-dark);
+        margin: 0 0 var(--space-3);
+      }
+      .wl-sub {
+        font-size: var(--text-base);
+        color: var(--muted-on-dark);
+        line-height: var(--leading-normal);
+        margin: 0 0 var(--space-8);
+      }
+
+      /* ─── Form ─── */
+      .wl-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+      .wl-field {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+      }
+      .wl-field label {
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+        font-weight: var(--weight-semibold);
+        letter-spacing: var(--tracking-label);
+        text-transform: uppercase;
+        color: var(--muted-on-dark);
+      }
+      .wl-field input {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid var(--line-dark);
+        border-radius: var(--radius-md);
+        padding: var(--space-4) var(--space-5);
+        font-family: var(--font-sans);
+        font-size: var(--text-md);
+        color: var(--text-on-dark);
+        outline: none;
+        transition: border-color var(--dur-base);
+        width: 100%;
+      }
+      .wl-field input::placeholder {
+        color: rgba(168,162,158,0.5);
+      }
+      .wl-field input:focus {
+        border-color: var(--accent);
+        outline: var(--focus-width) solid var(--focus-color-dark);
+        outline-offset: var(--focus-offset);
+      }
+      .wl-field input:invalid:not(:placeholder-shown) {
+        border-color: var(--danger);
+      }
+      .wl-submit {
+        margin-top: var(--space-2);
+        width: 100%;
+        justify-content: center;
+        font-size: var(--text-md);
+      }
+      .wl-error {
+        font-size: var(--text-base);
+        color: var(--danger);
+        margin: 0;
+        font-family: var(--font-mono);
+      }
+
+      /* ─── Success state ─── */
+      .wl-success {
+        text-align: center;
+        padding: var(--space-6) 0;
+      }
+      .wl-check {
+        font-size: 40px;
+        color: var(--accent);
+        margin-bottom: var(--space-5);
+        line-height: 1;
+      }
+      .wl-success .wl-sub {
+        margin-bottom: 0;
+      }
+    </style>
+
+    <script is:inline>
+    (function () {
+      var SUPABASE_URL  = 'https://ghkebzdbexoqxuzneayk.supabase.co';
+      var SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdoa2ViemRiZXhvcXh1em5lYXlrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5OTAxOTQsImV4cCI6MjEwMDU2NjE5NH0.6-YwQFhxkVnTtOtyRnvOS-WPaKeUruYi0f3-cHfxJ0A';
+
+      var dialog  = document.getElementById('waitlist-dialog');
+      var form    = document.getElementById('wl-form');
+      var body    = document.getElementById('wl-body');
+      var success = document.getElementById('wl-success');
+      var errEl   = document.getElementById('wl-error');
+      var closeBtn = document.getElementById('wl-close');
+
+      // Open on any #waitlist link
+      document.querySelectorAll('a[href="#waitlist"]').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
+          e.preventDefault();
+          dialog.showModal();
+        });
+      });
+
+      // Close on X button or backdrop click
+      closeBtn.addEventListener('click', function () { dialog.close(); });
+      dialog.addEventListener('click', function (e) {
+        if (e.target === dialog) dialog.close();
+      });
+
+      // Reset form on close so it's fresh next open
+      dialog.addEventListener('close', function () {
+        form.reset();
+        errEl.hidden = true;
+        body.hidden = false;
+        success.hidden = true;
+        setLoading(false);
+      });
+
+      function setLoading(on) {
+        var label   = form.querySelector('.wl-submit-label');
+        var loading = form.querySelector('.wl-submit-loading');
+        var submit  = form.querySelector('.wl-submit');
+        label.hidden   = on;
+        loading.hidden = !on;
+        submit.disabled = on;
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        errEl.hidden = true;
+        var name  = form.elements.name.value.trim();
+        var email = form.elements.email.value.trim();
+        if (!name || !email) return;
+
+        setLoading(true);
+        try {
+          var res = await fetch(SUPABASE_URL + '/rest/v1/waitlist', {
+            method: 'POST',
+            headers: {
+              'apikey':        SUPABASE_ANON,
+              'Authorization': 'Bearer ' + SUPABASE_ANON,
+              'Content-Type':  'application/json',
+              'Prefer':        'return=minimal',
+            },
+            body: JSON.stringify({ name: name, email: email }),
+          });
+          if (!res.ok) {
+            var data = await res.json().catch(function () { return {}; });
+            // Supabase returns code '23505' for unique violations (duplicate email)
+            if (data.code === '23505') {
+              throw new Error('That email is already on the list.');
+            }
+            throw new Error('Something went wrong. Try again.');
+          }
+          body.hidden    = true;
+          success.hidden = false;
+        } catch (err) {
+          errEl.textContent = err.message;
+          errEl.hidden = false;
+          setLoading(false);
+        }
+      });
+    })();
+    </script>
   </body>
 </html>

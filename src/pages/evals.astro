@@ -1,0 +1,403 @@
+---
+import { Image } from 'astro:assets';
+import Layout, { GITHUB_URL } from '../layouts/Layout.astro';
+import RunCard from '../components/RunCard.astro';
+import { getRuns } from '../lib/runs';
+
+import { getImage } from 'astro:assets';
+import receipt from '../assets/receipt-kimi-k3.png';
+import reportLeaderboard from '../assets/report-leaderboard.png';
+import reportHeatmap from '../assets/report-heatmap.png';
+
+const receiptFull = await getImage({ src: receipt, format: 'webp', width: receipt.width });
+
+const TITLE = 'CanaryOne — Your Evals';
+const DESCRIPTION = 'Run your tests against every AI provider route. Real cost and quality on your own workload — not a leaderboard someone else built.';
+
+const DEMO_REPORT = '/demo-report/index.html';
+
+const latestRuns = (await getRuns()).slice(0, 3);
+
+const routers = [
+  { name: 'OpenRouter', file: 'openrouter.svg' },
+  { name: 'Vercel AI Gateway', file: 'vercel.svg' },
+  { name: 'AWS Bedrock', file: 'bedrock.svg' },
+];
+
+const directA = [
+  { name: 'Moonshot', file: 'moonshot.svg' },
+  { name: 'Nebius', file: 'nebius.svg' },
+  { name: 'Fireworks', file: 'fireworks.svg' },
+  { name: 'Together', file: 'together.svg' },
+];
+
+const directB = [
+  { name: 'Baseten', file: 'baseten.svg' },
+  { name: 'Groq', file: 'groq.svg' },
+  { name: 'DeepSeek', file: 'deepseek.svg' },
+  { name: 'Cerebras', file: 'cerebras.svg' },
+];
+
+const scoreboard = [
+  { provider: 'nebius',        via: 'Vercel',     pass:  '6/12', cost: '$0.0472', weighted: '$0.0683', traj: '69 ⚠', winner: false, narrator: true  },
+  { provider: 'moonshot-intl', via: 'direct',     pass:  '9/12', cost: '$0.0686', weighted: '$0.0789', traj: '87',   winner: false, narrator: false },
+  { provider: 'moonshotai',    via: 'Vercel',     pass:  '9/12', cost: '$0.0957', weighted: '$0.1064', traj: '90',   winner: false, narrator: false },
+  { provider: 'Fireworks',     via: 'Vercel',     pass:  '9/12', cost: '$0.0921', weighted: '$0.1071', traj: '86',   winner: false, narrator: false },
+  { provider: 'baseten',       via: 'Vercel',     pass: '11/12', cost: '$0.0967', weighted: '$0.1151', traj: '84',   winner: false, narrator: false },
+  { provider: 'nebius',        via: 'direct',     pass:  '6/12', cost: '$0.1052', weighted: '$0.1224', traj: '86',   winner: false, narrator: false },
+  { provider: 'fireworks',     via: 'direct',     pass:  '7/12', cost: '$0.1315', weighted: '$0.1664', traj: '79',   winner: false, narrator: false },
+  { provider: 'nebius, fp4',   via: 'OpenRouter', pass:  '8/12', cost: '$0.1578', weighted: '$0.1973', traj: '80',   winner: false, narrator: false },
+  { provider: 'moonshotai, mxfp4', via: 'OpenRouter', pass: '12/12', cost: '$0.1852', weighted: '$0.2104', traj: '88', winner: false, narrator: false },
+  { provider: 'Fireworks, fast', via: 'OpenRouter', pass: '9/12', cost: '$0.2040', weighted: '$0.2428', traj: '84',  winner: false, narrator: false },
+];
+---
+
+<Layout title={TITLE} description={DESCRIPTION} path="/evals">
+  <!-- Page band header -->
+  <div class="page-band">
+    <div class="container">
+      <div class="page-head">
+        <p class="kicker">YOUR EVALS</p>
+        <h1>Test every route<br />on your own workload.</h1>
+        <p class="lede">Point CanaryOne at your repo. It runs your tests against every provider you could ship on. Results specific to your workload — not a leaderboard someone else built.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── COVERAGE ─── -->
+  <section class="section">
+    <div class="container">
+      <p class="kicker">COVERAGE</p>
+      <h2>Every router.<br />Every direct provider.</h2>
+      <p class="lede">
+        CanaryOne benchmarks the same model across three routers plus nine
+        direct provider APIs — every route your production traffic could take.
+      </p>
+
+      <div class="hub" id="hub">
+        <svg id="hub-lines" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"></svg>
+
+        <div class="hub-row routers">
+          {routers.map((r) => (
+            <div class="hub-card" data-node="router" data-label={r.name}>
+              <img src={`/logos/${r.file}`} alt={r.name} title={r.name} width="120" height="26" />
+            </div>
+          ))}
+        </div>
+
+        <div class="hub-center" data-node="center">
+          <div class="core">
+            <span class="glyph" aria-hidden="true">c</span>
+            <span>CanaryOne</span>
+          </div>
+        </div>
+
+        <div class="hub-row direct-a">
+          {directA.map((p) => (
+            <div class="hub-card small" data-node="direct" data-label={p.name}>
+              <img src={`/logos/${p.file}`} alt={p.name} title={p.name} width="100" height="22" />
+            </div>
+          ))}
+        </div>
+
+        <div class="hub-row direct-b">
+          {directB.map((p) => (
+            <div class="hub-card small" data-node="direct" data-label={p.name}>
+              <img src={`/logos/${p.file}`} alt={p.name} title={p.name} width="100" height="22" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── ROUTE MATTERS ─── -->
+  <section class="section">
+    <div class="container">
+      <p class="kicker">ROUTE MATTERS</p>
+      <h2><span class="em">3.6×</span> spread in weighted<br />cost per pass.</h2>
+      <p class="lede">
+        Ten ways to buy Kimi K3. Identical weights, the same four tasks, three
+        repeats each — twelve sessions per route. Weighted cost per pass ran
+        from $0.0683 to $0.2428, and the cheapest route on raw cost was also
+        the worst on pass rate and the only one flagged for narrating an answer
+        instead of grounding it in what its tools returned. CanaryOne lets you
+        pick the cheapest <em>grounded</em> lane, not the cheapest lane.
+      </p>
+
+      <div class="scoreboard">
+        <table>
+          <caption class="sr-only">
+            Kimi K3 across ten routes, sorted by weighted cost per pass
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Route</th>
+              <th scope="col" class="num">Pass</th>
+              <th scope="col" class="num">Raw $/pass</th>
+              <th scope="col" class="num">Weighted $/pass</th>
+              <th scope="col" class="num">Trajectory</th>
+            </tr>
+          </thead>
+          <tbody>
+            {scoreboard.map((row) => (
+              <tr class={`${row.winner ? 'winner' : ''} ${row.narrator ? 'narrator' : ''}`}>
+                <td>
+                  {row.provider} <span class="via">· {row.via}</span>
+                </td>
+                <td class="num">{row.pass}</td>
+                <td class="num">{row.cost}</td>
+                <td class="num">{row.weighted}</td>
+                <td class="num">{row.traj}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <p class="table-source">
+        Run <code>e860167a</code>, 29 July 2026. Ten lanes, four tasks, three
+        repeats, 120 sessions, $10.53. Judged by Claude Haiku 4.5.
+        <a href={DEMO_REPORT} target="_blank" rel="noopener">Read the full report →</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── LOCAL ─── -->
+  <section class="section">
+    <div class="container">
+      <p class="kicker">LOCAL</p>
+      <h2>Runs on your machine,<br />against your own tests.</h2>
+      <p class="lede">
+        API keys sit in <code>~/.c1/.env</code> at mode <code>0600</code>. The
+        proxy runs on localhost. Reports are static HTML files under
+        <code>&lt;repo&gt;/.c1/runs/</code>. Nothing sits in your request path,
+        and no dashboard or login stands between you and the result.
+      </p>
+
+      <div class="boundary">
+        <div class="row">
+          <div class="node">
+            your app
+            <span class="sub">tests + eval harness</span>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="node">
+            localhost:port
+            <span class="sub">per-lane proxy</span>
+          </div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="node">
+            ~/.c1/runs
+            <span class="sub">sqlite + report</span>
+          </div>
+        </div>
+
+        <div class="egress">
+          <span class="kv">outbound →</span>
+          the providers you configured, plus the judge and the scan summariser
+          <span class="egress-note">
+            The judge sends each session transcript to a gateway to be scored, and
+            the scan summariser sends your test files there to be classified.
+            <code>--disable-judge</code> turns the judge off.
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── THE REPORT ─── -->
+  <section class="section report-section">
+    <div class="container">
+      <p class="kicker">THE REPORT</p>
+      <h2>A static HTML report,<br />dropped in your repo.</h2>
+      <p class="lede">
+        Every run writes a self-contained <code>report/index.html</code> under
+        <code>&lt;repo&gt;/.c1/runs/&lt;runId&gt;/</code>. Leaderboard cards,
+        lane table, heatmap, session drilldown — no dashboard, no login, no
+        cloud.
+      </p>
+
+      <a class="report-frame" href={DEMO_REPORT} target="_blank" rel="noopener">
+        <div class="report-toolbar">
+          <span class="dot r"></span>
+          <span class="dot y"></span>
+          <span class="dot g"></span>
+          <span class="path">/.c1/runs/e860167a/report/index.html</span>
+          <span class="open">open full report →</span>
+        </div>
+        <div class="report-shots">
+          <figure class="shot">
+            <Image
+              src={reportLeaderboard}
+              alt="CanaryOne report leaderboard — Best Value, Cheapest Raw, Pass Rate, Total Spend."
+              widths={[760, 1100, reportLeaderboard.width]}
+              sizes="min(1100px, 88vw)"
+              loading="lazy"
+            />
+            <figcaption>Leaderboard — every lane, ranked by weighted $/pass.</figcaption>
+          </figure>
+          <figure class="shot">
+            <Image
+              src={reportHeatmap}
+              alt="CanaryOne report heatmap — pass/fail per lane × task."
+              widths={[760, 1100, reportHeatmap.width]}
+              sizes="min(1100px, 88vw)"
+              loading="lazy"
+            />
+            <figcaption>Heatmap — every lane × task cell, at a glance.</figcaption>
+          </figure>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ─── THE RUNS ─── -->
+  <section class="section runs-teaser">
+    <div class="container">
+      <p class="kicker">THE RUNS</p>
+      <h2>Every number here<br />has a run behind it.</h2>
+      <p class="lede">
+        Each report carries its method, its route matrix, what was held
+        constant, and an explicit note on what it does not support. The last
+        one is the important one: a result without its limits is marketing.
+      </p>
+
+      <div class="run-cards">
+        {latestRuns.map((run) => <RunCard run={run} />)}
+      </div>
+
+      <p class="runs-more"><a href="/runs">All run reports →</a></p>
+    </div>
+  </section>
+
+  <!-- ─── GET STARTED ─── -->
+  <section class="section install" id="install">
+    <div class="container">
+      <p class="kicker">GET STARTED</p>
+      <h2>One command.</h2>
+
+      <div class="terminal">
+        <div class="terminal-bar" aria-hidden="true">
+          <span class="dot r"></span>
+          <span class="dot y"></span>
+          <span class="dot g"></span>
+          <span class="label">~/your-repo</span>
+        </div>
+        <div class="terminal-body">
+          <span class="prompt">$</span>
+          <code id="install-cmd">npx canaryone</code>
+          <button class="copy" id="copy-btn" type="button" aria-label="Copy command">copy</button>
+        </div>
+      </div>
+
+      <p class="hint">
+        Point it at any repo whose tests call an LLM.
+        See the <a href={GITHUB_URL} target="_blank" rel="noopener">README</a> for the walk-through.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── LIGHTBOX ─── -->
+  <div class="lightbox" id="lightbox" aria-hidden="true" data-src={receiptFull.src}>
+    <img alt="" width={receipt.width} height={receipt.height} />
+  </div>
+
+  <script is:inline>
+    (function () {
+      // ---------- Copy button ----------
+      const btn = document.getElementById('copy-btn');
+      const cmd = document.getElementById('install-cmd');
+      if (btn && cmd) {
+        btn.addEventListener('click', async () => {
+          try {
+            await navigator.clipboard.writeText(cmd.textContent.trim());
+            btn.textContent = 'copied';
+            btn.classList.add('copied');
+            setTimeout(() => {
+              btn.textContent = 'copy';
+              btn.classList.remove('copied');
+            }, 1600);
+          } catch (e) {
+            btn.textContent = 'select all';
+            const sel = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(cmd);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            setTimeout(() => (btn.textContent = 'copy'), 2000);
+          }
+        });
+      }
+
+      // ---------- Lightbox ----------
+      const frame = document.getElementById('receipt-frame');
+      const lightbox = document.getElementById('lightbox');
+      const openLightbox = () => {
+        // The full-size image is only fetched the first time it is asked for.
+        const img = lightbox.querySelector('img');
+        if (img && !img.getAttribute('src')) img.setAttribute('src', lightbox.dataset.src);
+        lightbox.classList.add('open');
+        lightbox.setAttribute('aria-hidden', 'false');
+      };
+      const closeLightbox = () => {
+        lightbox.classList.remove('open');
+        lightbox.setAttribute('aria-hidden', 'true');
+      };
+      if (frame && lightbox) {
+        frame.addEventListener('click', openLightbox);
+        frame.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(); }
+        });
+        lightbox.addEventListener('click', closeLightbox);
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+      }
+
+      // ---------- Hub-and-spoke connectors ----------
+      const hub = document.getElementById('hub');
+      const svg = document.getElementById('hub-lines');
+      if (hub && svg && window.matchMedia('(min-width: 640px)').matches) {
+        const draw = () => {
+          const cards = hub.querySelectorAll('.hub-card');
+          const center = hub.querySelector('.hub-center .core');
+          if (!center || !cards.length) return;
+
+          const hubRect = hub.getBoundingClientRect();
+          svg.setAttribute('viewBox', `0 0 ${hubRect.width} ${hubRect.height}`);
+          svg.setAttribute('width', hubRect.width);
+          svg.setAttribute('height', hubRect.height);
+
+          const c = center.getBoundingClientRect();
+          const cx = c.left + c.width / 2 - hubRect.left;
+          const cy = c.top + c.height / 2 - hubRect.top;
+
+          let paths = '';
+          cards.forEach((card) => {
+            const r = card.getBoundingClientRect();
+            const rx = r.left + r.width / 2 - hubRect.left;
+            const ry = r.top + r.height / 2 - hubRect.top;
+
+            // Anchor to nearest edge of the card (top or bottom) so lines don't overlap the label.
+            const anchorY = ry < cy ? r.bottom - hubRect.top : r.top - hubRect.top;
+            // Anchor to nearest edge of the hub (top or bottom).
+            const hubY = ry < cy ? c.top - hubRect.top : c.bottom - hubRect.top;
+
+            // Curved cubic path: start at card, control points bend toward the hub.
+            const midY = (anchorY + hubY) / 2;
+            paths += `<path d="M ${rx} ${anchorY} C ${rx} ${midY}, ${cx} ${midY}, ${cx} ${hubY}" />`;
+          });
+          svg.innerHTML = paths;
+        };
+        const rafDraw = () => requestAnimationFrame(draw);
+        rafDraw();
+        window.addEventListener('resize', rafDraw, { passive: true });
+        // Redraw after fonts + images settle
+        window.addEventListener('load', () => setTimeout(rafDraw, 50));
+        if (typeof ResizeObserver !== 'undefined') {
+          const ro = new ResizeObserver(rafDraw);
+          ro.observe(hub);
+        }
+      }
+    })();
+  </script>
+</Layout>
