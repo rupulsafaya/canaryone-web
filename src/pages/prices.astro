@@ -7,16 +7,19 @@ import Layout from '../layouts/Layout.astro';
   description="Listed and effective LLM prices per million tokens, plotted over time from a nightly snapshot of every model we track."
   path="/prices"
 >
-  <header class="page-head">
-    <div class="container">
-      <h1>Time Machine</h1>
-      <p class="lede">
-        What every model we track costs per million tokens, snapshotted nightly and plotted
-        over time. Prices are read straight from the gateway's own listings, so this is what
-        a model is advertised at rather than what any particular run of it cost.
-      </p>
-    </div>
-  </header>
+  <div class="page-band">
+    <header class="page-head">
+      <div class="container">
+        <p class="kicker">PRICES</p>
+        <h1>Price time machine</h1>
+        <p class="lede">
+          What every model we track costs per million tokens, snapshotted nightly and plotted
+          over time. Prices are read straight from the gateway's own listings, so this is what
+          a model is advertised at rather than what any particular run of it cost.
+        </p>
+      </div>
+    </header>
+  </div>
 
   <section class="tm">
     <div class="container">

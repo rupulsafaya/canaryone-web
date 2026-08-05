@@ -11,17 +11,20 @@ const runs = await getRuns();
   description="Every benchmark run we have published, with its method, its route matrix and an explicit note on what it does not support."
   path="/runs/"
 >
-  <header class="page-head">
-    <div class="container">
-      <h1>Run reports</h1>
-      <p class="lede">
-        Every run we have published, newest first. Each one carries its method, its
-        route matrix, what was held constant, and an explicit note on what it does not
-        support — because a table without its method is not usable, and a result without
-        its limits is marketing.
-      </p>
-    </div>
-  </header>
+  <div class="page-band">
+    <header class="page-head">
+      <div class="container">
+        <p class="kicker">RUN REPORTS</p>
+        <h1>Benchmark run reports</h1>
+        <p class="lede">
+          Every run we have published, newest first. Each one carries its method, its
+          route matrix, what was held constant, and an explicit note on what it does not
+          support — because a table without its method is not usable, and a result without
+          its limits is marketing.
+        </p>
+      </div>
+    </header>
+  </div>
 
   <section class="runs-list">
     <div class="container">
