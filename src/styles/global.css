@@ -1,3 +1,17 @@
+/* =============================================================================
+   TOKENS
+
+   The palette is canonical for every CanaryOne repo — see README.md § Brand
+   palette before changing any value in the first block. The scales below it are
+   local to this site.
+
+   Rule for the scales: nothing outside this block should contain a literal
+   length, radius, shadow, duration or font-size. If a use site needs a value the
+   scale does not have, the scale is wrong — widen it here rather than writing a
+   one-off. That is the whole reason these exist; the file previously carried 15
+   distinct radii, 9 bespoke shadows and 24 font sizes.
+   ============================================================================= */
+
 :root {
   --bg: #fafaf7;
   --bg-tint: #f5f2e8;
@@ -25,6 +39,95 @@
   --gutter: clamp(20px, 5vw, 64px);
   --content-max: 1200px;
   --section-y: clamp(80px, 12vw, 160px);
+
+  /* ---------- Spacing, on a 4px grid ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+
+  /* ---------- Radii ---------- */
+  --radius-sm: 4px;    /* inline code, swatches, badges */
+  --radius-md: 8px;    /* buttons, inputs, nav pills, chips */
+  --radius-lg: 12px;   /* cards, panels, tables */
+  --radius-xl: 16px;   /* hero frames, terminal windows, the boundary diagram */
+  --radius-full: 9999px;  /* jump pills, and circles on square elements */
+
+  /* ---------- Elevation ----------
+     Three levels plus two special cases. --shadow-cta is the yellow CTA glow, and
+     --shadow-dark carries the inset white hairline that reads as a lit top edge on
+     the near-black panels. Shadow rgba is always neutral black: a slate rgba tints
+     the shadow cool, which is README § Brand palette rule 3. */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px -12px rgba(0, 0, 0, 0.18);
+  --shadow-lg: 0 24px 56px -24px rgba(0, 0, 0, 0.28);
+  --shadow-cta: 0 6px 24px -8px rgba(253, 224, 71, 0.55);
+  --shadow-dark: 0 30px 60px -25px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+
+  /* ---------- Type scale ----------
+     Body settles at --text-md. The two half-pixel sizes the file used to carry
+     (13.5px, 14.5px) collapse into --text-sm and --text-base. */
+  --text-2xs: 11px;   /* uppercase mono micro-labels, table heads */
+  --text-xs: 12px;    /* mono labels, captions, footer */
+  --text-sm: 13px;    /* mono table bodies, dates, breadcrumbs */
+  --text-base: 15px;  /* hints, status lines, small body */
+  --text-md: 17px;    /* body copy */
+  --text-lg: 19px;    /* ledes, run summaries */
+  --text-xl: 21px;    /* card titles */
+
+  /* Display sizes are fluid. Four, down from six: --display-lg deliberately serves
+     both the home page's section h2 and every subpage h1, so an inner page's title
+     carries the same weight as a section heading rather than its own arbitrary size. */
+  --display-sm: clamp(22px, 2.4vw, 28px);   /* imported-markdown h2 */
+  --display-md: clamp(28px, 3.6vw, 44px);   /* run report h1 */
+  --display-lg: clamp(32px, 4.8vw, 56px);   /* section h2, subpage h1 */
+  --display-xl: clamp(38px, 6.4vw, 72px);   /* hero h1 only */
+
+  --leading-tight: 1.05;    /* display */
+  --leading-snug: 1.25;     /* card titles */
+  --leading-normal: 1.5;    /* ledes, UI text */
+  --leading-relaxed: 1.65;  /* body prose */
+
+  --tracking-display: -0.025em;
+  --tracking-tight: -0.015em;
+  --tracking-label: 0.1em;        /* uppercase mono labels */
+  --tracking-label-wide: 0.14em;  /* the hero kicker, which sits alone and can carry more */
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+
+  /* ---------- Measure ----------
+     Down from nine ad-hoc ch values. */
+  --measure-display: 22ch;
+  --measure-lede: 64ch;
+  --measure-prose: 74ch;
+  --measure-wide: 82ch;
+
+  /* ---------- Motion ---------- */
+  --dur-fast: 80ms;    /* button press */
+  --dur-base: 120ms;   /* hover, colour, border */
+  --dur-slow: 200ms;   /* lifts, frames, chart updates */
+  --ease: ease;
+
+  /* ---------- Focus ----------
+     The ring is near-black on light surfaces and Canary 300 on dark ones, and that
+     is an accessibility constraint rather than a taste call. WCAG 2.2 § 1.4.11 wants
+     3:1 for a focus indicator, and --accent-deep on --bg measures about 1.87:1, so a
+     yellow ring on cream fails outright. --text on --bg is roughly 16:1 and --accent
+     on --dark is roughly 14:1. Do not "fix" the light ring back to yellow. */
+  --focus-width: 2px;
+  --focus-offset: 2px;
+  --focus-color: var(--text);
+  --focus-color-dark: var(--accent);
 }
 
 * {
@@ -55,6 +158,51 @@ a {
 
 code, pre, .mono {
   font-family: var(--font-mono);
+}
+
+/* ---------- Focus ----------
+
+   One treatment for the whole site. Before this the only :focus-visible rule in the
+   file was on .run-card, so the nav, both segmented controls, the model chips, the
+   copy button and the receipt frame all fell back to the user-agent ring.
+
+   This uses `outline` rather than `box-shadow` deliberately. An outline follows the
+   element's own border-radius and composites with whatever shadow the element already
+   carries; a box-shadow ring would erase the primary button's glow and every card's
+   elevation the moment it took focus. Nothing in this file should ever set
+   `outline: none` without putting an equivalent indicator back. */
+
+:focus-visible {
+  outline: var(--focus-width) solid var(--focus-color);
+  outline-offset: var(--focus-offset);
+}
+
+/* On the near-black surfaces the ring switches to Canary 300. The offset means the ring
+   is drawn on the dark background around the element rather than on the element itself,
+   so this reads correctly even for the yellow primary button. */
+.hero :focus-visible,
+.install .terminal :focus-visible {
+  outline-color: var(--focus-color-dark);
+}
+
+/* ---------- Reduced motion ----------
+   `scroll-behavior: smooth` above is global, so it needs unwinding here too. This also
+   stops the hero kicker's infinitely pulsing dot, which is the main thing on the site a
+   motion-sensitive reader would want gone. */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 .container {
