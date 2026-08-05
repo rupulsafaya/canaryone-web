@@ -34,18 +34,6 @@ const directB = [
   { name: 'Cerebras', file: 'cerebras.svg' },
 ];
 
-const scoreboard = [
-  { provider: 'nebius',        via: 'Vercel',     pass:  '6/12', cost: '$0.0472', weighted: '$0.0683', traj: '69 ⚠', winner: false, narrator: true  },
-  { provider: 'moonshot-intl', via: 'direct',     pass:  '9/12', cost: '$0.0686', weighted: '$0.0789', traj: '87',   winner: false, narrator: false },
-  { provider: 'moonshotai',    via: 'Vercel',     pass:  '9/12', cost: '$0.0957', weighted: '$0.1064', traj: '90',   winner: false, narrator: false },
-  { provider: 'Fireworks',     via: 'Vercel',     pass:  '9/12', cost: '$0.0921', weighted: '$0.1071', traj: '86',   winner: false, narrator: false },
-  { provider: 'baseten',       via: 'Vercel',     pass: '11/12', cost: '$0.0967', weighted: '$0.1151', traj: '84',   winner: false, narrator: false },
-  { provider: 'nebius',        via: 'direct',     pass:  '6/12', cost: '$0.1052', weighted: '$0.1224', traj: '86',   winner: false, narrator: false },
-  { provider: 'fireworks',     via: 'direct',     pass:  '7/12', cost: '$0.1315', weighted: '$0.1664', traj: '79',   winner: false, narrator: false },
-  { provider: 'nebius, fp4',   via: 'OpenRouter', pass:  '8/12', cost: '$0.1578', weighted: '$0.1973', traj: '80',   winner: false, narrator: false },
-  { provider: 'moonshotai, mxfp4', via: 'OpenRouter', pass: '12/12', cost: '$0.1852', weighted: '$0.2104', traj: '88', winner: false, narrator: false },
-  { provider: 'Fireworks, fast', via: 'OpenRouter', pass: '9/12', cost: '$0.2040', weighted: '$0.2428', traj: '84',  winner: false, narrator: false },
-];
 ---
 
 <Layout title={TITLE} description={DESCRIPTION} path="/evals">
@@ -111,50 +99,19 @@ const scoreboard = [
   <section class="section">
     <div class="container">
       <p class="kicker">ROUTE MATTERS</p>
-      <h2><span class="em">3.6×</span> spread in weighted<br />cost per pass.</h2>
+      <h2>The cheapest route is not<br /><span class="em">the cheapest way to finish.</span></h2>
       <p class="lede">
-        Ten ways to buy Kimi K3. Identical weights, the same four tasks, three
-        repeats each — twelve sessions per route. Weighted cost per pass ran
-        from $0.0683 to $0.2428, and the cheapest route on raw cost was also
-        the worst on pass rate and the only one flagged for narrating an answer
-        instead of grounding it in what its tools returned. CanaryOne lets you
-        pick the cheapest <em>grounded</em> lane, not the cheapest lane.
+        Buy the same open-weight model several different ways and it does not do
+        the same work for the same money. In our own testing, the route that
+        looked cheapest per token was the worst at actually completing the task,
+        and it was the only one the judge flagged for narrating an answer rather
+        than grounding it in what its tools returned. It was cheap partly because
+        it did less work. CanaryOne ranks by cost per completed task, so the lane
+        that wins is the one that finishes the job.
       </p>
 
-      <div class="scoreboard">
-        <table>
-          <caption class="sr-only">
-            Kimi K3 across ten routes, sorted by weighted cost per pass
-          </caption>
-          <thead>
-            <tr>
-              <th scope="col">Route</th>
-              <th scope="col" class="num">Pass</th>
-              <th scope="col" class="num">Raw $/pass</th>
-              <th scope="col" class="num">Weighted $/pass</th>
-              <th scope="col" class="num">Trajectory</th>
-            </tr>
-          </thead>
-          <tbody>
-            {scoreboard.map((row) => (
-              <tr class={`${row.winner ? 'winner' : ''} ${row.narrator ? 'narrator' : ''}`}>
-                <td>
-                  {row.provider} <span class="via">· {row.via}</span>
-                </td>
-                <td class="num">{row.pass}</td>
-                <td class="num">{row.cost}</td>
-                <td class="num">{row.weighted}</td>
-                <td class="num">{row.traj}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
       <p class="table-source">
-        Run <code>e860167a</code>, 29 July 2026. Ten lanes, four tasks, three
-        repeats, 120 sessions, $10.53. Judged by Claude Haiku 4.5.
-        <a href={DEMO_REPORT} target="_blank" rel="noopener">Read the full report →</a>
+        <a href={DEMO_REPORT} target="_blank" rel="noopener">See an example report →</a>
       </p>
     </div>
   </section>
