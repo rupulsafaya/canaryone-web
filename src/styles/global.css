@@ -88,9 +88,14 @@ code, pre, .mono {
   height: 28px;
 }
 
+/* Wraps rather than overflows. Four links plus the @handle exceed a phone's width, and
+   without this the whole page body scrolls sideways — the same failure the markdown tables
+   are wrapped to avoid. */
 .topnav .links {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px 20px;
   font-family: var(--font-mono);
   font-size: 14px;
   color: var(--muted);
@@ -1496,4 +1501,337 @@ code, pre, .mono {
 /* The reports teaser on the home page is a list of links, so it stays narrow. */
 .runs-teaser .run-cards {
   max-width: 860px;
+}
+
+/* ---------- /prices — the Time Machine chart ---------- */
+
+.tm {
+  padding-bottom: clamp(64px, 9vw, 120px);
+}
+
+.tm-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+  align-items: flex-end;
+  margin-bottom: 18px;
+}
+
+.tm-group-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted-strong);
+  margin-bottom: 8px;
+}
+
+/* A segmented control. The pressed segment carries canary yellow, which is why no data
+   series is allowed to use that colour. */
+.tm-toggle {
+  display: inline-flex;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.tm-toggle button {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  color: var(--muted-strong);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.tm-toggle button:hover {
+  color: var(--text);
+  background: var(--bg-tint);
+}
+
+.tm-toggle button[aria-pressed='true'] {
+  background: var(--accent);
+  border-color: var(--accent-deep);
+  color: var(--dark);
+  font-weight: 600;
+}
+
+.tm-note {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted-strong);
+  max-width: 78ch;
+  margin: 0 0 22px;
+}
+
+.tm-panel {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 20px 12px;
+}
+
+/* Fixed height with the canvas absolutely filling it, so Chart.js has a box to measure and
+   the panel never grows without bound on resize. */
+.tm-canvas-wrap {
+  position: relative;
+  height: clamp(320px, 46vw, 520px);
+}
+
+.tm-canvas-wrap canvas {
+  position: absolute;
+  inset: 0;
+}
+
+.tm-status {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--muted-strong);
+  margin: 0;
+  padding: 28px 4px;
+  max-width: 70ch;
+}
+
+.tm-status.error {
+  color: #b42318;
+}
+
+/* ---------- Legend and filter in one ---------- */
+
+.tm-picker {
+  border: 0;
+  padding: 0;
+  margin: 24px 0 0;
+}
+
+.tm-picker legend {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted-strong);
+  padding: 0;
+  margin-bottom: 10px;
+}
+
+.tm-picker-count {
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--muted);
+  margin-left: 8px;
+}
+
+.tm-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 6px;
+}
+
+.tm-chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--panel);
+  font-size: 14.5px;
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.tm-chip:hover {
+  border-color: var(--line-strong);
+}
+
+.tm-chip.on {
+  background: var(--bg-tint);
+  border-color: var(--line-strong);
+}
+
+/* At the eight-series cap the unselected rows stay readable but visibly unavailable. */
+.tm-chip.capped {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.tm-chip input {
+  margin: 0;
+  accent-color: var(--accent-deep);
+  flex: 0 0 auto;
+}
+
+.tm-swatch {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid var(--line-strong);
+  flex: 0 0 12px;
+}
+
+/* Reserves the icon's width whether or not a brand resolved, so model names stay aligned
+   down the grid when the library covers one vendor and not its neighbour. */
+.tm-brand-slot {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tm-brand {
+  width: 16px;
+  height: 16px;
+  display: block;
+  object-fit: contain;
+}
+
+.tm-chip-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tm-chip-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted-strong);
+  flex: 0 0 auto;
+}
+
+.tm-coverage {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--muted-strong);
+  background: var(--bg-tint);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-deep);
+  border-radius: 0 8px 8px 0;
+  padding: 14px 18px;
+  max-width: 82ch;
+  margin: 26px 0 0;
+}
+
+.tm-coverage:empty {
+  display: none;
+}
+
+/* ---------- Table view ---------- */
+
+.tm-table {
+  margin-top: 28px;
+}
+
+.tm-table summary {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  color: var(--muted-strong);
+  cursor: pointer;
+  padding: 10px 0;
+}
+
+.tm-table summary:hover {
+  color: var(--text);
+}
+
+.tm-table-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: var(--panel);
+  margin-top: 10px;
+}
+
+.tm-data-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13.5px;
+}
+
+.tm-data-table caption {
+  caption-side: top;
+  text-align: left;
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--muted-strong);
+  border-bottom: 1px solid var(--line);
+}
+
+.tm-data-table th,
+.tm-data-table td {
+  padding: 10px 14px;
+  text-align: right;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--line);
+}
+
+.tm-data-table thead th {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-strong);
+  background: var(--bg-tint);
+}
+
+.tm-data-table th[scope='row'] {
+  text-align: left;
+  font-weight: 500;
+  position: sticky;
+  left: 0;
+  background: var(--panel);
+}
+
+.tm-data-table td {
+  font-family: var(--font-mono);
+  color: var(--text);
+}
+
+/* Aligns the icon with the model name's first line rather than centring it against the
+   two-line name-plus-id block. */
+.tm-row-head {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.tm-row-head .tm-brand-slot {
+  margin-top: 2px;
+}
+
+.tm-row-id {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.tm-empty {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  color: var(--muted-strong);
+  padding: 18px 16px;
+  margin: 0;
+}
+
+@media (max-width: 560px) {
+  .tm-controls {
+    gap: 18px;
+  }
+
+  .tm-picker-grid {
+    grid-template-columns: 1fr;
+  }
 }

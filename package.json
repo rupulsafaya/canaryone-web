@@ -12,13 +12,16 @@
     "import:runs": "node scripts/import-runs.mjs",
     "build:logo": "node scripts/build-logo.mjs",
     "build:og": "node scripts/build-og.mjs",
-    "redact:report": "node scripts/redact-report.mjs"
+    "redact:report": "node scripts/redact-report.mjs",
+    "sync:model-icons": "node scripts/sync-model-icons.mjs"
   },
   "dependencies": {
-    "astro": "^5.14.0"
+    "astro": "^5.14.0",
+    "chart.js": "^4.5.1"
   },
   "packageManager": "pnpm@10.30.3",
   "devDependencies": {
+    "@lobehub/icons-static-svg": "1.94.0",
     "sharp": "^0.35.3"
   },
   "pnpm": {

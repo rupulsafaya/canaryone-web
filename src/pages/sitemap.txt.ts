@@ -10,6 +10,7 @@ export const GET: APIRoute = async () => {
   const runs = await getRuns();
   const urls = [
     `${SITE_URL}/`,
+    `${SITE_URL}/prices`,
     `${SITE_URL}/runs/`,
     ...runs.map((run) => `${SITE_URL}/runs/${run.id}/`),
   ];
