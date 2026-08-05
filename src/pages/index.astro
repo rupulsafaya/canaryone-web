@@ -17,12 +17,12 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
             to <span class="em">open-weight models.</span>
           </h1>
           <div class="hero-models" aria-label="Supported open-weight models">
-            <img src="/logos/models/meta.svg"     alt="Llama"    title="Meta / Llama" width="32" height="32" />
-            <img src="/logos/models/mistral.svg"  alt="Mistral"  title="Mistral"      width="32" height="32" />
-            <img src="/logos/models/qwen.svg"     alt="Qwen"     title="Qwen"         width="32" height="32" />
-            <img src="/logos/models/deepseek.svg" alt="DeepSeek" title="DeepSeek"     width="32" height="32" />
-            <img src="/logos/models/gemma.svg"    alt="Gemma"    title="Gemma"        width="32" height="32" />
-            <img src="/logos/models/chatglm.svg"  alt="ChatGLM"  title="ChatGLM"      width="32" height="32" />
+            <img src="/logos/marks/meta.svg"     alt="Llama"    title="Meta / Llama" width="32" height="32" />
+            <img src="/logos/marks/mistral.svg"  alt="Mistral"  title="Mistral"      width="32" height="32" />
+            <img src="/logos/marks/qwen.svg"     alt="Qwen"     title="Qwen"         width="32" height="32" />
+            <img src="/logos/marks/deepseek.svg" alt="DeepSeek" title="DeepSeek"     width="32" height="32" />
+            <img src="/logos/marks/gemma.svg"    alt="Gemma"    title="Gemma"        width="32" height="32" />
+            <img src="/logos/marks/chatglm.svg"  alt="ChatGLM"  title="ChatGLM"      width="32" height="32" />
           </div>
 
           <p class="sub">
@@ -74,7 +74,17 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
             <div class="fw-node fw-node--left">
               <div class="fw-pill">Improve</div>
             </div>
-            <div class="fw-center">CanaryOne</div>
+            <!-- The dark-surface lockup, held well back. The wheel's own motion is the
+                 subject here, so the brand sits at its hub as a watermark rather than as a
+                 fifth thing competing with the four pills. Width is capped in CSS so it
+                 cannot grow into the IMPROVE and TUNE pills either side of it. -->
+            <img
+              class="fw-center"
+              src="/c1-logo-dark.svg"
+              alt=""
+              width="153"
+              height="28"
+            />
           </div>
         </div>
       </div>
@@ -157,8 +167,8 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
         <div class="partner-row">
           <span class="partner-label">Ingests traces from</span>
           <div class="partner-logos">
-            <img src="/logos/models/langchain.svg"  alt="LangChain"  title="LangChain"  />
-            <img src="/logos/models/llamaindex.svg" alt="LlamaIndex" title="LlamaIndex" />
+            <img src="/logos/langchain.svg"  alt="LangChain"  title="LangChain"  />
+            <img src="/logos/llamaindex.svg" alt="LlamaIndex" title="LlamaIndex" />
           </div>
         </div>
         <div class="partner-row">
@@ -206,17 +216,17 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
         <div class="partner-row">
           <span class="partner-label">EU</span>
           <div class="partner-logos">
-            <img src="/logos/nebius.svg"   alt="Nebius"   title="Nebius"   class="dt-logo" />
-            <img src="/logos/nscale.svg"   alt="nscale"   title="nscale"   class="dt-logo" />
-            <img src="/logos/scaleway.svg" alt="Scaleway" title="Scaleway" class="dt-logo" />
+            <img src="/logos/nebius.svg"   alt="Nebius"   title="Nebius"   />
+            <img src="/logos/nscale.svg"   alt="nscale"   title="nscale"   />
+            <img src="/logos/scaleway.svg" alt="Scaleway" title="Scaleway" />
           </div>
         </div>
         <div class="partner-row">
           <span class="partner-label">US</span>
           <div class="partner-logos">
-            <img src="/logos/coreweave.svg"     alt="CoreWeave"  title="CoreWeave"  class="dt-logo" />
-            <img src="/logos/vultr.svg"         alt="Vultr"      title="Vultr"      class="dt-logo" />
-            <img src="/logos/models/lambda.svg" alt="Lambda Labs" title="Lambda Labs" class="dt-logo" />
+            <img src="/logos/coreweave.svg" alt="CoreWeave"   title="CoreWeave"   />
+            <img src="/logos/vultr.svg"     alt="Vultr"       title="Vultr"       />
+            <img src="/logos/lambda.svg"    alt="Lambda Labs" title="Lambda Labs" />
           </div>
         </div>
       </div>
@@ -275,13 +285,24 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   gap: var(--space-5);
   flex-wrap: wrap;
 }
+/* --logo-icon sets both dimensions because these files are square glyphs, not wordmarks, so
+   they do not belong to the --logo-h wordmark scale. The `width`/`height` attributes in the
+   markup carry the same number as the intrinsic size, which is what reserves the row's space
+   before the SVGs load; keep the two in step.
+
+   The source is /logos/marks/, not /logos/models/. Both hold the same artwork, but the marks
+   are normalised by scripts/build-logos.mjs so that each one's longer side fills the same
+   share of its box. Straight from models/ the ink filled anywhere from 67% of the box (Meta's
+   wide infinity) to 100% (Gemma), so Gemma drew half again as large as Meta in a row that
+   sets one size for all six. models/ is left alone because sync-model-icons.mjs mirrors the
+   whole library there for the 16px icons on /prices, where the padding does no harm. */
 .hero-models img {
-  width: 32px;
-  height: 32px;
+  width: var(--logo-icon);
+  height: var(--logo-icon);
   object-fit: contain;
   opacity: 0.85;
   transition: opacity var(--dur-base);
-  filter: drop-shadow(0 0 2px rgba(0,0,0,0.4));
+  filter: var(--glow-icon-on-dark);
 }
 .hero-models img:hover {
   opacity: 1;
@@ -305,11 +326,21 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   justify-content: center;
 }
 
-/* ─── Flywheel ─── */
+/* ─── Flywheel ───
+   The site's one looping animation, which DESIGN.md § Motion allows by name. Everything
+   below is tokenised except the SVG's own geometry — the stroke widths, the dash array and
+   the dash offset — which is a documented exception in DESIGN.md: 1075 and 1097 are measured
+   off the `#fw-circuit` path in the markup above and mean nothing anywhere else, so naming
+   them in :root would be a token that can never be reused. If the path changes, remeasure
+   with `path.getTotalLength()` and update both numbers together.
+
+   There is no local prefers-reduced-motion block. global.css already caps every animation on
+   the page at one iteration of 0.01ms, which lands the dot at dashoffset 0 and every pill in
+   its unlit state — the same frame a local `animation: none` would show. */
 .flywheel {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: var(--figure-max);
   aspect-ratio: 8 / 5;
 }
 .flywheel__svg {
@@ -332,16 +363,12 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   stroke-linecap: round;
   stroke-dasharray: 22 1075;
   stroke-dashoffset: 0;
-  animation: fw-travel 4s linear infinite;
-  filter: drop-shadow(0 0 8px var(--accent)) drop-shadow(0 0 16px var(--accent-soft));
+  animation: fw-travel var(--dur-cycle) linear infinite;
+  filter: var(--glow-accent);
 }
 @keyframes fw-travel {
   from { stroke-dashoffset: 0; }
   to   { stroke-dashoffset: -1097; }
-}
-/* reduced-motion: freeze animation */
-@media (prefers-reduced-motion: reduce) {
-  .circuit-travel { animation: none; }
 }
 
 .fw-node {
@@ -367,33 +394,31 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   transition: background var(--dur-base), box-shadow var(--dur-base);
 }
 
-/* Staggered glow: each pill lights up as the dot passes */
-.fw-node--top    .fw-pill { animation: fw-glow 4s  0s   ease-in-out infinite; }
-.fw-node--right  .fw-pill { animation: fw-glow 4s  1s   ease-in-out infinite; }
-.fw-node--bottom .fw-pill { animation: fw-glow 4s  2s   ease-in-out infinite; }
-.fw-node--left   .fw-pill { animation: fw-glow 4s  3s   ease-in-out infinite; }
+/* Staggered glow: each pill lights up as the dot passes it. The delays are quarters of the
+   cycle expressed as calc(), so retiming --dur-cycle keeps all four pills in step with the
+   dot instead of silently desynchronising them. */
+.fw-node--top    .fw-pill { animation: fw-glow var(--dur-cycle) 0s ease-in-out infinite; }
+.fw-node--right  .fw-pill { animation: fw-glow var(--dur-cycle) calc(var(--dur-cycle) / 4) ease-in-out infinite; }
+.fw-node--bottom .fw-pill { animation: fw-glow var(--dur-cycle) calc(var(--dur-cycle) / 2) ease-in-out infinite; }
+.fw-node--left   .fw-pill { animation: fw-glow var(--dur-cycle) calc(var(--dur-cycle) * 3 / 4) ease-in-out infinite; }
 @keyframes fw-glow {
   0%, 14%, 100% { background: var(--accent); box-shadow: none; }
-  7% { background: var(--accent-soft); box-shadow: 0 0 0 3px rgba(253,224,71,0.2), 0 0 24px var(--accent); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .fw-node--top .fw-pill,
-  .fw-node--right .fw-pill,
-  .fw-node--bottom .fw-pill,
-  .fw-node--left .fw-pill { animation: none; }
+  7% { background: var(--accent-soft); box-shadow: var(--shadow-pill-lit); }
 }
 
+/* The lockup at the hub of the wheel. 30% is the setting where the wordmark is still
+   readable as CanaryOne but does not compete with the four pills or the travelling dot; the
+   text it replaced sat at 0.14, which was too faint for artwork carrying a coloured mark.
+   Width is a percentage of the flywheel rather than a fixed size, so it scales with the
+   diagram and clears the side pills at every viewport the wheel is shown at. */
 .fw-center {
   position: absolute;
   left: 50%; top: 50%;
   transform: translate(-50%, -50%);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: rgba(253,224,71,0.14);
+  width: 30%;
+  height: auto;
+  opacity: 0.3;
   pointer-events: none;
-  white-space: nowrap;
 }
 
 /* ─── Pillar cards grid ─── */
@@ -425,13 +450,15 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   margin: 0;
   color: var(--accent-deep);
 }
+/* The headline's own <br /> does the breaking; --measure-display is the backstop that keeps
+   it breaking somewhere sane if the copy changes and the <br /> is dropped. */
 .pillar-card__h {
   font-size: var(--display-md);
   font-weight: var(--weight-medium);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-display);
   margin: 0;
-  max-width: 20ch;
+  max-width: var(--measure-display);
 }
 .pillar-card__body {
   font-size: var(--text-md);
@@ -507,7 +534,7 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   letter-spacing: var(--tracking-label);
   color: var(--muted);
   white-space: nowrap;
-  min-width: 14ch;
+  min-width: var(--measure-label);
 }
 .partner-logos {
   display: flex;
@@ -515,11 +542,14 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   gap: var(--space-6);
   flex-wrap: wrap;
 }
+/* One rule for every third-party logo on this page, and the only one. The partner rows and
+   the deploy rows used to carry different heights and a width clamp between them; every
+   file in public/logos/ is now cropped to its own ink, so a single height is all it takes.
+   No opacity: these were at 0.75, which reads as deliberate restraint on a solid black
+   wordmark and as a printing fault on a two-colour mark. */
 .partner-logos img {
-  height: 24px;
+  height: var(--logo-h);
   width: auto;
-  opacity: 0.75;
-  filter: none;
 }
 
 /* ─── DEPLOY diagram ─── */
@@ -532,7 +562,7 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   color: var(--text-on-dark);
-  max-width: 640px;
+  max-width: var(--panel-max);
   margin-bottom: var(--space-12);
 }
 .deploy-diagram .app-label {
@@ -564,9 +594,11 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   color: var(--text-on-dark);
   font-weight: var(--weight-semibold);
 }
+/* Yellow as a hairline and a wash, which is only legible on a dark surface — hence the
+   token names, and hence this treatment staying inside .deploy-diagram. */
 .deploy-lane--yours {
-  border-color: rgba(253,224,71,0.25);
-  background: rgba(253,224,71,0.04);
+  border-color: var(--accent-line-on-dark);
+  background: var(--accent-bg-on-dark);
 }
 .deploy-lane--yours .deploy-lane__pct { color: var(--accent-deep); }
 .deploy-lane--yours .deploy-lane__label { color: var(--accent); }
@@ -605,20 +637,13 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
   gap: var(--space-4);
   margin-bottom: var(--space-12);
 }
-/* Override partner-row label width for deploy section — keep it tight */
+/* The deploy rows' labels are short region names rather than category names, so they do not
+   need the reserved label column the partner rows use. `auto` rather than a smaller measure:
+   the labels are nowrap and already wider than any floor worth setting, so a literal here
+   would only have looked like it was doing something. */
 .deploy-targets .partner-label {
-  min-width: 3ch;
+  min-width: auto;
 }
-.dt-logo {
-  height: 20px;
-  max-width: 110px;
-  width: auto;
-  object-fit: contain;
-  opacity: 0.75;
-  transition: opacity var(--dur-base);
-}
-.dt-logo:hover { opacity: 1; }
-/* nscale now uses the proper black SVG — no filter needed */
 
 /* ─── Waitlist CTA row ─── */
 .waitlist-row {

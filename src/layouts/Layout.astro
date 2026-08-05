@@ -30,6 +30,16 @@ const canonical = `${SITE_URL}${path}`;
          painted and a missing wordmark is very visible against near-black. Preloaded so it
          lands with the first paint rather than a beat after it. -->
     <link rel="preload" as="image" type="image/svg+xml" href="/c1-logo-dark.svg" />
+    <!-- Declaration order is deliberate and the `sizes` hints are load-bearing.
+         The .ico comes first carrying an explicit `sizes="32x32"`, which is what stops a
+         browser preferring it over the vector for the tab: given a size hint it can satisfy
+         from the SVG instead, it takes the SVG, and the .ico is left to serve the surfaces
+         that ask for /favicon.ico by path and ignore this markup entirely — Safari's
+         Favorites and bookmarks, browser history lists, and most link unfurlers. That file
+         did not exist before and those requests 404'd, which is why the icon appeared in
+         the tab but nowhere else. The 64px PNG stays as a last resort for anything that
+         reads neither format. -->
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
@@ -89,7 +99,6 @@ const canonical = `${SITE_URL}${path}`;
         <span class="spacer"></span>
         <a href="/evals">evals</a>
         <a href="/prices">model market</a>
-        <a href="/runs">runs</a>
         <!-- Icon-only, same as the nav. `aria-label` carries the accessible name the removed
              <span> used to provide, and `title` gives a sighted reader the same name on
              hover. Both share the .icon-only component with the nav. -->

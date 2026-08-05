@@ -29,9 +29,9 @@
  * committed favicon.png kept the old colour, which is the drift the MARK COLOUR CHECK below
  * now catches.
  *
- * Ink is measured by rasterising and reading alpha bounds rather than by parsing the bezier
- * paths, because the mark is drawn through a clip path and curve control points lie outside
- * the shape they describe. Rasterising respects both.
+ * Ink is measured by scripts/lib/svg-ink.mjs, which rasterises rather than parsing the
+ * bezier paths; the reasoning is recorded there. build-logos.mjs shares that module, so the
+ * two scripts cannot drift apart on what counts as the edge of a logo.
  *
  * Run it whenever the designer supplies new exports:
  *   pnpm build:logo && pnpm build:og
@@ -40,6 +40,7 @@ import sharp from 'sharp';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
+import { openSvg, measureInk, r } from './lib/svg-ink.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -57,6 +58,14 @@ const LOGO_DARK_OUT = resolve(ROOT, 'public/c1-logo-dark.svg');
 const MARK_SOURCE = resolve(ROOT, 'brand/c1-logo-mark.svg');
 const FAVICON_SVG_OUT = resolve(ROOT, 'public/favicon.svg');
 const FAVICON_PNG_OUT = resolve(ROOT, 'public/favicon.png');
+/**
+ * The legacy container, and not optional. A `<link rel="icon">` covers the tab strip, but
+ * several surfaces ignore the markup and request /favicon.ico from the site root directly:
+ * Safari's bookmarks and Favorites, a browser's own bookmark and history lists, and most
+ * link-unfurlers. Until 2026-08-05 this file did not exist and that request 404'd, which is
+ * why the icon was missing outside the tab.
+ */
+const FAVICON_ICO_OUT = resolve(ROOT, 'public/favicon.ico');
 const APPLE_ICON_OUT = resolve(ROOT, 'public/apple-touch-icon.png');
 
 /** The export's wordmark fill, and the near-black we replace it with. */
@@ -64,10 +73,6 @@ const EXPORT_WORDMARK_FILL = '#000000';
 const WORDMARK_FILL = '#0f0f10';
 /** Canary 100, which is --text-on-dark. The wordmark colour in the dark-surface lockup. */
 const WORDMARK_FILL_ON_DARK = '#fef9c3';
-/** Supersampling factor for the ink measurement. 4x gives quarter-unit precision. */
-const PROBE_SCALE = 4;
-/** Alpha above which a pixel counts as ink, on 0-255. Ignores antialiasing fringe. */
-const INK_ALPHA = 8;
 /**
  * The favicon sits the mark on a dark rounded square rather than on transparency. The mark
  * is canary yellow line art, which measures 1.53:1 against a white browser tab bar and is
@@ -82,61 +87,48 @@ const FAVICON_RADIUS = 0.22;
 /** Raster size of the PNG favicon fallback. */
 const FAVICON_PNG_SIZE = 64;
 /**
+ * Sizes packed into favicon.ico. A browser picks the entry nearest the size it needs, so
+ * 16 covers the tab strip at 1x, 32 covers it at 2x and the bookmarks bar, and 48 covers
+ * the history and new-tab surfaces. Rendering each size from the vector beats letting the
+ * browser downscale one large bitmap, because the mark is thin line art.
+ */
+const FAVICON_ICO_SIZES = [16, 32, 48];
+/**
  * iOS applies its own corner mask to apple-touch-icon, so that one ships full-bleed and
  * square. A pre-rounded icon would get rounded twice and show dark corners inside the mask.
  */
 const APPLE_ICON_SIZE = 180;
 
-const r = (n) => Number(n.toFixed(3));
-
 /**
- * Splits an SVG into its root attributes and its body, so the body can be re-wrapped in a
- * root of our own choosing.
+ * Packs PNGs into an ICO container. Every browser in support since IE11 reads PNG-compressed
+ * ICO entries, so there is no need to emit the old uncompressed DIB format, and sharp has no
+ * ICO encoder of its own. The layout is a 6-byte ICONDIR, one 16-byte ICONDIRENTRY per image,
+ * then the image payloads.
  */
-function openSvg(path) {
-  const text = readFileSync(path, 'utf8');
-  const rootTag = text.match(/<svg\b[^>]*>/);
-  if (!rootTag) throw new Error(`No root <svg> element in ${path}.`);
+function packIco(images) {
+  const HEADER = 6;
+  const ENTRY = 16;
+  const dir = Buffer.alloc(HEADER + ENTRY * images.length);
+  dir.writeUInt16LE(0, 0); // reserved
+  dir.writeUInt16LE(1, 2); // 1 = icon, as opposed to 2 = cursor
+  dir.writeUInt16LE(images.length, 4);
 
-  const viewBox = rootTag[0].match(/viewBox="([\d.\s-]+)"/);
-  if (!viewBox) throw new Error(`The root <svg> in ${path} has no viewBox to measure against.`);
-  const [x, y, w, h] = viewBox[1].trim().split(/\s+/).map(Number);
+  let offset = dir.length;
+  images.forEach(({ size, data }, i) => {
+    const at = HEADER + ENTRY * i;
+    // A zero byte means 256. Nothing here is that large, but the encoding is the spec's.
+    dir.writeUInt8(size >= 256 ? 0 : size, at);
+    dir.writeUInt8(size >= 256 ? 0 : size, at + 1);
+    dir.writeUInt8(0, at + 2); // palette size, 0 for truecolour
+    dir.writeUInt8(0, at + 3); // reserved
+    dir.writeUInt16LE(1, at + 4); // colour planes
+    dir.writeUInt16LE(32, at + 6); // bits per pixel
+    dir.writeUInt32LE(data.length, at + 8);
+    dir.writeUInt32LE(offset, at + 12);
+    offset += data.length;
+  });
 
-  const body = text.slice(rootTag.index + rootTag[0].length).replace(/<\/svg>\s*$/, '');
-  return { text, body, viewBox: viewBox[1], vb: { x, y, w, h } };
-}
-
-/** Rasterises the artwork and returns the bounding box of its ink, in user units. */
-async function measureInk(body, viewBox, vb, label) {
-  const probeSvg =
-    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" ` +
-    `viewBox="${viewBox}" width="${Math.round(vb.w * PROBE_SCALE)}" height="${Math.round(vb.h * PROBE_SCALE)}">${body}</svg>`;
-
-  const probe = await sharp(Buffer.from(probeSvg)).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
-  const { width: pw, height: ph, channels } = probe.info;
-
-  let minX = pw;
-  let minY = ph;
-  let maxX = -1;
-  let maxY = -1;
-  for (let y = 0; y < ph; y++) {
-    for (let x = 0; x < pw; x++) {
-      if (probe.data[(y * pw + x) * channels + channels - 1] > INK_ALPHA) {
-        if (x < minX) minX = x;
-        if (x > maxX) maxX = x;
-        if (y < minY) minY = y;
-        if (y > maxY) maxY = y;
-      }
-    }
-  }
-  if (maxX < 0) throw new Error(`The ${label} measured as empty. Did a fill get stripped that should not have been?`);
-
-  // Round outward so no antialiased edge is clipped.
-  const X0 = vb.x + Math.floor(minX / PROBE_SCALE);
-  const Y0 = vb.y + Math.floor(minY / PROBE_SCALE);
-  const X1 = vb.x + Math.ceil((maxX + 1) / PROBE_SCALE);
-  const Y1 = vb.y + Math.ceil((maxY + 1) / PROBE_SCALE);
-  return { X0, Y0, W: X1 - X0, H: Y1 - Y0 };
+  return Buffer.concat([dir, ...images.map((i) => i.data)]);
 }
 
 /** The yellow a source file paints its artwork in, used to compare lockup against mark. */
@@ -166,7 +158,7 @@ if (!wordmarkFills.length) {
 }
 logoBody = logoBody.replace(new RegExp(`fill="${EXPORT_WORDMARK_FILL}"`, 'g'), `fill="${WORDMARK_FILL}"`);
 
-const logoInk = await measureInk(logoBody, logo.viewBox, logo.vb, 'lockup');
+const logoInk = await measureInk({ ...logo, body: logoBody }, 'lockup');
 
 // Everything is wrapped in one translate, defs included. A clip path resolves against the
 // user space of the element that references it, so wrapping the reference and the clip
@@ -209,7 +201,7 @@ console.log(`  wordmark ${wordmarkFills.length} fills normalised ${EXPORT_WORDMA
 // ---------------------------------------------------------------- the favicon
 
 const mark = openSvg(MARK_SOURCE);
-const markInk = await measureInk(mark.body, mark.viewBox, mark.vb, 'mark');
+const markInk = await measureInk(mark, 'mark');
 
 // A favicon has to be square. Rather than scaling the mark inside a fixed box, the box is
 // sized from the mark so that its longer side lands on FAVICON_MARK_SCALE of the whole;
@@ -243,7 +235,17 @@ const rasterise = (svg, px) =>
 await rasterise(faviconSvg, FAVICON_PNG_SIZE).toFile(FAVICON_PNG_OUT);
 await rasterise(composeIcon(0), APPLE_ICON_SIZE).toFile(APPLE_ICON_OUT);
 
+// Each ICO entry is rendered from the vector at its own size rather than downscaled from one
+// bitmap, because at 16px the mark is a few pixels of line weight and a resample of a 48px
+// render loses it. The rounded corner is kept: these surfaces sit on white as often as dark.
+const icoEntries = [];
+for (const size of FAVICON_ICO_SIZES) {
+  icoEntries.push({ size, data: await rasterise(faviconSvg, size).toBuffer() });
+}
+writeFileSync(FAVICON_ICO_OUT, packIco(icoEntries));
+
 console.log(`Favicon written: ${FAVICON_SVG_OUT} + ${FAVICON_PNG_OUT}`);
+console.log(`  ICO fallback ${FAVICON_ICO_OUT} carrying ${FAVICON_ICO_SIZES.join(', ')}px`);
 console.log(`  mark ink ${r(markInk.W)}x${r(markInk.H)} -> ${r(side)} box, mark at ${(FAVICON_MARK_SCALE * 100).toFixed(0)}% of it`);
 console.log(`  background ${FAVICON_BG}, corner radius ${(FAVICON_RADIUS * 100).toFixed(0)}%`);
 console.log(`  PNG fallback ${FAVICON_PNG_SIZE}x${FAVICON_PNG_SIZE}`);

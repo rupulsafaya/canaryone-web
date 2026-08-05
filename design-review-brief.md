@@ -440,17 +440,25 @@ long-form copy in grey and the document pages set it in near-black, at different
 
 ## 7. Constraints — things you must not propose
 
-From `SPEC.md`'s non-goals list, all still binding except where noted:
+These began as `SPEC.md`'s non-goals list. SPEC.md was deleted on 2026-08-05 once it had drifted
+too far from the site to be safe to read, so this is now the only place the list survives; it
+needs a permanent home in README.md or DESIGN.md. All of it is still binding except where noted.
 
 - **No web fonts.** System stack only. No Google Fonts, no Inter, no JetBrains Mono, zero
   external font requests. This is both a performance rule and an anti-mimicry rule.
 - **No component libraries** — no Tailwind, no shadcn, Radix or Headless UI, no CSS-in-JS.
   Hand-written CSS with custom properties.
 - **No dark-mode toggle.**
-- **No hero animations, gradient meshes, or "as seen on" logo walls.** The existing hero
-  gradients and dot grid are static; the pulsing kicker dot is the one exception already in
-  the codebase, and it is fair game to question.
-- **No email capture, newsletter, "book a demo", or scheduling.**
+- **No gradient meshes or "as seen on" logo walls.** The hero gradients and dot grid are
+  static.
+- **Amended — one looping animation is allowed, and the hero flywheel is it.** The original
+  rule was no hero animations at all, and it was dropped because a page with no movement
+  anywhere reads as static and unfinished. The budget is one loop, above the fold, and
+  DESIGN.md § Motion holds the argument for why it is not two.
+- **Lifted — the site captures email.** "No email capture, newsletter, book a demo, or
+  scheduling" was a non-goal when this was a one-page link to a GitHub repo. It is now a lead
+  generation page for a platform in private beta, so the early-access waitlist is the point of
+  the page rather than a violation of it. Scheduling and newsletter are still out.
 - **No analytics of any kind.** Not Vercel Web Analytics, not Plausible, not GA.
 - **No emojis in copy.**
 - **No feature comparison tables against OpenRouter, Braintrust, LangSmith or anyone else.**
@@ -461,7 +469,7 @@ From `SPEC.md`'s non-goals list, all still binding except where noted:
 - Lighthouse targets: Performance ≥ 95, Accessibility ≥ 95. Astro ships zero JS by default
   and the only client JS is the copy button, the lightbox, the hub connectors and Chart.js.
 - **Lifted:** the spec's original "single page, scroll only" and "≤ 3 viewport heights"
-  rules no longer apply — they were dropped when `/runs` and `/prices` were added.
+  rules no longer apply — they were dropped when the site grew past one page.
 
 Two things are fixed by generated assets rather than CSS, so treat their proportions as
 given: the logo lockup is a 714×131 viewBox at 5.4504:1, which is where the nav's 153×28

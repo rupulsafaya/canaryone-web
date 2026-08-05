@@ -9,8 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "import:runs": "node scripts/import-runs.mjs",
     "build:logo": "node scripts/build-logo.mjs",
+    "build:logos": "node scripts/build-logos.mjs",
     "build:og": "node scripts/build-og.mjs",
     "redact:report": "node scripts/redact-report.mjs",
     "sync:model-icons": "node scripts/sync-model-icons.mjs"
@@ -25,6 +25,9 @@
     "sharp": "^0.35.3"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["sharp", "esbuild"]
+    "onlyBuiltDependencies": [
+      "sharp",
+      "esbuild"
+    ]
   }
 }

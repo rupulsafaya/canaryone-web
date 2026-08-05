@@ -5,69 +5,48 @@ Marketing site for [canaryone](https://github.com/rupulsafaya/canaryone) — ser
 CanaryOne brand palette** — other repos (canaryone, canaryone-cloud, canaryone-demo)
 should inherit their colors from here rather than reinvent them.
 
-Astro, no Tailwind, no analytics, no web fonts. Four pages:
+Astro, no Tailwind, no analytics, no web fonts. Three pages:
 
 | Path | What it is |
 |---|---|
 | `/` | Platform landing page — hero with animated flywheel, four pillar cards (Test / Tune / Deploy / Improve), detail sections for Tune / Deploy / Improve, early-access waitlist popup |
-| `/evals` | Your Evals — full benchmark detail: provider hub, route scoreboard, local-proxy diagram, report screenshots, run cards, install command |
+| `/evals` | Your Evals — full benchmark detail: provider hub, route scoreboard, local-proxy diagram, report screenshots, install command |
 | `/prices` | Model Market — listed token prices for every tracked model, snapshotted nightly and plotted over time |
-| `/runs` | Run reports index — every commissioned sweep published here |
 
 The homepage no longer carries the scoreboard or install terminal directly; those live at `/evals`. The early-access waitlist submits to a Supabase `waitlist` table (`ghkebzdbexoqxuzneayk`, us-east-1) using the anon key with INSERT-only RLS — no credentials are exposed to the browser.
 
+Every page has to be listed by hand in
+[`src/pages/sitemap.txt.ts`](./src/pages/sitemap.txt.ts). That file used to enumerate the run
+reports from a content collection and, because nobody revisited it when the site was
+repositioned, it never listed `/evals` at all — the page carrying all of the benchmark detail
+went unindexed from the day it landed. Three URLs are few enough to keep by hand; add the line
+when a page lands.
+
 See [`DESIGN.md`](./DESIGN.md) for the design system: the token scales, where canary yellow
-is and is not allowed, the header band, the table contract and the focus rules. Read it
-before changing anything visual.
+is and is not allowed, the header band, the table contract, the third-party logo pipeline and
+the focus rules. Read it before changing anything visual.
 
-[`SPEC.md`](./SPEC.md) is the original decision record and is now **historical**. It was
-written when this was a single scroll-only page and predates `/runs` and `/prices`; treat
-DESIGN.md and this README as current and SPEC.md as background.
+## Run reports, and why they are gone
 
-## Run reports
+`/runs` published six benchmark reports imported from **fantastic-dollop**, under
+`outreach/results/`. On 2026-08-05 the whole thing was removed: the index and detail pages, the
+`runs` content collection and its six markdown files, the `RunCard` component, `src/lib/runs.ts`,
+`scripts/import-runs.mjs`, and the "THE RUNS" section on `/evals` that listed the three most
+recent. The markdown table plugin in `astro.config.mjs` went with them, since no markdown is
+rendered on this site any more.
 
+The reasoning is recorded here because it is a deletion rather than a refactor and the reports
+were the site's evidence base. `/runs` was already dropped from the nav when the site was
+repositioned onto the four pillars, leaving it reachable only from a footer link and one link at
+the bottom of `/evals`. Rather than keep a section of the site that nothing pointed at, it went.
+Everything is in git history, and `outreach/results/` in fantastic-dollop remains the source of
+truth, so restoring it is a revert rather than a rewrite.
 
-The reports at [`/runs`](https://canaryone.ai/runs) are written in the **fantastic-dollop**
-repository, under `outreach/results/`. That directory is the source of truth. This
-repository holds a published copy under [`src/content/runs/`](./src/content/runs/).
-
-**Why a copy and not a reference, so nobody re-litigates it.** Vercel builds only from
-`canaryone-web` and has no access to a sibling checkout. A relative path in
-`astro.config.mjs`, a symlink, or a git submodule all work locally and all fail the
-moment Vercel runs the build. So the content is committed here, and a script copies it
-across when you ask it to:
-
-```bash
-pnpm import:runs                 # copy, and report what changed
-pnpm import:runs -- --dry-run    # report only, write nothing
-pnpm import:runs -- --prune      # also delete copies whose source file is gone
-```
-
-The script is idempotent: re-running it with no upstream change writes nothing and
-reports every file unchanged. It picks up any `outreach/results/YYYY-MM-DD-*.md`, and
-excludes `README.md` and `TEMPLATE.md`, which are the index and the blank template rather
-than runs. Point it somewhere else with `RESULTS_DIR=/path/to/results pnpm import:runs`.
-
-**Never edit `src/content/runs/` by hand.** The next import overwrites it. Fix the source
-file in fantastic-dollop and re-import.
-
-What the import changes, and nothing else:
-
-| Change | Why |
-|---|---|
-| Prepends frontmatter | Derived from the file's own H1 and Identity table, plus the "What it is" and "Status" cells of the results index. The schema is in [`src/content.config.ts`](./src/content.config.ts). |
-| Rewrites links between run files to `/runs/<slug>` | A relative `.md` link is a dead link on the web. |
-| Turns links pointing outside `results/` into plain text | Those targets are working documents in fantastic-dollop that a reader cannot open. |
-| Replaces absolute home paths with `<repo>` | The same redaction `results/README.md` asks for on screenshots. |
-
-Everything else is copied verbatim, including every "what this run does not support"
-caveat. Those caveats are the reason a run page is citable rather than marketing, so the
-build prints a warning if a run arrives without one.
-
-**Every number on this site has to trace to `outreach/numbers.md` in fantastic-dollop, or
-to an artefact published here.** The scoreboard on `/evals` is run `e860167a`, whose
-full report ships at [`public/demo-report/`](./public/demo-report/) so a reader can check
-it.
+**What the deletion does not change: every number on this site still has to trace to
+`outreach/numbers.md` in fantastic-dollop, or to an artefact published here.** The scoreboard on
+`/evals` is run `e860167a`, whose full report ships at
+[`public/demo-report/`](./public/demo-report/) so a reader can check it. That report is now the
+only published evidence on the site, which makes it more load-bearing than it was, not less.
 
 ## Brand palette (source of truth)
 
@@ -125,8 +104,8 @@ should take the new value and delete any `--muted-strong` of their own.
    yourself thinking "the yellow is too much," it isn't.
 2. **No blue-slate on dark surfaces.** Body text at `#0f172a` is fine because it's
    small type. Large dark panels/cards/backgrounds must use `#0f0f10` (neutral
-   near-black), NOT `slate-900`. See [`SPEC.md`](./SPEC.md) for the history —
-   Tailwind's `slate-900` reads blue under a yellow radial gradient.
+   near-black), NOT `slate-900`. The reason, which used to live in the deleted `SPEC.md`:
+   Tailwind's `slate-900` reads visibly blue under a yellow radial gradient.
 3. **Shadow drops:** `rgba(0, 0, 0, X)`. Never `rgba(15, 23, 42, X)` — that slate
    rgba tints the shadow cool.
 4. **Muted-on-dark:** `#a8a29e` (stone-400). Never `#94a3b8` (slate-400).
@@ -155,14 +134,21 @@ pnpm preview          # preview the built site
 
 ## Generated assets
 
-Both scripts are run by hand and their output is committed. Neither runs during
-`pnpm build`, so a Vercel deploy never depends on them.
+Every script here is run by hand and its output is committed. None of them run during
+`pnpm build`, so a Vercel deploy never depends on them, and `sharp` and the icon library stay
+devDependencies.
 
 ```bash
-pnpm build:logo       # brand/*.svg -> public/c1-logo.svg, favicon.svg, favicon.png
+pnpm build:logo       # brand/*.svg -> public/c1-logo.svg, favicon.svg/.png/.ico
+pnpm build:logos      # lobehub + brand/partners/ -> public/logos/ and public/logos/marks/
 pnpm build:og         # public/c1-logo.svg + receipt -> public/og.png
+pnpm sync:model-icons # lobehub -> public/logos/models/ (the 16px icons on /prices)
 pnpm redact:report    # prepare public/demo-report/ for publication
 ```
+
+`build:logo` is the CanaryOne brand mark and `build:logos` is everyone else's. The singular
+name predates the plural one and the two are easy to confuse; they share the ink measurement in
+[`scripts/lib/svg-ink.mjs`](./scripts/lib/svg-ink.mjs) and nothing else.
 
 **The demo report.** `public/demo-report/index.html` is a real generated report for run
 `e860167a`, and the home page cites it, so it is served as the artefact rather than
@@ -209,10 +195,25 @@ at the export's pure black, the OG card would render a black wordmark on a near-
 and the swap would fail silently, so `build-logo.mjs` throws if it cannot find the fill it
 expects.
 
-**The favicon.** `public/favicon.svg`, `public/favicon.png` and
+**The favicon.** `public/favicon.svg`, `public/favicon.png`, `public/favicon.ico` and
 `public/apple-touch-icon.png` are all generated by `build-logo.mjs` from the mark-only
-export at [`brand/c1-logo-mark.svg`](./brand/c1-logo-mark.svg). The layout links the SVG
-first, the 64×64 PNG as a fallback, and the 180×180 icon for iOS.
+export at [`brand/c1-logo-mark.svg`](./brand/c1-logo-mark.svg).
+
+**`favicon.ico` is not optional, and its `sizes` hint is load-bearing.** A
+`<link rel="icon">` covers the browser tab, but several surfaces ignore the markup and
+request `/favicon.ico` from the site root by path: Safari's Favorites and bookmarks,
+browser history lists, and most link unfurlers. Until 2026-08-05 the file did not exist and
+every one of those requests 404'd, which is why the icon showed in the tab and nowhere else.
+The layout declares the `.ico` first carrying an explicit `sizes="32x32"`, and that hint is
+what keeps a browser from preferring the raster over the vector for the tab itself — given a
+size it can satisfy from the SVG, it takes the SVG. The 64×64 PNG stays after both as a last
+resort, and the 180×180 icon serves iOS.
+
+The `.ico` packs 16, 32 and 48px entries, each rendered from the vector at its own size
+rather than resampled down from one larger bitmap. At 16px the mark is a few pixels of line
+weight and a downscale of a 48px render loses it. The container is written by hand in
+`packIco()` because sharp has no ICO encoder; the entries are PNG-compressed, which every
+browser still in support reads.
 
 **The mark sits on a dark rounded square, and that is deliberate.** On transparency the
 canary yellow measures 1.53:1 against a white browser tab bar and is close to invisible at
@@ -232,10 +233,46 @@ the lockup export against the yellow in the mark export and warns when they disa
 **The OG image.** `public/og.png` is 1200×630, composed from the logo, the headline, and
 `src/assets/receipt-kimi-k3.png`. Re-run `pnpm build:og` if you change either input.
 
+## Third-party logos
+
+`public/logos/` holds a horizontal lockup for each partner, `public/logos/marks/` holds the six
+open-weight model marks in the hero, and both are generated by
+[`scripts/build-logos.mjs`](./scripts/build-logos.mjs) from two sources:
+
+| Source | Covers | Notes |
+|---|---|---|
+| `@lobehub/icons-static-svg`, the `-text` variants | 14 partner lockups plus the 6 hero marks | A devDependency. Bump it, re-run `pnpm build:logos`, commit the output. |
+| [`brand/partners/`](./brand/partners/) | CoreWeave, nscale, Scaleway, Vultr | The four brands lobehub does not ship. Hand-sourced, and **not** to be edited in place — the script rewrites `public/logos/`, so `brand/partners/` is the copy that survives. |
+
+**Take a hand-sourced logo from the company, not from a logo aggregator.** The first Scaleway
+candidate came from vectorlogo.zone carrying `viewBox="0 0 0 0 750 0 200"` — seven numbers, which
+is not a viewBox. `openSvg` now validates the attribute and names the file, because taking the
+first four numbers gave a 0×0 box and the failure surfaced from inside the rasteriser as "bad
+dimensions", which says nothing about which file is wrong.
+
+**Why a script rather than 18 committed files.** Every logo arrived with its own idea of how much
+padding belongs inside its viewBox, and the pages set a CSS height and trusted it. The result was
+a row where `height: 20px` produced anywhere from 11px to 20px of actual wordmark. See DESIGN.md
+§ Third-party logos for the normalisation and the two rules it makes unnecessary.
+
+Two build-time guards, both of which exist because the bug they catch already shipped:
+
+1. **A contrast floor of 1.6:1**, measured per group against the surface that group sits on —
+   cream for the lockups, near-black for the hero marks. Scaleway serves only a white-on-dark
+   lockup from its own header, which measured 1.04:1 on cream and was invisible; it is now
+   recoloured to `--text`, and the recolour is only ever applied to artwork that is entirely
+   white. Vultr's blue mark and CoreWeave's are left exactly as drawn.
+2. **A stale-recolour check.** A brand listed in `RECOLOUR_WHITE_TO_INK` that no longer has a
+   white fill fails the build rather than leaving a rule that silently does nothing.
+
+Adding a brand: put the lockup in `brand/partners/` or add its lobehub filename to `LOCKUPS`,
+run `pnpm build:logos`, and commit `public/logos/`. The script deletes any file in the two output
+directories it does not own, so a removed brand cannot leave an orphan behind.
+`public/logos/models/` is left alone — that belongs to `sync:model-icons`.
+
 ## Deploy
 
-Vercel, static. Committed to `main` deploys to production. See
-[`SPEC.md`](./SPEC.md) for domain + DNS notes.
+Vercel, static. Committed to `main` deploys to production.
 
 ## License
 

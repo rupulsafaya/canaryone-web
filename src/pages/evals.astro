@@ -1,8 +1,6 @@
 ---
 import { Image } from 'astro:assets';
 import Layout, { GITHUB_URL } from '../layouts/Layout.astro';
-import RunCard from '../components/RunCard.astro';
-import { getRuns } from '../lib/runs';
 
 import { getImage } from 'astro:assets';
 import receipt from '../assets/receipt-kimi-k3.png';
@@ -15,8 +13,6 @@ const TITLE = 'CanaryOne — Your Evals';
 const DESCRIPTION = 'Run your tests against every AI provider route. Real cost and quality on your own workload — not a leaderboard someone else built.';
 
 const DEMO_REPORT = '/demo-report/index.html';
-
-const latestRuns = (await getRuns()).slice(0, 3);
 
 const routers = [
   { name: 'OpenRouter', file: 'openrouter.svg' },
@@ -249,25 +245,6 @@ const scoreboard = [
           </figure>
         </div>
       </a>
-    </div>
-  </section>
-
-  <!-- ─── THE RUNS ─── -->
-  <section class="section runs-teaser">
-    <div class="container">
-      <p class="kicker">THE RUNS</p>
-      <h2>Every number here<br />has a run behind it.</h2>
-      <p class="lede">
-        Each report carries its method, its route matrix, what was held
-        constant, and an explicit note on what it does not support. The last
-        one is the important one: a result without its limits is marketing.
-      </p>
-
-      <div class="run-cards">
-        {latestRuns.map((run) => <RunCard run={run} />)}
-      </div>
-
-      <p class="runs-more"><a href="/runs">All run reports →</a></p>
     </div>
   </section>
 
