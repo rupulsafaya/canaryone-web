@@ -97,12 +97,20 @@ import Layout from '../layouts/Layout.astro';
 
   Chart.register(LineController, LineElement, PointElement, LinearScale, LogarithmicScale, Tooltip);
 
+  /**
+   * Chart.js takes colours as strings rather than reading CSS variables, so the palette has
+   * to be restated here. These must stay in step with :root in global.css.
+   *
+   * `grid` was rgba(15, 23, 42, 0.08) — a slate alpha, which is the one thing README
+   * § Brand palette rule 3 rules out, because a cool alpha over warm cream reads blue. It is
+   * now the flat --line hairline the rest of the site draws borders with.
+   */
   const INK = {
-    text: '#0f172a',
-    muted: '#57534e',
-    grid: 'rgba(15, 23, 42, 0.08)',
-    axis: '#d1d5db',
-    surface: '#ffffff',
+    text: '#0f172a',      // --text
+    muted: '#57534e',     // --muted
+    grid: '#e5e7eb',      // --line
+    axis: '#d1d5db',      // --line-strong
+    surface: '#ffffff',   // --panel
   };
 
   const el = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
