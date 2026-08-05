@@ -20,18 +20,43 @@
   --line: #e5e7eb;
   --line-strong: #d1d5db;
   --line-dark: #262626;
-  --muted: #6b7280;
-  /* --muted only reaches 4.32:1 on --bg-tint, which fails WCAG AA for small text. Warm
-     stone-600 is the palette-consistent replacement for muted type on a tinted surface. */
-  --muted-strong: #57534e;
+  /* One muted, not two. This was #6b7280 (cool grey) with a separate --muted-strong at
+     #57534e for tinted surfaces, because #6b7280 only reaches 4.32:1 on --bg-tint and fails
+     WCAG AA for small text. Collapsing to the warm stone-600 fixes the contrast everywhere
+     at once, drops a token, and stops the site mixing a cool grey into an otherwise warm
+     palette. #57534e on --bg is 7.4:1 and on --bg-tint is 6.9:1, so both pass AA. */
+  --muted: #57534e;
   --muted-on-dark: #a8a29e;
   --text: #0f172a;
   --text-on-dark: #fef9c3;
   --accent: #FDE047;
   --accent-soft: #fef08a;
   --accent-deep: #EAB308;
+
+  /* ---------- Semantic ----------
+     Each state is a foreground plus a matching 10%-alpha fill, so badges and callouts stop
+     hardcoding their own one-off hexes. --info is warm stone-500, NOT slate: the palette is
+     warm throughout and README rule 4 already bans slate-400 for exactly this reason. A cool
+     grey badge sitting next to warm cream reads as a different design system. */
   --good: #16a34a;
+  --good-bg: rgba(22, 163, 74, 0.1);
   --warn: #ca8a04;
+  --warn-bg: rgba(202, 138, 4, 0.1);
+  --danger: #b42318;
+  --danger-bg: rgba(180, 35, 24, 0.1);
+  --info: #78716c;
+  --info-bg: rgba(120, 113, 108, 0.1);
+
+  /* One step below --dark, for a surface that sits on top of a dark panel: the receipt
+     bezel inside the hero. Neutral, not slate, for the same reason --dark is. */
+  --dark-deep: #0a0a0b;
+
+  /* macOS window-chrome dots. Not brand colours — they are quoting an interface — but they
+     were duplicated across the report frame and the install terminal at two different
+     sizes, so they belong in one place. */
+  --traffic-red: #ff5f57;
+  --traffic-amber: #febc2e;
+  --traffic-green: #28c840;
 
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
@@ -482,7 +507,7 @@ code, pre, .mono {
 .hero .receipt-frame {
   position: relative;
   border-radius: var(--radius-xl);
-  background: #0a0a0b;
+  background: var(--dark-deep);
   border: 1px solid rgba(253, 224, 71, 0.16);
   padding: var(--space-2);
   cursor: zoom-in;
@@ -681,7 +706,7 @@ code, pre, .mono {
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--muted-strong);
+  color: var(--muted);
   padding: var(--space-4) var(--space-4);
   border-bottom: 1px solid var(--line);
   background: var(--bg-tint);
@@ -858,23 +883,14 @@ code, pre, .mono {
   border-bottom: 1px solid var(--line);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
-  color: var(--muted-strong);
+  color: var(--muted);
 }
 
-.report-section .report-toolbar .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  display: inline-block;
-  opacity: 0.8;
-}
-.report-section .report-toolbar .r { background: #ff5f57; }
-.report-section .report-toolbar .y { background: #febc2e; }
-.report-section .report-toolbar .g { background: #28c840; }
+/* Shared with the install terminal below — see the .dot rule there. */
 
 .report-section .report-toolbar .path {
   margin-left: var(--space-2);
-  color: var(--muted-strong);
+  color: var(--muted);
 }
 
 .report-section .report-toolbar .open {
@@ -966,15 +982,24 @@ code, pre, .mono {
   gap: var(--space-2);
 }
 
+/* The one traffic-light component. The report frame drew these at 10px and 0.8 opacity and
+   the install terminal at 12px and full opacity, which is two components pretending to be
+   one. 10px for both, full opacity, since the 0.8 was compensating for the larger size. */
+.report-section .report-toolbar .dot,
 .install .terminal-bar .dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   display: inline-block;
+  flex: 0 0 auto;
 }
-.install .terminal-bar .r { background: #ff5f57; }
-.install .terminal-bar .y { background: #febc2e; }
-.install .terminal-bar .g { background: #28c840; }
+
+.report-section .report-toolbar .r,
+.install .terminal-bar .r { background: var(--traffic-red); }
+.report-section .report-toolbar .y,
+.install .terminal-bar .y { background: var(--traffic-amber); }
+.report-section .report-toolbar .g,
+.install .terminal-bar .g { background: var(--traffic-green); }
 
 .install .terminal-bar .label {
   margin-left: var(--space-3);
@@ -1210,18 +1235,29 @@ code, pre, .mono {
 }
 
 .kind.commissioned-sweep {
-  color: #15803d;
-  border-color: rgba(22, 163, 74, 0.42);
-  background: rgba(22, 163, 74, 0.07);
+  color: var(--good);
+  border-color: var(--good);
+  background: var(--good-bg);
 }
 .kind.commissioned-sweep::before { background: var(--good); }
 
 .kind.local-tool-run {
-  color: #a16207;
-  border-color: rgba(234, 179, 8, 0.5);
-  background: rgba(253, 224, 71, 0.16);
+  color: var(--warn);
+  border-color: var(--warn);
+  background: var(--warn-bg);
 }
 .kind.local-tool-run::before { background: var(--accent-deep); }
+
+/* A metadata scan is the third kind the content schema allows, and it had no rule at all —
+   two of the six published runs fell through to the neutral base style while the other two
+   kinds carried deliberate colour. Warm stone rather than a colour, because a metadata scan
+   is neither a pass nor a warning; it is cheap, verifiable, and goes stale fast. */
+.kind.metadata-scan {
+  color: var(--info);
+  border-color: var(--info);
+  background: var(--info-bg);
+}
+.kind.metadata-scan::before { background: var(--info); }
 
 /* ---------- Run cards, on the home page and the /runs index ---------- */
 
@@ -1435,7 +1471,7 @@ code, pre, .mono {
   font-size: var(--text-2xs);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--muted-strong);
+  color: var(--muted);
   margin-bottom: var(--space-2);
 }
 
@@ -1454,7 +1490,7 @@ code, pre, .mono {
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: var(--space-0-5) var(--space-1);
-  color: var(--muted-strong);
+  color: var(--muted);
 }
 
 /* ---------- Imported markdown ---------- */
@@ -1575,7 +1611,7 @@ code, pre, .mono {
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
-  color: var(--muted-strong);
+  color: var(--muted);
   background: var(--bg-tint);
   padding: var(--space-3) var(--space-4);
   border-bottom: 1px solid var(--line);
@@ -1683,7 +1719,7 @@ code, pre, .mono {
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: var(--space-0-5) var(--space-1);
-  color: var(--muted-strong);
+  color: var(--muted);
 }
 
 .table-source a {
@@ -1714,7 +1750,7 @@ code, pre, .mono {
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: var(--space-0-5) var(--space-1);
-  color: var(--muted-strong);
+  color: var(--muted);
 }
 
 /* The reports teaser on the home page is a list of links, so it stays narrow. */
@@ -1742,7 +1778,7 @@ code, pre, .mono {
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: var(--tracking-label);
-  color: var(--muted-strong);
+  color: var(--muted);
   margin-bottom: var(--space-2);
 }
 
@@ -1760,7 +1796,7 @@ code, pre, .mono {
 .tm-toggle button {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--muted-strong);
+  color: var(--muted);
   background: transparent;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
@@ -1784,7 +1820,7 @@ code, pre, .mono {
 .tm-note {
   font-size: var(--text-base);
   line-height: var(--leading-relaxed);
-  color: var(--muted-strong);
+  color: var(--muted);
   max-width: var(--measure-prose);
   margin: 0 0 var(--space-6);
 }
@@ -1813,14 +1849,14 @@ code, pre, .mono {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
-  color: var(--muted-strong);
+  color: var(--muted);
   margin: 0;
   padding: var(--space-7) var(--space-1);
   max-width: var(--measure-prose);
 }
 
 .tm-status.error {
-  color: #b42318;
+  color: var(--danger);
 }
 
 /* ---------- Legend and filter in one ---------- */
@@ -1836,7 +1872,7 @@ code, pre, .mono {
   font-size: var(--text-xs);
   text-transform: uppercase;
   letter-spacing: var(--tracking-label);
-  color: var(--muted-strong);
+  color: var(--muted);
   padding: 0;
   margin-bottom: var(--space-3);
 }
@@ -1925,14 +1961,14 @@ code, pre, .mono {
 .tm-chip-value {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--muted-strong);
+  color: var(--muted);
   flex: 0 0 auto;
 }
 
 .tm-coverage {
   font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
-  color: var(--muted-strong);
+  color: var(--muted);
   background: var(--bg-tint);
   border: 1px solid var(--line);
   border-left: 3px solid var(--accent-deep);
@@ -1955,7 +1991,7 @@ code, pre, .mono {
 .tm-table summary {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--muted-strong);
+  color: var(--muted);
   cursor: pointer;
   padding: var(--space-3) 0;
 }
@@ -1984,7 +2020,7 @@ code, pre, .mono {
   padding: var(--space-4) var(--space-4);
   font-size: var(--text-sm);
   line-height: var(--leading-relaxed);
-  color: var(--muted-strong);
+  color: var(--muted);
   border-bottom: 1px solid var(--line);
 }
 
@@ -2000,7 +2036,7 @@ code, pre, .mono {
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   font-weight: var(--weight-medium);
-  color: var(--muted-strong);
+  color: var(--muted);
   background: var(--bg-tint);
 }
 
@@ -2040,7 +2076,7 @@ code, pre, .mono {
 .tm-empty {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  color: var(--muted-strong);
+  color: var(--muted);
   padding: var(--space-5) var(--space-4);
   margin: 0;
 }

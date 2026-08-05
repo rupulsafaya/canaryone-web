@@ -80,14 +80,29 @@ production are the CSS variables in [`src/styles/global.css`](./src/styles/globa
 
 /* Text on cream */
 --text:          #0f172a;   /* primary text (small type — the blue tint is imperceptible here) */
---muted:         #6b7280;   /* secondary text */
+--muted:         #57534e;   /* secondary text · stone-600, warm */
 --line:          #e5e7eb;   /* hairline borders */
 --line-strong:   #d1d5db;   /* stronger separators */
 
-/* Semantic */
---good:          #16a34a;   /* pass green */
---warn:          #ca8a04;   /* narrated / warning */
+/* Semantic — each state is a foreground plus a matching 10%-alpha fill */
+--good:          #16a34a;   --good-bg:   rgba(22, 163, 74, 0.1);    /* pass */
+--warn:          #ca8a04;   --warn-bg:   rgba(202, 138, 4, 0.1);    /* narrated / warning */
+--danger:        #b42318;   --danger-bg: rgba(180, 35, 24, 0.1);    /* error */
+--info:          #78716c;   --info-bg:   rgba(120, 113, 108, 0.1);  /* neutral · stone-500, warm */
+
+/* Surfaces and chrome */
+--dark-deep:     #0a0a0b;   /* one step below --dark, for a panel on a dark panel */
+--traffic-red:   #ff5f57;   /* macOS window dots — quoting an interface, not brand colour */
+--traffic-amber: #febc2e;
+--traffic-green: #28c840;
 ```
+
+**`--muted` changed from `#6b7280` to `#57534e` on 2026-08-05, and there is no longer a
+`--muted-strong`.** The old cool grey only reached 4.32:1 on `--bg-tint`, which fails WCAG AA
+for small text, so the file carried a second warm token just for tinted surfaces. The single
+warm stone-600 measures 7.4:1 on `--bg` and 6.9:1 on `--bg-tint`, passes AA on both, drops a
+token, and stops a cool grey sitting inside an otherwise warm palette. Downstream repos
+should take the new value and delete any `--muted-strong` of their own.
 
 **Rules for downstream repos:**
 
