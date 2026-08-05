@@ -90,6 +90,16 @@ illegible.
 direction is deliberate: a kicker added to a new cream section should not be able to come out
 illegible.
 
+## Icon-only links
+
+GitHub and X carry no text label in either the nav or the footer, and both use the same
+`.icon-only` component: square padding, `gap: 0`, a 32x32 target. The accessible name lives on
+`aria-label` and `title` repeats it for a sighted reader on hover.
+
+Do not compensate the padding with a negative margin between an adjacent pair. The padded box
+is the hit target, and hit targets set the rhythm of a link row — pulling them together
+collapsed the gap to 4px in the nav against 20px everywhere else.
+
 ## The header band
 
 Every page opens on the same `--dark` surface. The nav is dark on every page and merges into

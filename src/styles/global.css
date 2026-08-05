@@ -381,11 +381,19 @@ code, pre, .mono {
   outline-color: var(--focus-color-dark);
 }
 
-/* GitHub and X are icon-only in the nav, so they get square padding rather than the
-   text links' 6px/10px. That lands a 32x32 target, comfortably over the 24x24 minimum
-   WCAG 2.5.8 asks for, and it stops the two icons reading as lopsided next to the
-   word links. Their accessible names live on aria-label in the markup. */
-.topnav .links a.icon-only {
+/* One icon-only link component, shared by the nav and the footer. GitHub and X carry no text
+   label in either place, so they get square padding rather than the text links' asymmetric
+   padding. That lands a 32x32 target, comfortably over the 24x24 minimum WCAG 2.5.8 asks for,
+   and it stops the icons reading as lopsided beside the word links. Their accessible names
+   live on aria-label in the markup, with title repeating it for a sighted reader on hover.
+
+   No margin correction between an adjacent pair. I tried pulling their padding back so the
+   ink would sit at the same distance as the word labels' ink, and it was wrong: the padded box
+   is the hit target, and hit targets are what set the rhythm of a link row. Left alone, the
+   icon boxes sit on the same gap as every other link. Compensated, they collapsed to 4px in
+   the nav against 20px everywhere else. */
+.topnav .links a.icon-only,
+.footer a.icon-only {
   padding: var(--space-2);
   gap: 0;
 }
