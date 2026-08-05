@@ -46,6 +46,14 @@ const ROOT = resolve(__dirname, '..');
 
 const LOGO_SOURCE = resolve(ROOT, 'brand/c1-logo-source.svg');
 const LOGO_OUT = resolve(ROOT, 'public/c1-logo.svg');
+/**
+ * The same lockup with the wordmark recoloured for a dark surface. The nav sits on --dark
+ * on every page, and --dark is #0f0f10 — the exact colour the wordmark is normalised to
+ * below — so the light lockup renders as an invisible wordmark beside a yellow mark there.
+ * Generated rather than hand-dropped, for the reason recorded in README under the favicon:
+ * a hand-made copy silently kept a stale colour once already.
+ */
+const LOGO_DARK_OUT = resolve(ROOT, 'public/c1-logo-dark.svg');
 const MARK_SOURCE = resolve(ROOT, 'brand/c1-logo-mark.svg');
 const FAVICON_SVG_OUT = resolve(ROOT, 'public/favicon.svg');
 const FAVICON_PNG_OUT = resolve(ROOT, 'public/favicon.png');
@@ -54,6 +62,8 @@ const APPLE_ICON_OUT = resolve(ROOT, 'public/apple-touch-icon.png');
 /** The export's wordmark fill, and the near-black we replace it with. */
 const EXPORT_WORDMARK_FILL = '#000000';
 const WORDMARK_FILL = '#0f0f10';
+/** Canary 100, which is --text-on-dark. The wordmark colour in the dark-surface lockup. */
+const WORDMARK_FILL_ON_DARK = '#fef9c3';
 /** Supersampling factor for the ink measurement. 4x gives quarter-unit precision. */
 const PROBE_SCALE = 4;
 /** Alpha above which a pixel counts as ink, on 0-255. Ignores antialiasing fringe. */
@@ -168,8 +178,29 @@ const logoOut = `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www
 `;
 writeFileSync(LOGO_OUT, logoOut);
 
+/**
+ * The dark-surface variant. Swapping the normalised fill is exactly what build-og.mjs does
+ * in memory for the social card; here the result is written to disk because the nav needs it
+ * on every request. Only the wordmark moves — the mark keeps its Canary 400 yellow, which
+ * already measures 10.51:1 on the near-black panel.
+ */
+const darkFills = (logoOut.match(new RegExp(WORDMARK_FILL, 'g')) || []).length;
+if (!darkFills) {
+  throw new Error(
+    `Cannot build the dark lockup: no ${WORDMARK_FILL} fill found in the normalised output.`
+  );
+}
+writeFileSync(
+  LOGO_DARK_OUT,
+  logoOut
+    .replace(new RegExp(WORDMARK_FILL, 'g'), WORDMARK_FILL_ON_DARK)
+    .replace('id="c1-logo-title"', 'id="c1-logo-dark-title"')
+    .replace('aria-labelledby="c1-logo-title"', 'aria-labelledby="c1-logo-dark-title"')
+);
+
 const logoAspect = logoInk.W / logoInk.H;
 console.log(`Lockup written: ${LOGO_OUT}`);
+console.log(`Dark lockup written: ${LOGO_DARK_OUT} (${darkFills} wordmark fill(s) -> ${WORDMARK_FILL_ON_DARK})`);
 console.log(`  artboard ${logo.vb.w}x${logo.vb.h} -> ink ${r(logoInk.W)}x${r(logoInk.H)} at (${r(logoInk.X0)}, ${r(logoInk.Y0)})`);
 console.log(`  aspect ${logoAspect.toFixed(4)}:1  ->  nav ${Math.round(logoAspect * 28)}x28, footer ${Math.round(logoAspect * 20)}x20`);
 console.log(`  removed ${rects.length} white artboard rect(s)`);

@@ -33,13 +33,18 @@ if (!sections.some((s) => CAVEAT_HEADING.test(s.text))) {
   description={summary}
   path={`/runs/${run.id}/`}
 >
+  <div class="page-band">
+    <div class="run-head">
+      <div class="container narrow">
+        <p class="crumb"><a href="/runs">runs</a> / {date}</p>
+        <h1>{title}</h1>
+        <p class="summary">{summary}</p>
+      </div>
+    </div>
+  </div>
+
   <article class="run">
     <div class="container narrow">
-      <p class="crumb"><a href="/runs">runs</a> / {date}</p>
-
-      <h1>{title}</h1>
-      <p class="summary">{summary}</p>
-
       <dl class="identity">
         <div>
           <dt>Run date</dt>
