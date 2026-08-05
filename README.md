@@ -5,10 +5,16 @@ Marketing site for [canaryone](https://github.com/rupulsafaya/canaryone) — ser
 CanaryOne brand palette** — other repos (canaryone, canaryone-cloud, canaryone-demo)
 should inherit their colors from here rather than reinvent them.
 
-Astro, no Tailwind, no analytics, no web fonts. A home page plus the run reports at
-`/runs`. See [`SPEC.md`](./SPEC.md) for the decision record, and note that SPEC.md's
-"single page, scroll only" and "≤3 viewport heights" rules were lifted when the reports
-section was added — everything else in its non-goals list still stands.
+Astro, no Tailwind, no analytics, no web fonts. A home page, the price chart at `/prices`,
+and the run reports at `/runs`.
+
+See [`DESIGN.md`](./DESIGN.md) for the design system: the token scales, where canary yellow
+is and is not allowed, the header band, the table contract and the focus rules. Read it
+before changing anything visual.
+
+[`SPEC.md`](./SPEC.md) is the original decision record and is now **historical**. It was
+written when this was a single scroll-only page and predates `/runs` and `/prices`; treat
+DESIGN.md and this README as current and SPEC.md as background.
 
 ## Run reports
 
