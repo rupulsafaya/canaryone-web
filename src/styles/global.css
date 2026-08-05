@@ -183,6 +183,24 @@
   --dur-slow: 200ms;   /* lifts, frames, chart updates */
   --ease: ease;
 
+  /* ---------- Where yellow is allowed ----------
+     Canary yellow only works on dark. --accent-deep on --bg measures 1.87:1, which is the
+     same number that disqualifies it as a focus ring, so on cream it cannot be a foreground
+     or a hairline that has to be seen. It was being used as hovered link text in six places,
+     which was illegible rather than merely undisciplined.
+
+     On a dark surface, yellow may be a foreground: the kicker, the terminal prompt, a
+     breadcrumb hover, the focus ring, the fading band hairlines.
+
+     On cream, yellow may only be a fill sitting behind dark text — the primary button, the
+     pressed segment of a toggle, the highlight band behind a headline, the winner row tint,
+     the report frame's open chip — or a 3px decorative callout rule, where the label beside
+     it carries the meaning and the rule is only drawing the eye.
+
+     On cream, yellow may NOT be text, a link underline, or a card's hover border. Those all
+     read as a wash of yellow that never resolves into emphasis, which is how a colour meant
+     to be decisive ends up looking incidental. */
+
   /* ---------- Focus ----------
      The ring is near-black on light surfaces and Canary 300 on dark ones, and that
      is an accessibility constraint rather than a taste call. WCAG 2.2 § 1.4.11 wants
@@ -257,9 +275,13 @@ code, pre, .mono {
 }
 
 /* ---------- Reduced motion ----------
-   `scroll-behavior: smooth` above is global, so it needs unwinding here too. This also
-   stops the hero kicker's infinitely pulsing dot, which is the main thing on the site a
-   motion-sensitive reader would want gone. */
+   `scroll-behavior: smooth` above is global, so it needs unwinding here too, along with the
+   hover lifts on cards and frames.
+
+   An earlier version of this comment said the guard also stopped a pulsing dot on the hero
+   kicker. It did not: .kicker .pulse and its @keyframes were in the stylesheet but no markup
+   ever rendered them, and both have now been deleted. There is no looping animation on the
+   site — every remaining transition is interaction-triggered. */
 
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -433,27 +455,16 @@ code, pre, .mono {
   font-weight: var(--weight-medium);
   text-transform: uppercase;
   letter-spacing: var(--tracking-label);
-  color: var(--accent);
+  /* Muted is the default and yellow is opt-in, which is the safe way round. Yellow on cream
+     is 1.87:1, so a kicker added to a new cream section with the old accent default would
+     have been illegible; now it has to sit on a dark surface to become yellow. */
+  color: var(--muted);
   margin: 0 0 var(--space-7);
 }
 
-.kicker .pulse {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--accent);
-  box-shadow: 0 0 0 4px rgba(253, 224, 71, 0.18);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { box-shadow: 0 0 0 4px rgba(253, 224, 71, 0.18); }
-  50%      { box-shadow: 0 0 0 8px rgba(253, 224, 71, 0); }
-}
-
-/* on cream sections */
-.section .kicker {
-  color: var(--muted);
+.hero .kicker,
+.page-band .kicker {
+  color: var(--accent);
 }
 
 .hero h1 {
@@ -565,6 +576,38 @@ code, pre, .mono {
   width: 100%;
   height: auto;
   border-radius: var(--radius-md);
+}
+
+/* The frame is a button with cursor: zoom-in and nothing else saying so. A mono chip in the
+   corner says it out loud. Text rather than a magnifying-glass emoji: this is a tool whose
+   entire pitch is precision, and the caption beneath is already mono. */
+.hero .receipt-frame::after {
+  content: "click to expand";
+  position: absolute;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  background: rgba(15, 15, 16, 0.82);
+  border: 1px solid var(--line-dark);
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--muted-on-dark);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease);
+  pointer-events: none;
+}
+
+.hero .receipt-frame:hover::after,
+.hero .receipt-frame:focus-visible::after {
+  opacity: 1;
+}
+
+/* Touch has no hover, so the affordance is always visible there. */
+@media (hover: none) {
+  .hero .receipt-frame::after { opacity: 1; }
 }
 
 .hero .receipt-caption {
@@ -698,6 +741,7 @@ code, pre, .mono {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   padding: var(--space-6) var(--space-4);
   display: flex;
   align-items: center;
@@ -892,11 +936,6 @@ code, pre, .mono {
   color: var(--warn);
 }
 
-.scoreboard tbody tr .star {
-  color: var(--accent-deep);
-  font-weight: var(--weight-bold);
-}
-
 /* ---------- Localhost boundary diagram ---------- */
 
 .boundary {
@@ -1005,7 +1044,7 @@ code, pre, .mono {
 
 .report-section .report-frame:hover {
   transform: translateY(-2px);
-  border-color: var(--accent-deep);
+  border-color: var(--line-strong);
   box-shadow: var(--shadow-lg);
 }
 
@@ -1198,7 +1237,8 @@ code, pre, .mono {
 }
 
 .install .hint a:hover {
-  border-bottom-color: var(--accent-deep);
+  border-bottom-color: currentColor;
+  color: var(--text);
 }
 
 /* ---------- Status + footer ---------- */
@@ -1249,8 +1289,10 @@ code, pre, .mono {
   color: var(--text);
 }
 
+/* The icon follows the link's own colour. It used to go --accent-deep, which is 1.87:1 on
+   cream — invisible for the thing it was meant to highlight. */
 .footer a:hover .icon {
-  color: var(--accent-deep);
+  color: currentColor;
 }
 
 .footer .spacer { flex: 1; }
@@ -1406,6 +1448,7 @@ code, pre, .mono {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
   padding: var(--space-6) var(--space-6);
   transition: transform var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
 }
@@ -1413,7 +1456,7 @@ code, pre, .mono {
 .run-card:hover,
 .run-card:focus-visible {
   transform: translateY(-2px);
-  border-color: var(--accent-deep);
+  border-color: var(--line-strong);
   box-shadow: var(--shadow-md);
 }
 
@@ -1477,8 +1520,7 @@ code, pre, .mono {
 }
 
 .runs-more a:hover {
-  border-bottom-color: var(--accent-deep);
-  color: var(--accent-deep);
+  border-bottom-color: currentColor;
 }
 
 /* ---------- /runs index ---------- */
@@ -1532,7 +1574,7 @@ code, pre, .mono {
 
 .crumb a:hover {
   color: var(--text);
-  border-bottom-color: var(--accent-deep);
+  border-bottom-color: currentColor;
 }
 
 .runs-list {
@@ -1600,7 +1642,7 @@ code, pre, .mono {
 /* The publication status, which is the first thing a reader should see. */
 .run .status-note {
   border: 1px solid var(--line-strong);
-  border-left: 4px solid var(--accent-deep);
+  border-left: 3px solid var(--accent-deep);
   border-radius: var(--radius-md);
   background: var(--bg-tint);
   padding: var(--space-5) var(--space-6);
@@ -1705,8 +1747,7 @@ code, pre, .mono {
 }
 
 .prose a:hover {
-  color: var(--accent-deep);
-  border-bottom-color: var(--accent-deep);
+  border-bottom-color: currentColor;
 }
 
 .prose code {
@@ -1718,10 +1759,12 @@ code, pre, .mono {
   padding: var(--space-0-5) var(--space-1);
 }
 
+/* Neutral, not yellow. A blockquote is quoting the source document; it is not a callout the
+   page is raising, and the yellow left rules are reserved for those. */
 .prose blockquote {
   margin: 0 0 var(--space-6);
   padding: var(--space-1) 0 var(--space-1) var(--space-6);
-  border-left: 3px solid var(--accent);
+  border-left: 3px solid var(--line-strong);
   color: var(--muted);
 }
 
@@ -1806,7 +1849,8 @@ code, pre, .mono {
 
 .run .jump li a:hover {
   color: var(--text);
-  border-color: var(--accent-deep);
+  border-color: var(--line-strong);
+  background: var(--bg-tint);
 }
 
 /* Anchored headings should not land under nothing; give them breathing room. */
@@ -1855,8 +1899,7 @@ code, pre, .mono {
 }
 
 .table-source a:hover {
-  color: var(--accent-deep);
-  border-bottom-color: var(--accent-deep);
+  border-bottom-color: currentColor;
 }
 
 /* The outbound line has to name what actually leaves the machine, so it needs room for
@@ -2038,7 +2081,7 @@ code, pre, .mono {
 
 .tm-chip.on {
   background: var(--bg-tint);
-  border-color: var(--line-strong);
+  border-color: var(--text);
 }
 
 /* At the eight-series cap the unselected rows stay readable but visibly unavailable. */
@@ -2049,7 +2092,9 @@ code, pre, .mono {
 
 .tm-chip input {
   margin: 0;
-  accent-color: var(--accent-deep);
+  /* --text, not --accent-deep. accent-color paints the box and the browser draws a white
+     tick on top; white on #EAB308 is roughly 2.2:1, so the tick was nearly invisible. */
+  accent-color: var(--text);
   flex: 0 0 auto;
 }
 
