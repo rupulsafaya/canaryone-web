@@ -16,8 +16,7 @@
     "sync:model-icons": "node scripts/sync-model-icons.mjs"
   },
   "dependencies": {
-    "astro": "^5.14.0",
-    "chart.js": "^4.5.1"
+    "astro": "^5.14.0"
   },
   "packageManager": "pnpm@10.30.3",
   "devDependencies": {
