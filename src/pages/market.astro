@@ -294,19 +294,38 @@ const marked = pair ? [pair.cheap, pair.dear] : [];
 
 /* 2. The ladder: cheapest to dearest listed host of each model, on a log axis.
    Prices run from two cents to six dollars, so a linear axis puts eleven of the
-   thirteen rows inside the leftmost eighth of the width. */
+   thirteen rows inside the leftmost eighth of the width.
+
+   Ordered by the mean price across every company serving the model, dearest first. That is
+   what "this model is expensive" means, and it is not the midpoint of the two ends: Kimi K2.7
+   Code is served at $0.68 to $0.86 by most of its companies and at $1.90 by one, so its bar
+   looks high-centred while its average sits below GLM 5.2's.
+
+   Which is why the mean is now drawn as a tick on each bar. Sorting rows by a number the
+   chart does not show reads as a sorting fault, and the tick earns its place twice over: it
+   also says whether a range is skewed, which two endpoints alone cannot. */
 const ladder = market.models
   .filter((x: any) => x.open_weights && x.price_in && x.price_in.n > 1)
   .map((x: any) => ({ short: x.short, id: x.id, or_url: x.or_url, ...x.price_in }))
-  .sort((a: any, b: any) => b.ratio - a.ratio);
-const LW = 800, LROW = 30, LL = 168, LR = 66, LT = 26;
+  .sort((a: any, b: any) => b.mean - a.mean);
+/* LL moved out from 168 to make room for a brand mark and a left-aligned name. The names were
+   right-aligned against the plot area, which cannot work with a mark beside them: the mark
+   would have to sit at a different x on every row, and SVG has no text metrics at build time
+   to place it. A fixed mark column with the name after it is what the model table does. */
+const LW = 800, LROW = 30, LL = 196, LR = 66, LT = 26;
+const L_ICON = 12;
 const LH = LT + ladder.length * LROW + 40;
 const lgLo = 0.01, lgHi = 10;
 const lx = (v: number) =>
   LL + ((lg(v) - lg(lgLo)) / (lg(lgHi) - lg(lgLo))) * (LW - LL - LR);
 const ly = (i: number) => LT + i * LROW + LROW / 2;
 const lTicks = [0.01, 0.1, 1, 10];
-const ladderMax = ladder.length ? ladder[0] : null;
+/* The widest and narrowest spreads, found rather than read off the first and last row. Those
+   two rows meant the widest and the narrowest while the ladder was sorted by spread; it is
+   sorted by average price now, so taking row one would have quietly started naming whichever
+   model happened to be dearest. */
+const ladderMax = ladder.reduce((a: any, b: any) => (b.ratio > a.ratio ? b : a), ladder[0]);
+const ladderMin = ladder.reduce((a: any, b: any) => (b.ratio < a.ratio ? b : a), ladder[0]);
 
 /* 3. The capability matrix: one dot per live host, hollow where the host does not
    advertise tool calling. Hosts sit in listed-price order, which is the only
@@ -716,19 +735,21 @@ const reference = market.models
 
       <h2>Every model we watch, cheapest host to dearest</h2>
       <p class="tm-note">
-        Each bar runs from the lowest listed price for that model to the highest. The axis is
-        logarithmic, because the models on it are three hundred times apart in price and the
-        spreads inside them would otherwise be invisible.
+        Each bar runs from the cheapest company serving that model to the dearest, with a tick
+        at the average of all of them. Dearest on average first. The axis is logarithmic: the
+        models are three hundred times apart in price.
       </p>
 
       <div class="tm-panel mk-wrap">
         <svg viewBox={`0 0 ${LW} ${LH}`} class="mk-svg" role="img"
-             aria-label={`Listed input price range across hosts for ${ladder.length} open-weight models. Every model's hosts differ in price, from 1.25 times on the narrowest to ${ladderMax ? ladderMax.ratio.toFixed(1) : ''} times on the widest. The table lower down the page gives every figure.`}>
+             aria-label={`Listed input price range across hosts for ${ladder.length} open-weight models. Every model's hosts differ in price, from ${ladderMin.ratio.toFixed(2)} times on the narrowest to ${ladderMax.ratio.toFixed(1)} times on the widest. The table lower down the page gives every figure.`}>
           <g>
             <circle cx={LL + 6} cy="12" r={R_SM} class="mk-end mk-end-lo" />
-            <text x={LL + 18} y="16" class="mk-ax">Cheapest listed host</text>
-            <circle cx={LL + 176} cy="12" r={R_SM} class="mk-end" />
-            <text x={LL + 188} y="16" class="mk-ax">Dearest listed host</text>
+            <text x={LL + 18} y="16" class="mk-ax">Cheapest company</text>
+            <line x1={LL + 156} x2={LL + 156} y1="5" y2="19" class="mk-mean" />
+            <text x={LL + 166} y="16" class="mk-ax">Average of all of them</text>
+            <circle cx={LL + 330} cy="12" r={R_SM} class="mk-end" />
+            <text x={LL + 342} y="16" class="mk-ax">Dearest company</text>
           </g>
           {lTicks.map((t) => (
             <g>
@@ -746,8 +767,15 @@ const reference = market.models
                their own row. */
             <g class="mk-row" data-model={r.id}>
               <rect x="0" y={ly(i) - LROW / 2} width={LW} height={LROW} class="mk-row-band" />
-              <text x={LL - 12} y={ly(i) + 4} class="mk-ax mk-ax-y mk-ax-row">{r.short}</text>
+              {brandIconFor(r.id) && (
+                <image href={brandIconFor(r.id)} x="6" y={ly(i) - L_ICON / 2}
+                       width={L_ICON} height={L_ICON} />
+              )}
+              <text x={6 + L_ICON + 8} y={ly(i) + 4} class="mk-ax mk-ax-row">{r.short}</text>
               <line x1={lx(r.min)} x2={lx(r.max)} y1={ly(i)} y2={ly(i)} class="mk-range" />
+              <line x1={lx(r.mean)} x2={lx(r.mean)} y1={ly(i) - 6} y2={ly(i) + 6} class="mk-mean">
+                <title>{`${r.short} · ${usd(r.mean)} per 1M averaged across ${r.n} companies`}</title>
+              </line>
               <circle cx={lx(r.min)} cy={ly(i)} r={R_SM} class="mk-end mk-end-lo">
                 <title>{`${r.short} · cheapest listed host ${usd(r.min)} per 1M`}</title>
               </circle>
@@ -763,11 +791,11 @@ const reference = market.models
         </svg>
       </div>
       <p class="tm-coverage">
-        There is no model here whose hosts agree on a price. On the narrowest row the dearest
-        company still charges {times(ladder[ladder.length - 1].ratio)} the cheapest. On the
-        widest, {ladder[0].short}, {ladder[0].n} companies serve the same weights and the
-        dearest charges {times(ladder[0].ratio)} the cheapest. Metadata read {captured}.
-        {' '}<a href={ladder[0].or_url} rel="noopener" target="_blank">Check the widest one on
+        There is no model here whose hosts agree on a price. At the narrowest, {ladderMin.short},
+        the dearest company still charges {times(ladderMin.ratio)} the cheapest. At the widest,
+        {' '}{ladderMax.short}, {ladderMax.n} companies serve the same weights and the dearest
+        charges {times(ladderMax.ratio)} the cheapest. Metadata read {captured}.
+        {' '}<a href={ladderMax.or_url} rel="noopener" target="_blank">Check the widest one on
         OpenRouter →</a>
       </p>
 
@@ -1006,6 +1034,10 @@ const reference = market.models
   /* Ladder. Hollow at the cheapest end, solid at the dearest, so the direction of the
      bar is readable without reading the axis. */
   .mk-range { stroke: var(--line-strong); stroke-width: 3; stroke-linecap: round; }
+  /* The average across a model's companies, and the key the rows are sorted by. A tick rather
+     than a third dot: it reads as a position on the bar instead of a fourth kind of endpoint,
+     and it stays legible where it lands close to one of the two ends. */
+  .mk-mean { stroke: var(--muted); stroke-width: 2; }
   .mk-end { fill: var(--text); stroke: var(--panel); stroke-width: 1.5; }
   .mk-end-lo { fill: var(--panel); stroke: var(--text); stroke-width: 1.5; }
 
