@@ -72,10 +72,23 @@ mono) and `--text-base` (15px, sans) is the seam between those tracks rather tha
 step — nothing should ever need both.
 
 Body is `--text-md` at 17px. Ledes are `--text-lg` at 19px. Three fluid display sizes cover
-everything larger, and `--display-lg` deliberately serves both the home page's section `h2`
-and every subpage `h1`, so an inner page's title carries the same weight as a section heading
-instead of its own arbitrary size. There were four until the run reports were removed;
-`--display-sm` existed only for the `h2` of their imported markdown.
+everything larger. There were four until the run reports were removed; `--display-sm` existed
+only for the `h2` of their imported markdown.
+
+**Subpage `h1` uses `--display-xl` and matches the home hero at 72px, changed 2026-08-11.**
+It previously shared `--display-lg` with section `h2` at 56px, on the reasoning that an inner
+page's title should carry the same weight as a section heading rather than its own arbitrary
+size. In practice `/evals`, `/market` and `/market-v2` read as sections of the home page
+rather than as pages in their own right. The change sits on the `.page-head h1` rule rather
+than on the token, so section `h2` keeps 56px.
+
+**`.page-head .lede` sets no colour, and that is deliberate.** It used to set `--muted`,
+which is the cream-background token, and because it follows `.page-band .lede` at equal
+specificity it won on source order — dark grey text on the near-black band at 2.51:1 against
+the 4.5:1 body text needs. Leaving it unset lets `.page-band .lede` govern at
+`--muted-on-dark` and 7.60:1. A `.page-head` on a light background instead inherits body
+colour, which is also readable, so unsetting is more robust than swapping in another
+hardcoded token.
 
 **Never fight a clamp with a fixed override in a media query.** The display sizes are fluid
 and their minimums *are* the mobile sizes. Overriding them at a breakpoint is how the file

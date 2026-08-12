@@ -40,6 +40,13 @@
      fills below do. */
   --accent-line-on-dark: rgba(253, 224, 71, 0.25);
   --accent-bg-on-dark: rgba(253, 224, 71, 0.04);
+  /* The cream counterpart, and the only form yellow is allowed to take on cream besides a
+     solid fill behind dark text: a wash sitting behind content that keeps its own colour. It
+     carries no -on-dark suffix because it is the light-surface value, and at 12% it is strong
+     enough to read as "this row" against #fafaf7 where the 4% on-dark value would vanish.
+     Two use sites: the hovered row of the /market price ladder, and the winner row of the
+     route scoreboard, which held this value as a literal rgba until the token existed. */
+  --accent-bg: rgba(253, 224, 71, 0.12);
 
   /* ---------- Semantic ----------
      Each state is a foreground plus a matching 10%-alpha fill, so badges and callouts stop
@@ -155,13 +162,19 @@
   --text-lg: 19px;    /* ledes, run summaries */
   --text-xl: 21px;    /* card titles */
 
-  /* Display sizes are fluid. Three, down from six: --display-lg deliberately serves
-     both the home page's section h2 and every subpage h1, so an inner page's title
-     carries the same weight as a section heading rather than its own arbitrary size.
-     --display-sm went with the run reports; it existed only for their markdown h2. */
+  /* Display sizes are fluid. Three, down from six. --display-sm went with the run
+     reports; it existed only for their markdown h2.
+
+     REVERSED 2026-08-11. --display-lg used to serve both the home page's section h2 and
+     every subpage h1, on the reasoning that an inner page's title should carry the same
+     weight as a section heading rather than its own arbitrary size. Subpage h1 now uses
+     --display-xl and matches the home hero at 72px instead, because in practice /evals,
+     /market and /evals read as sections of the home page rather than as pages of
+     their own. The change is on the .page-head h1 rule rather than on this token, so
+     section h2 keeps 56px. */
   --display-md: clamp(28px, 3.6vw, 44px);   /* pillar card h2, waitlist dialog title */
-  --display-lg: clamp(32px, 4.8vw, 56px);   /* section h2, subpage h1 */
-  --display-xl: clamp(38px, 6.4vw, 72px);   /* hero h1 only */
+  --display-lg: clamp(32px, 4.8vw, 56px);   /* section h2 */
+  --display-xl: clamp(38px, 6.4vw, 72px);   /* home hero h1 and subpage .page-head h1 */
 
   --leading-tight: 1.05;    /* display */
   --leading-snug: 1.25;     /* card titles */
@@ -221,6 +234,14 @@
      coincidence and the two are unrelated. */
   --figure-max: 480px;
   --panel-max: 640px;
+  /* The floor below which an inline-SVG chart stops being readable rather than merely
+     getting smaller. A chart on a viewBox scales its labels with the box, so on a 375px
+     phone the 11px axis text on /market rendered at about 4px. Below this width the
+     chart keeps its size and its panel scrolls sideways instead, which is the same thing
+     .tm-table-scroll does for a wide table. The value is the width of the charts' own
+     viewBox, so at the floor a chart renders one-to-one and its labels come out at exactly
+     the size they were set in. */
+  --chart-min: 800px;
 
   /* ---------- Breakpoints ----------
      Custom properties cannot be used inside a media query condition, so these are
@@ -956,7 +977,7 @@ code, pre, .mono {
    the text sitting on it, and a gradient implied a direction the data does not have. The
    left bar below carries the emphasis; the fill only has to say "this row". */
 .scoreboard tbody tr.winner td {
-  background: rgba(253, 224, 71, 0.08);
+  background: var(--accent-bg);
 }
 
 .scoreboard tbody tr.winner td:first-child {
@@ -1439,7 +1460,10 @@ code, pre, .mono {
 }
 
 .page-head h1 {
-  font-size: var(--display-lg);
+  /* --display-xl rather than --display-lg, so a subpage title matches the home hero at
+     72px instead of sitting 16px smaller. Changed on the rule rather than on the token,
+     because --display-lg is also section h2 and those should stay at 56px. */
+  font-size: var(--display-xl);
   font-weight: var(--weight-medium);
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-display);
@@ -1450,7 +1474,15 @@ code, pre, .mono {
 .page-head .lede {
   font-size: var(--text-lg);
   line-height: var(--leading-relaxed);
-  color: var(--muted);
+  /* No colour here on purpose. This rule used to set --muted, which is the token for the
+     cream background, and because it sits after `.page-band .lede` at equal specificity it
+     won on source order — putting #57534e text on the #0f0f10 band at a contrast ratio of
+     2.51:1, against the 4.5:1 that body text needs. Every page using .page-band inherited
+     it: /evals and /market were both identically unreadable.
+     Leaving the colour unset lets `.page-band .lede` govern, which resolves to
+     --muted-on-dark and 7.60:1. A .page-head placed on a light background instead inherits
+     body colour, which is also readable, so this is the robust direction rather than
+     swapping one hardcoded token for another. */
   max-width: var(--measure-lede);
   margin: 0;
 }
@@ -1797,6 +1829,22 @@ code, pre, .mono {
   text-align: right;
 }
 
+/* The first column is the row-header column, and its heading has to sit over its own
+   values. Without this the body cells left-aligned via th[scope='row'] while the heading
+   above them stayed right, so on /market's model table the word MODEL floated in the middle
+   of a column of names — the wider the first column, the further adrift the label.
+
+   Done structurally rather than with a class an author adds per table: the pairing is a
+   property of the component, and a rule that has to be remembered is a rule that gets
+   forgotten on the next table. .scoreboard already behaves this way, left by default with
+   numeric columns opting in via .num, so the two table components now agree.
+
+   A table whose first column is genuinely numeric would want this off, and there is none on
+   the site. Give it a modifier when one appears rather than reverting this. */
+.tm-data-table thead th:first-child {
+  text-align: left;
+}
+
 .tm-data-table th[scope='row'] {
   text-align: left;
   font-weight: var(--weight-medium);
@@ -1810,24 +1858,18 @@ code, pre, .mono {
   color: var(--text);
 }
 
-/* Aligns the icon with the model name's first line rather than centring it against the
-   two-line name-plus-id block. */
+/* A brand mark beside a model name, in a table's row-header cell.
+
+   CENTRED, changed 2026-08-11. This was flex-start plus a 2px top nudge on the slot, which
+   was right when the cell held /prices' two-line name-plus-id block: top-aligning put the
+   icon against the name rather than centring it across both lines. That page and its second
+   line are gone, and against the single-line name on /market the same rule drew a 16px icon
+   noticeably above the text it labels. `.tm-row-id`, which styled that second line, was
+   removed with it rather than left behind as a rule with no use site. */
 .tm-row-head {
   display: inline-flex;
-  align-items: flex-start;
+  align-items: center;
   gap: var(--space-2);
-}
-
-.tm-row-head .tm-brand-slot {
-  margin-top: var(--space-0-5);
-}
-
-.tm-row-id {
-  display: block;
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-normal);
-  color: var(--muted);
 }
 
 .tm-empty {
