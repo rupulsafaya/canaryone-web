@@ -63,6 +63,10 @@ const times = (r: number) => {
   if (frac >= 0.4 && frac <= 0.6) return `${spell(f)} and a half times`;
   if (frac > 0.85) return `nearly ${spell(f + 1)} times`;
   if (frac < 0.15) return `${spell(f)} times`;
+  /* Approaching a half from below. Bounded above by 0.4 on purpose: without that bound a
+     ratio of 4.62 came out as "nearly four and a half times" when it is past four and a
+     half, which is the wrong side to round on a page with a number gate. */
+  if (frac >= 0.28 && frac < 0.4) return `nearly ${spell(f)} and a half times`;
   return `more than ${spell(f)} times`;
 };
 const int = (n: number) => Math.round(n).toLocaleString('en-GB');
@@ -453,58 +457,67 @@ const reference = market.models
 
       {pair && (
         <>
-          <h2>Same model. Same tasks. Same price. {mult(pair.ratio)} different cost.</h2>
+          <h2>
+            Same model. Same tasks. Cheaper tokens. {mult(pair.ratio)} the cost.
+          </h2>
           <p class="tm-note">
             We ran the same {m.tasks} coding tasks on {m.model_name} across
-            {' '}{m.routes.length} host routes. Two of those hosts advertised the same token
-            price and passed every task, and one of them cost {times(pair.ratio)} as much to
+            {' '}{m.routes.length} host routes. One host advertises tokens
+            {' '}{Math.round((1 - pair.dear_listed / pair.cheap_listed) * 100)} per cent cheaper
+            than another and passed every task, and it cost {times(pair.ratio)} as much to
             finish the work.
           </p>
 
           <div class="tm-panel mk-wrap">
             <svg viewBox={`0 0 ${PAIR_W} ${PAIR_H}`} class="mk-svg" role="img"
-                 aria-label={`Two hosts serving ${m.model_name}, both advertising $${pair.listed_price.toFixed(2)} per million input tokens and both passing ${pair.cheap.passed} of ${pair.cheap.attempted} tasks. Cost per successful task was $${pair.cheap.cost_per_task.toFixed(4)} on ${pair.cheap.tag} and $${pair.dear.cost_per_task.toFixed(4)} on ${pair.dear.tag}, ${pair.ratio.toFixed(1)} times more. They spent ${Math.round(pair.cheap.reasoning_per_task)} and ${Math.round(pair.dear.reasoning_per_task)} reasoning tokens per task respectively.`}>
-              <text x={PC1} y="22" class="mk-ax mk-ax-row">{routeLabel(pair.cheap.tag)}</text>
-              <text x={PC2} y="22" class="mk-ax mk-ax-row">{routeLabel(pair.dear.tag)}</text>
+                 aria-label={`Two hosts serving ${m.model_name}. ${routeLabel(pair.dear.tag)} advertises $${pair.dear_listed.toFixed(3)} per million input tokens against $${pair.cheap_listed.toFixed(3)} for ${routeLabel(pair.cheap.tag)}, and both passed ${pair.dear.passed} of ${pair.dear.attempted} tasks. Cost per successful task ran the other way: $${pair.dear.cost_per_task.toFixed(4)} on the cheaper-advertised host against $${pair.cheap.cost_per_task.toFixed(4)}, which is ${pair.ratio.toFixed(1)} times more. They spent ${Math.round(pair.dear.reasoning_per_task)} and ${Math.round(pair.cheap.reasoning_per_task)} reasoning tokens per task respectively.`}>
+              {/* The host with the CHEAPER advertised price sits on the left, so the reader
+                  reads the columns in the order the argument runs: this one looks cheaper,
+                  then it turns out to cost more. `pair.dear` and `pair.cheap` are named for
+                  measured cost, which is why the dear one is on the left here. */}
+              <text x={PC1} y="22" class="mk-ax mk-ax-row">{routeLabel(pair.dear.tag)}</text>
+              <text x={PC2} y="22" class="mk-ax mk-ax-row">{routeLabel(pair.cheap.tag)}</text>
 
-              {/* The controls. An equals sign between the two columns says "held constant"
-                  faster than a sentence can, and inside a diagram it is a graphic rather
-                  than grammar. */}
+              {/* Two comparators carry the setup: the advertised prices are NOT equal and the
+                  task counts are, so a reader gets "looks cheaper, did the same work" before
+                  the cost row contradicts it. Inside a diagram a glyph is a graphic rather
+                  than grammar, which is where COPY.md allows it. */}
               <text x={PL} y="60" class="mk-ax mk-ax-y">Advertised price per 1M tokens</text>
-              <text x={PC1} y="60" class="mk-ax mk-ax-row">{usd(pair.listed_price)}</text>
-              <text x={PEQ} y="60" class="mk-ax mk-ax-c">=</text>
-              <text x={PC2} y="60" class="mk-ax mk-ax-row">{usd(pair.listed_price)}</text>
+              <text x={PC1} y="60" class="mk-ax mk-ax-row">{usdCol(pair.dear_listed)}</text>
+              <text x={PEQ} y="60" class="mk-ax mk-ax-c">{'<'}</text>
+              <text x={PC2} y="60" class="mk-ax mk-ax-row">{usdCol(pair.cheap_listed)}</text>
 
               <text x={PL} y="92" class="mk-ax mk-ax-y">Tasks completed</text>
               <text x={PC1} y="92" class="mk-ax mk-ax-row">
-                {pair.cheap.passed} of {pair.cheap.attempted}
+                {pair.dear.passed} of {pair.dear.attempted}
               </text>
               <text x={PEQ} y="92" class="mk-ax mk-ax-c">=</text>
               <text x={PC2} y="92" class="mk-ax mk-ax-row">
-                {pair.dear.passed} of {pair.dear.attempted}
+                {pair.cheap.passed} of {pair.cheap.attempted}
               </text>
 
               <line x1={PC1} x2={PC2 + PCW} y1="114" y2="114" class="mk-grid" />
 
-              {/* The reveal. Only this row gets bars. */}
+              {/* The reveal, and the only row with bars. The longer bar is now on the left,
+                  which is the point: the cheaper-advertised host is the dearer one. */}
               <text x={PL} y="152" class="mk-ax mk-ax-y">Cost per successful task</text>
-              <text x={PC1} y="152" class="mk-hero-val">{usd4(pair.cheap.cost_per_task)}</text>
-              <text x={PC2} y="152" class="mk-hero-val">{usd4(pair.dear.cost_per_task)}</text>
-              <rect x={PC1} y="166" width={pairBar(pair.cheap.cost_per_task)} height="20"
+              <text x={PC1} y="152" class="mk-hero-val">{usd4(pair.dear.cost_per_task)}</text>
+              <text x={PC2} y="152" class="mk-hero-val">{usd4(pair.cheap.cost_per_task)}</text>
+              <rect x={PC1} y="166" width={pairBar(pair.dear.cost_per_task)} height="20"
                     rx="2" class="mk-hero-bar" />
-              <rect x={PC2} y="166" width={pairBar(pair.dear.cost_per_task)} height="20"
+              <rect x={PC2} y="166" width={pairBar(pair.cheap.cost_per_task)} height="20"
                     rx="2" class="mk-hero-bar" />
-              <text x={PC2} y="206" class="mk-ax mk-ax-row">{mult(pair.ratio)} higher</text>
+              <text x={PC1} y="206" class="mk-ax mk-ax-row">{mult(pair.ratio)} higher</text>
 
               <line x1={PC1} x2={PC2 + PCW} y1="232" y2="232" class="mk-grid" />
 
               {/* Subordinate: smaller, muted, no bars. The mechanism rather than the finding. */}
               <text x={PL} y="262" class="mk-ax mk-ax-y">Reasoning tokens per task</text>
               <text x={PC1} y="262" class="mk-ax">
-                {int(pair.cheap.reasoning_per_task)}
+                {int(pair.dear.reasoning_per_task)}
               </text>
               <text x={PC2} y="262" class="mk-ax">
-                {int(pair.dear.reasoning_per_task)}
+                {int(pair.cheap.reasoning_per_task)}
               </text>
               {/* Kept to one short line: at 11px mono a longer sentence starting at this x ran
                   off the right edge of the viewBox. The compact multiplier is a diagram
@@ -525,10 +538,11 @@ const reference = market.models
             <svg viewBox={`0 0 ${STRIP_W} ${STRIP_H}`} class="mk-svg" role="img"
                  aria-label={`Cost per successful task across all ${routes.length} routes, from $${rLo.toFixed(4)} to $${rHi.toFixed(4)}. The two hosts discussed above sit at $${pair.cheap.cost_per_task.toFixed(4)} and $${pair.dear.cost_per_task.toFixed(4)}.`}>
               {/* The label column, right-aligned to the same edge as the comparison above, one
-                  line per data row. The full range lives here rather than as an axis end
-                  label: the dearest of the eleven is a third host, so a figure sitting at the
-                  right-hand end of the axis with a company name under the row below would
-                  read as that company's number, which it is not. */}
+                  line per data row. The full range lives here rather than as a pair of axis
+                  end labels, because whether an end of the axis belongs to a marked host
+                  changes from night to night: on 9 August the dearest of the eleven was a
+                  third company, and a figure at the right-hand end with a name under the row
+                  below would have read as that company's number. */}
               <text x={PL} y={SY + 4} class="mk-ax mk-ax-y mk-ax-row">
                 Cost per successful task
               </text>
@@ -548,14 +562,17 @@ const reference = market.models
                 </circle>
               ))}
               {marked.map((r: any) => (
-                <>
+                /* Anchored to the end rather than the start once a dot is near the right edge,
+                   because a marked host can also be the dearest of the cohort — on this night
+                   it is — and a label starting at that dot runs off the panel. */
+                <g class={rx(r.cost_per_task) > SRX - 90 ? 'mk-ax-end-r' : ''}>
                   <text x={rx(r.cost_per_task)} y={S_PRICE_Y} class="mk-ax mk-ax-row">
                     {usd4(r.cost_per_task)}
                   </text>
                   <text x={rx(r.cost_per_task)} y={S_NAME_Y} class="mk-ax mk-ax-row">
                     {routeLabel(r.tag)}
                   </text>
-                </>
+                </g>
               ))}
             </svg>
           </div>
