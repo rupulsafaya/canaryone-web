@@ -22,11 +22,12 @@
   "model": "deepseek/deepseek-v4-pro",
   "ratio": 274.1063829787234
  },
- "generated_at": "2026-08-12T13:13:50.791780+00:00",
+ "generated_at": "2026-08-12T13:48:17.370311+00:00",
  "hf_captured_at": "2026-08-11T14:33:46.647393+00:00",
  "hook": {
   "hosts": [
    {
+    "context": 1048576,
     "first": 2.31,
     "last": 2.31,
     "moved": false,
@@ -60,10 +61,12 @@
      2.31
     ],
     "provider": "Alibaba",
+    "quant": "fp8",
     "tag": "alibaba/fast",
     "variant": "fast"
    },
    {
+    "context": 1048576,
     "first": 2.0999999999999996,
     "last": 2.0999999999999996,
     "moved": false,
@@ -97,10 +100,12 @@
      2.0999999999999996
     ],
     "provider": "Wafer",
+    "quant": "fp4",
     "tag": "wafer/fast",
     "variant": "fast"
    },
    {
+    "context": 1048576,
     "first": 2.0999999999999996,
     "last": 2.0999999999999996,
     "moved": false,
@@ -134,10 +139,12 @@
      2.0999999999999996
     ],
     "provider": "Fireworks",
+    "quant": "unknown",
     "tag": "fireworks/fast",
     "variant": "fast"
    },
    {
+    "context": 262144,
     "first": 2.0999999999999996,
     "last": 2.0999999999999996,
     "moved": false,
@@ -171,10 +178,12 @@
      2.0999999999999996
     ],
     "provider": "Cloudflare",
+    "quant": "unknown",
     "tag": "cloudflare/fast",
     "variant": "fast"
    },
    {
+    "context": 1048576,
     "first": 2.0999999999999996,
     "last": 2.0999999999999996,
     "moved": false,
@@ -208,10 +217,12 @@
      2.0999999999999996
     ],
     "provider": "BaseTen",
+    "quant": "fp8",
     "tag": "baseten/fast",
     "variant": "fast"
    },
    {
+    "context": 1048576,
     "first": 1.1760000000000002,
     "last": 1.4,
     "moved": true,
@@ -245,10 +256,12 @@
      1.4
     ],
     "provider": "Baidu",
+    "quant": "fp8",
     "tag": "baidu/fp8",
     "variant": "fp8"
    },
    {
+    "context": 1048576,
     "first": 1.4,
     "last": 1.4,
     "moved": false,
@@ -282,10 +295,12 @@
      1.4
     ],
     "provider": "Z.AI",
+    "quant": "fp8",
     "tag": "z-ai/fp8",
     "variant": "fp8"
    },
    {
+    "context": 1048576,
     "first": 1.4,
     "last": 1.4,
     "moved": false,
@@ -319,10 +334,12 @@
      1.4
     ],
     "provider": "Fireworks",
+    "quant": "unknown",
     "tag": "fireworks",
     "variant": null
    },
    {
+    "context": 262144,
     "first": 1.4,
     "last": 1.4,
     "moved": false,
@@ -356,10 +373,12 @@
      1.4
     ],
     "provider": "Cloudflare",
+    "quant": "unknown",
     "tag": "cloudflare",
     "variant": null
    },
    {
+    "context": 1048576,
     "first": 1.4,
     "last": 1.4,
     "moved": false,
@@ -393,10 +412,12 @@
      1.4
     ],
     "provider": "Friendli",
+    "quant": "unknown",
     "tag": "friendli",
     "variant": null
    },
    {
+    "context": 262144,
     "first": 1.4,
     "last": 1.4,
     "moved": false,
@@ -430,10 +451,12 @@
      1.4
     ],
     "provider": "Parasail",
+    "quant": "fp4",
     "tag": "parasail/fp4",
     "variant": "fp4"
    },
    {
+    "context": 1000000,
     "first": 1.4,
     "last": 1.4,
     "moved": false,
@@ -467,10 +490,12 @@
      1.4
     ],
     "provider": "Venice",
+    "quant": "fp8",
     "tag": "venice/fp8",
     "variant": "fp8"
    },
    {
+    "context": 512000,
     "first": 1.4,
     "last": 1.4,
     "moved": false,
@@ -504,10 +529,12 @@
      1.4
     ],
     "provider": "Together",
+    "quant": "unknown",
     "tag": "together",
     "variant": null
    },
    {
+    "context": 1048576,
     "first": 1.4,
     "last": 1.4,
     "moved": false,
@@ -541,10 +568,12 @@
      1.4
     ],
     "provider": "Crusoe",
+    "quant": "fp8",
     "tag": "crusoe/fp8",
     "variant": "fp8"
    },
    {
+    "context": 1048576,
     "first": 1.4,
     "last": 1.4,
     "moved": false,
@@ -578,10 +607,12 @@
      1.4
     ],
     "provider": "BaseTen",
+    "quant": "fp8",
     "tag": "baseten/fp8",
     "variant": "fp8"
    },
    {
+    "context": 1048576,
     "first": 1.26,
     "last": 1.26,
     "moved": false,
@@ -615,10 +646,12 @@
      1.26
     ],
     "provider": "Wafer",
+    "quant": "fp4",
     "tag": "wafer",
     "variant": null
    },
    {
+    "context": 1048576,
     "first": 1.26,
     "last": 1.26,
     "moved": false,
@@ -652,10 +685,12 @@
      1.26
     ],
     "provider": "AtlasCloud",
+    "quant": "fp8",
     "tag": "atlas-cloud/fp8",
     "variant": "fp8"
    },
    {
+    "context": 1048576,
     "first": 1.19,
     "last": 1.19,
     "moved": false,
@@ -689,10 +724,12 @@
      1.19
     ],
     "provider": "SiliconFlow",
+    "quant": "fp8",
     "tag": "siliconflow/fp8",
     "variant": "fp8"
    },
    {
+    "context": 1048576,
     "first": 1.26,
     "last": 1.1340000000000001,
     "moved": true,
@@ -726,10 +763,12 @@
      1.1340000000000001
     ],
     "provider": "Phala",
+    "quant": "unknown",
     "tag": "phala",
     "variant": null
    },
    {
+    "context": null,
     "first": 1.1,
     "last": 1.1,
     "moved": false,
@@ -763,10 +802,12 @@
      null
     ],
     "provider": "Morph",
+    "quant": null,
     "tag": "morph",
     "variant": null
    },
    {
+    "context": 202752,
     "first": 1.0499999999999998,
     "last": 1.0499999999999998,
     "moved": false,
@@ -800,10 +841,12 @@
      1.0499999999999998
     ],
     "provider": "Ambient",
+    "quant": "fp8",
     "tag": "ambient/fp8",
     "variant": "fp8"
    },
    {
+    "context": 1048576,
     "first": 0.966,
     "last": 0.966,
     "moved": false,
@@ -837,10 +880,12 @@
      0.966
     ],
     "provider": "Alibaba",
+    "quant": "fp8",
     "tag": "alibaba/fp8",
     "variant": "fp8"
    },
    {
+    "context": 96890,
     "first": 0.77,
     "last": 0.77,
     "moved": false,
@@ -874,10 +919,12 @@
      0.77
     ],
     "provider": "AkashML",
+    "quant": "fp8",
     "tag": "akashml/fp8",
     "variant": "fp8"
    },
    {
+    "context": 262144,
     "first": 0.76,
     "last": 0.76,
     "moved": false,
@@ -911,10 +958,12 @@
      0.76
     ],
     "provider": "CoreWeave",
+    "quant": "fp4",
     "tag": "coreweave/fp4",
     "variant": "fp4"
    },
    {
+    "context": 1024000,
     "first": 0.693,
     "last": 0.75306,
     "moved": true,
@@ -948,10 +997,12 @@
      0.75306
     ],
     "provider": "StreamLake",
+    "quant": "fp8",
     "tag": "streamlake/fp8",
     "variant": "fp8"
    },
    {
+    "context": 1048576,
     "first": 0.7,
     "last": 0.7518,
     "moved": true,
@@ -985,10 +1036,12 @@
      0.7518
     ],
     "provider": "Novita",
+    "quant": "fp8",
     "tag": "novita/fp8",
     "variant": "fp8"
    },
    {
+    "context": 1048576,
     "first": 0.75,
     "last": 0.75,
     "moved": false,
@@ -1022,10 +1075,12 @@
      0.75
     ],
     "provider": "DeepInfra",
+    "quant": "fp4",
     "tag": "deepinfra/fp4",
     "variant": "fp4"
    },
    {
+    "context": 1048576,
     "first": 0.94,
     "last": 0.75,
     "moved": true,
@@ -1059,10 +1114,12 @@
      0.75
     ],
     "provider": "Inceptron",
+    "quant": "fp4",
     "tag": "inceptron/fp4",
     "variant": "fp4"
    },
    {
+    "context": 1048576,
     "first": 0.9239999999999999,
     "last": 0.742,
     "moved": true,
@@ -1096,10 +1153,12 @@
      0.742
     ],
     "provider": "GMICloud",
+    "quant": "fp8",
     "tag": "gmicloud/fp8",
     "variant": "fp8"
    },
    {
+    "context": 1048576,
     "first": 0.6,
     "last": 0.72,
     "moved": true,
@@ -1133,10 +1192,12 @@
      0.72
     ],
     "provider": "Decart",
+    "quant": "fp4",
     "tag": "decart/fp4",
     "variant": "fp4"
    },
    {
+    "context": 262144,
     "first": 1.0499999999999998,
     "last": 0.63,
     "moved": true,
@@ -1170,10 +1231,12 @@
      0.63
     ],
     "provider": "DigitalOcean",
+    "quant": "unknown",
     "tag": "digitalocean",
     "variant": null
    },
    {
+    "context": 1048576,
     "first": 1.0,
     "last": 0.5,
     "moved": true,
@@ -1207,6 +1270,7 @@
      0.5
     ],
     "provider": "Sail Research",
+    "quant": "fp8",
     "tag": "sail-research/fp8",
     "variant": "fp8"
    }

@@ -88,6 +88,17 @@ const pair = m?.same_price_pair;
    thing being singled out.
    --------------------------------------------------------------------------- */
 
+/* ---- mark sizes ----
+   Two radii for the whole page and no third. Every dot is either a data point or a data point
+   being singled out, so five ad-hoc values (2.5, 4, 4.5, 5 and 6) were four too many and the
+   charts read as separate exercises rather than one system.
+
+   These are viewBox units, so they only render at a consistent size if every chart shares a
+   scale factor. The wide charts are 800 units in a panel about 1072px across, which is 1.34.
+   The tiles are a quarter of that width, so their viewBox is a quarter as wide — see TW —
+   and the same R_SM draws the same number of screen pixels in both. */
+const R_SM = 4, R_LG = 6;
+
 /* 1. The hook: one small labelled chart per company, not one chart with 32 lines.
    The first version drew all 32 series in a single frame and was unreadable — no
    legend can name 32 lines, and this design system has no categorical palette to
@@ -100,8 +111,12 @@ const hkHosts = hook.hosts.filter((h: any) => h.last != null);
 const hkN = hook.stamps.length;
 /* One tile, drawn once per company. Small enough that 32 of them fit, tall enough that the
    shared vertical scale can actually separate a 50-cent company from a $2.31 one — at 52
-   units the whole market compressed into about eleven pixels of height. */
-const TW = 240, TH = 58, TP = 5;
+   units the whole market compressed into about eleven pixels of height.
+
+   190 units wide rather than 240, so a tile renders at roughly the same scale factor as the
+   800-unit wide charts and R_SM draws the same size of dot in both. At 240 the endpoint dot
+   and the line were visibly finer than every other mark on the page. */
+const TW = 190, TH = 46, TP = 4;
 const hkVals = hkHosts.flatMap((h: any) => h.points.filter((p: any) => p != null)) as number[];
 const hkLo = Math.min(...hkVals), hkHi = Math.max(...hkVals);
 /* Logarithmic, for the same reason the ladder is. Three companies ran a discount that took
@@ -135,6 +150,15 @@ const byPrice = (a: any, b: any) => a.last - b.last;
 const hkFlat = hkHosts.filter((h: any) => !h.moved).sort(byPrice);
 const hkMoved = hkHosts.filter((h: any) => h.moved).sort(byPrice);
 const hkLabel = (h: any) => h.provider + (h.variant ? ` ${h.variant}` : '');
+/* The hover text for a dot on the flat-price strip. Name, price and two facts that are
+   nowhere else on the page: what precision the company says it serves at, and how much
+   context it gives you, which runs from 94K to 1024K across these same weights. */
+const hkTip = (h: any) => [
+  hkLabel(h),
+  `${usd(h.last)} per 1M`,
+  h.quant && h.quant !== 'unknown' ? `${h.quant} precision` : 'precision not stated',
+  h.context ? `${Math.round(h.context / 1024)}K context` : null,
+].filter(Boolean).join(' · ');
 const hkTop = hkHosts.reduce((a: any, b: any) => (b.last > a.last ? b : a));
 const hkBot = hkHosts.reduce((a: any, b: any) => (b.last < a.last ? b : a));
 /* The deepest swing inside a single company's own week. Unnamed in the copy: the size of a
@@ -145,6 +169,78 @@ const hkSwing = Math.max(
     return Math.max(...v) / Math.min(...v);
   }),
 );
+/* ---- the shared grid ----
+   One label column and two value columns, used by three blocks below: the flat-price strip,
+   the measured pair and the cohort strip. Declared here rather than inside the pair because
+   all three read them, and a strip whose dots started at its own left edge would not line up
+   under the comparison it belongs to. Hoisted after the flat strip tried to call fsx() at
+   module scope and hit "Cannot access 'PC1' before initialization". */
+const PAIR_W = 800, PAIR_H = 306;
+const PL = 252;                        /* row labels end here */
+const PC1 = 280, PC2 = 540, PCW = 220; /* two value columns, left edge and width */
+/* Every value in a column shares that column's left edge, including the bar, so each column
+   reads as one column. The equals sign sits in the gap between them. */
+const PEQ = (PC1 + PC2) / 2;
+
+/* 1a. The companies that never moved, as a stacked dot plot rather than 23 flat sparklines.
+   A tile per company was a lot of space for "nothing happened": 23 boxes each drawing one
+   horizontal line, where the only information was the line's height.
+
+   Stacked rather than a single row, which is what the shape of the data forces. The 23 sit on
+   just 11 distinct prices, nine of them at exactly $1.40, so one row would draw 11 visible
+   dots and bury 12 companies underneath them where no hover could reach. Stacking makes the
+   cluster the thing you see first, which is the finding this section was hiding.
+
+   Vertical position therefore carries no meaning of its own; it is only how many companies
+   share that price. Same grid as the cohort strip lower down: label column right-aligned to
+   PL, data area between the hero's own column edges. */
+const FS_DOT = R_SM, FS_GAP = 11, FS_PAD = 8;
+const fsLo = hkFlat.length ? Math.min(...hkFlat.map((h: any) => h.last)) : 0;
+const fsHi = hkFlat.length ? Math.max(...hkFlat.map((h: any) => h.last)) : 1;
+/* Linear, not logarithmic. The whole range is three-fold, which a linear axis shows honestly
+   and without a scale a reader has to be told about. Inset by FS_PAD so the cheapest dot does
+   not sit half on top of the end of the axis rule. */
+const fsx = (v: number) =>
+  PC1 + FS_PAD
+  + (fsHi === fsLo ? 0 : (v - fsLo) / (fsHi - fsLo)) * (PC2 + PCW - PC1 - FS_PAD * 2);
+
+/* Row assignment, not grouping by equal price. Grouping only stacks dots whose prices match
+   exactly, which left DeepInfra at $0.750, CoreWeave at $0.760 and AkashML at $0.770 drawn
+   three pixels apart as one grey blob with three tooltips fighting over the same spot.
+   Working left to right and dropping each dot into the lowest row where it clears the last
+   dot already in that row handles equal and merely-close prices with one rule. Prices keep
+   their true position on the axis; only the row is invented. */
+const FS_MIN_DX = FS_DOT * 2 + 2;
+const fsRowLastX: number[] = [];
+const fsPlaced = [...hkFlat]
+  .sort((a: any, b: any) => a.last - b.last || hkLabel(a).localeCompare(hkLabel(b)))
+  .map((h: any) => {
+    const x = fsx(h.last);
+    let row = 0;
+    while (fsRowLastX[row] !== undefined && x - fsRowLastX[row] < FS_MIN_DX) row++;
+    fsRowLastX[row] = x;
+    return { host: h, x, row };
+  });
+/* Sized from the tallest column so a night with a deeper cluster grows the panel instead of
+   drawing dots off the top of it. */
+const fsRows = fsPlaced.length ? 1 + Math.max(...fsPlaced.map((p) => p.row)) : 1;
+const FS_AX = 20 + (fsRows - 1) * FS_GAP + 9;
+const FS_H = FS_AX + 46;
+
+/* Labels name the clusters only. Grouped on the exact listed price here rather than on the
+   drawn rows, because "nine companies charge exactly this" is the claim; three companies
+   whose prices merely round together is not. */
+const fsStacks = Object.values(
+  hkFlat.reduce((acc: Record<string, any>, h: any) => {
+    const key = h.last.toFixed(3);
+    (acc[key] ??= { price: h.last, hosts: [] }).hosts.push(h);
+    return acc;
+  }, {}),
+).sort((a: any, b: any) => a.price - b.price);
+const fsLabelled = fsStacks.filter((g: any) => g.hosts.length >= 3);
+const fsBiggest = fsStacks.reduce((a: any, b: any) => (b.hosts.length > a.hosts.length ? b : a),
+  { hosts: [] } as any);
+
 /* 1b. The measured pair, as a hero comparison rather than a four-row table.
    Two columns held throughout, so the same two hosts occupy the same two positions in every
    row. The first two rows are the controls and carry an equals sign between them; the cost
@@ -168,12 +264,6 @@ if (market.hook.model === m?.model) {
 }
 const routeLabel = (tag: string) => tagNames[tag] ?? tag;
 
-const PAIR_W = 800, PAIR_H = 306;
-const PL = 252;                       /* row labels end here */
-const PC1 = 280, PC2 = 540, PCW = 220; /* two value columns, left edge and width */
-/* Every value in a column shares that column's left edge, including the bar, so each column
-   reads as one column. The equals sign sits in the gap between them. */
-const PEQ = (PC1 + PC2) / 2;
 const pairMax = pair ? Math.max(pair.cheap.cost_per_task, pair.dear.cost_per_task) : 1;
 const pairBar = (v: number) => (v / pairMax) * PCW;
 
@@ -322,12 +412,10 @@ const reference = market.models
 
       <h2>One model, {hkHosts.length} companies, one week of prices</h2>
       <p class="tm-note">
-        One box per company, each showing what that company charged for
+        One box per company, showing what it charged for
         {' '}{hook.name.split(': ').pop()} across {hkN} reads since
-        {' '}{fmt(hook.stamps[0], false)}. The weights are identical in all
-        {' '}{hkHosts.length} of them. Every box uses the same vertical scale, so the height of
-        a line is comparable from one box to the next, and a line that drops away is a discount
-        that was running at the time.
+        {' '}{fmt(hook.stamps[0], false)}. Identical weights in all {hkHosts.length}. Every box
+        shares one vertical scale, and a line that drops away is a discount.
       </p>
 
       <p class="tm-group-label">
@@ -346,42 +434,81 @@ const reference = market.models
             <svg viewBox={`0 0 ${TW} ${TH}`} class="mk-spark" role="img"
                  aria-label={`${hkLabel(h)} charged $${h.first.toFixed(2)} per million tokens at the start of the week and $${h.last.toFixed(2)} at the end.`}>
               <path d={hkPath(h.points)} class="mk-spark-line" />
-              <circle cx={tx(hkN - 1)} cy={ty(h.last)} r="2.5" class="mk-spark-end" />
+              <circle cx={tx(hkN - 1)} cy={ty(h.last)} r={R_SM} class="mk-spark-end" />
             </svg>
             <p class="mk-tile-foot">was {usd(h.first)}</p>
           </li>
         ))}
       </ul>
 
-      <p class="tm-group-label">
-        Held the same price all week
-        <span class="tm-picker-count">{hkFlat.length} of {hkHosts.length} companies</span>
+      <p class="tm-note mk-strip-lede">
+        The other {hkFlat.length} never moved. One dot per company, stacked where several
+        charge the same price. Hover a dot for its precision and context window.
       </p>
-      <ul class="tm-picker-grid mk-tiles">
-        {hkFlat.map((h: any) => (
-          <li class="mk-tile">
-            <p class="mk-tile-top">
-              <span class="mk-tile-name">
-                {h.provider}{h.variant && <span class="mk-tile-var"> {h.variant}</span>}
-              </span>
-              <span class="mk-tile-price">{usd(h.last)}</span>
-            </p>
-            <svg viewBox={`0 0 ${TW} ${TH}`} class="mk-spark" role="img"
-                 aria-label={`${hkLabel(h)} charged $${h.last.toFixed(2)} per million tokens for the whole week.`}>
-              <path d={hkPath(h.points)} class="mk-spark-line" />
-              <circle cx={tx(hkN - 1)} cy={ty(h.last)} r="2.5" class="mk-spark-end" />
-            </svg>
-          </li>
-        ))}
-      </ul>
+      <div class="tm-panel mk-wrap">
+        <svg viewBox={`0 0 ${PAIR_W} ${FS_H}`} class="mk-svg" role="img"
+             aria-label={`Listed price of the ${hkFlat.length} companies that held the same price all week, from $${fsLo.toFixed(3)} to $${fsHi.toFixed(3)} per million tokens. They sit on ${fsStacks.length} distinct prices, and ${fsBiggest.hosts.length} of them charge exactly $${fsBiggest.price.toFixed(2)}.`}>
+          <text x={PL} y={FS_AX - 14} class="mk-ax mk-ax-y mk-ax-row">Held the same price all week</text>
+          <text x={PL} y={FS_AX + 8} class="mk-ax mk-ax-y">{usd(fsLo)} to {usd(fsHi)} per 1M</text>
+          <text x={PL} y={FS_AX + 30} class="mk-ax mk-ax-y">
+            {hkFlat.length} of {hkHosts.length} companies
+          </text>
+
+          <line x1={PC1} x2={PC2 + PCW} y1={FS_AX} y2={FS_AX} class="mk-grid" />
+
+          {fsPlaced.map((p: any) => (
+            <circle cx={p.x} cy={FS_AX - 9 - p.row * FS_GAP} r={FS_DOT} class="mk-flat-dot">
+              <title>{hkTip(p.host)}</title>
+            </circle>
+          ))}
+
+          {fsLabelled.map((g: any) => (
+            <>
+              <text x={fsx(g.price)} y={FS_AX + 18} class="mk-ax mk-ax-c mk-ax-row">
+                {usd(g.price)}
+              </text>
+              <text x={fsx(g.price)} y={FS_AX + 34} class="mk-ax mk-ax-c">
+                {g.hosts.length} companies
+              </text>
+            </>
+          ))}
+        </svg>
+      </div>
+
+      {/* The table twin for the strip above. A hover may enhance a chart and must not be the
+          only way to reach a value: there is no hover on a touch screen, and these 23
+          companies' names and prices appear nowhere else on the page. Collapsed because the
+          finding is the shape of the cluster and this is the lookup behind it. */}
+      <details class="tm-table">
+        <summary>The {hkFlat.length} companies that held their price, as a table</summary>
+        <div class="tm-table-scroll">
+          <table class="tm-data-table">
+            <thead>
+              <tr>
+                <th scope="col">Company</th>
+                <th>Price per 1M</th>
+                <th>Precision</th>
+                <th>Context</th>
+              </tr>
+            </thead>
+            <tbody>
+              {hkFlat.map((h: any) => (
+                <tr>
+                  <th scope="row">{hkLabel(h)}</th>
+                  <td>{usdCol(h.last)}</td>
+                  <td>{h.quant && h.quant !== 'unknown' ? h.quant : 'not stated'}</td>
+                  <td>{h.context ? `${Math.round(h.context / 1024)}K` : '—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
       <p class="tm-coverage">
-        Most of this market does not move. {hkFlat.length} of the {hkHosts.length} companies
-        held the same price for the whole week, and the gap between the cheapest and the dearest
-        is there on every read. The steepest move among the
-        {' '}{hkMoved.length} that did change was a discount that cut one company's price by
-        {' '}{Math.round((1 - 1 / hkSwing) * 100)} per cent and then expired, leaving it above
-        where the week started. Each line is the price after whatever discount that company was
-        advertising at that moment, which is what a buyer pays. Metadata read {captured}.
+        The steepest move was a discount that cut one company's price by
+        {' '}{Math.round((1 - 1 / hkSwing) * 100)} per cent before expiring above where the week
+        started. Every price here is what a buyer pays after whatever discount was running at
+        that moment. Metadata read {captured}.
         {' '}<a href={hook.or_url} rel="noopener" target="_blank">Check these prices on
         OpenRouter →</a>
       </p>
@@ -555,10 +682,9 @@ const reference = market.models
 
               <line x1={SL} x2={SRX} y1={SY} y2={SY} class="mk-grid" />
               {routes.map((r: any) => (
-                <circle cx={rx(r.cost_per_task)} cy={SY} r={isPairTag(r.tag) ? 6 : 4}
+                <circle cx={rx(r.cost_per_task)} cy={SY} r={isPairTag(r.tag) ? R_LG : R_SM}
                         class={isPairTag(r.tag) ? 'mk-strip-dot mk-strip-dot-on' : 'mk-strip-dot'}>
-                  <title>{routeLabel(r.tag)} · {usd4(r.cost_per_task)} per successful task ·
-                    {' '}{r.passed} of {r.attempted} passed</title>
+                  <title>{`${routeLabel(r.tag)} · ${usd4(r.cost_per_task)} per successful task · ${r.passed} of ${r.attempted} passed`}</title>
                 </circle>
               ))}
               {marked.map((r: any) => (
@@ -578,13 +704,12 @@ const reference = market.models
           </div>
 
           <p class="tm-coverage">
-            Measured workload: {m.model_name} on {m.routes.length} routes,
-            {' '}{m.tasks} coding tasks each, run on the night of
+            Measured workload, run on the night of
             {' '}{fmt(m.night + 'T00:00:00Z', false)}. Total spend divided by the tasks that
-            actually completed, so failed work stays in the cost. Unlike the listed prices
-            higher up this page, these figures cost money to reproduce and stay at that date
-            until the next run. The size of a gap like this repeats from night to night; which
-            host sits at either end does not, so read the multiple rather than the names.
+            completed, so failed work stays in the cost. These figures cost money to reproduce
+            and hold that date until the next run. The size of a gap repeats from night to
+            night; which host sits at either end does not, so read the multiple rather than the
+            names.
           </p>
         </>
       )}
@@ -600,9 +725,9 @@ const reference = market.models
         <svg viewBox={`0 0 ${LW} ${LH}`} class="mk-svg" role="img"
              aria-label={`Listed input price range across hosts for ${ladder.length} open-weight models. Every model's hosts differ in price, from 1.25 times on the narrowest to ${ladderMax ? ladderMax.ratio.toFixed(1) : ''} times on the widest. The table lower down the page gives every figure.`}>
           <g>
-            <circle cx={LL + 6} cy="12" r="4.5" class="mk-end mk-end-lo" />
+            <circle cx={LL + 6} cy="12" r={R_SM} class="mk-end mk-end-lo" />
             <text x={LL + 18} y="16" class="mk-ax">Cheapest listed host</text>
-            <circle cx={LL + 176} cy="12" r="4.5" class="mk-end" />
+            <circle cx={LL + 176} cy="12" r={R_SM} class="mk-end" />
             <text x={LL + 188} y="16" class="mk-ax">Dearest listed host</text>
           </g>
           {lTicks.map((t) => (
@@ -623,11 +748,11 @@ const reference = market.models
               <rect x="0" y={ly(i) - LROW / 2} width={LW} height={LROW} class="mk-row-band" />
               <text x={LL - 12} y={ly(i) + 4} class="mk-ax mk-ax-y mk-ax-row">{r.short}</text>
               <line x1={lx(r.min)} x2={lx(r.max)} y1={ly(i)} y2={ly(i)} class="mk-range" />
-              <circle cx={lx(r.min)} cy={ly(i)} r="4.5" class="mk-end mk-end-lo">
-                <title>{r.short} · cheapest listed host {usd(r.min)} per 1M</title>
+              <circle cx={lx(r.min)} cy={ly(i)} r={R_SM} class="mk-end mk-end-lo">
+                <title>{`${r.short} · cheapest listed host ${usd(r.min)} per 1M`}</title>
               </circle>
-              <circle cx={lx(r.max)} cy={ly(i)} r="4.5" class="mk-end">
-                <title>{r.short} · dearest listed host {usd(r.max)} per 1M</title>
+              <circle cx={lx(r.max)} cy={ly(i)} r={R_SM} class="mk-end">
+                <title>{`${r.short} · dearest listed host ${usd(r.max)} per 1M`}</title>
               </circle>
               <text x={LW - 8} y={ly(i) + 4} class="mk-ax mk-ax-end-r">{mult(r.ratio)}</text>
             </g>
@@ -665,16 +790,16 @@ const reference = market.models
             {xt.map((t) => <text x={sx(t)} y={H - 28} class="mk-ax mk-ax-c">${t.toFixed(2)}</text>)}
             <text x={8} y="14" class="mk-ax">First token, seconds</text>
             <g>
-              <circle cx={L + 6} cy={H - 12} r="4.5" class="mk-dot mk-dot-off" />
+              <circle cx={L + 6} cy={H - 12} r={R_SM} class="mk-dot mk-dot-off" />
               <text x={L + 18} y={H - 8} class="mk-ax">Not serving requests at this read</text>
               <text x={W - R} y={H - 8} class="mk-ax mk-ax-end-r">
                 Blended price per 1M tokens, logarithmic
               </text>
             </g>
             {pts.map((p: any) => (
-              <circle cx={sx(p.price)} cy={sy(p.ttft)} r="5"
+              <circle cx={sx(p.price)} cy={sy(p.ttft)} r={R_SM}
                       class={p.status === 0 ? 'mk-dot' : 'mk-dot mk-dot-off'}>
-                <title>{p.tag} · {usd(p.price)} per 1M · {(p.ttft / 1000).toFixed(1)}s</title>
+                <title>{`${p.tag} · ${usd(p.price)} per 1M · ${(p.ttft / 1000).toFixed(1)}s first token`}</title>
               </circle>
             ))}
           </svg>
@@ -707,9 +832,9 @@ const reference = market.models
         <svg viewBox={`0 0 ${CW} ${CH}`} class="mk-svg" role="img"
              aria-label={`Tool-calling support across ${capsTotal} live endpoints serving ${caps.length} models. ${capsMissing} endpoints do not advertise tool calling, concentrated on ${caps[0].short}, where ${caps[0].missing} of ${caps[0].grid.length} hosts lack it.`}>
           <g>
-            <circle cx={CL + 6} cy="14" r="4.5" class="mk-cell" />
+            <circle cx={CL + 6} cy="14" r={R_SM} class="mk-cell" />
             <text x={CL + 18} y="18" class="mk-ax">Advertises tool calling</text>
-            <circle cx={CL + 200} cy="14" r="4.5" class="mk-cell mk-cell-off" />
+            <circle cx={CL + 200} cy="14" r={R_SM} class="mk-cell mk-cell-off" />
             <text x={CL + 212} y="18" class="mk-ax">Does not</text>
           </g>
           {caps.map((c: any, i: number) => (
@@ -718,9 +843,9 @@ const reference = market.models
                 {c.short}
               </text>
               {c.grid.map((g: any, j: number) => (
-                <circle cx={CL + j * CCELL + CCELL / 2} cy={CT + i * CCELL + CCELL / 2} r="4.5"
+                <circle cx={CL + j * CCELL + CCELL / 2} cy={CT + i * CCELL + CCELL / 2} r={R_SM}
                         class={g.tools ? 'mk-cell' : 'mk-cell mk-cell-off'}>
-                  <title>{c.short} · {g.tag} · {g.tools ? 'tool calling' : 'no tool calling'}</title>
+                  <title>{`${c.short} · ${g.tag} · ${g.tools ? 'tool calling' : 'no tool calling'}`}</title>
                 </circle>
               ))}
               {c.missing > 0 && (
@@ -755,7 +880,7 @@ const reference = market.models
           {precSegs.map((s: any) => (
             <g>
               <rect x={s.x} y="8" width={s.w} height={PBAR} rx="3" class={s.cls}>
-                <title>{s.n} of {prec.total} endpoints · {s.label}</title>
+                <title>{`${s.n} of ${prec.total} endpoints · ${s.label}`}</title>
               </rect>
               <text x={s.lx} y={PBAR + 32} class="mk-ax mk-ax-c mk-ax-row">{s.n}</text>
               <text x={s.lx} y={PBAR + 50} class="mk-ax mk-ax-c">{s.label}</text>
@@ -804,6 +929,11 @@ const reference = market.models
      with the viewBox. --chart-min is the floor; above it every chart is fluid. */
   .mk-wrap { overflow-x: auto; }
   .mk-svg { width: 100%; min-width: var(--chart-min); height: auto; display: block; }
+
+  /* One opacity for every dot that is not the subject of its chart, so the greys match between
+     the flat-price strip and the cohort strip instead of sitting at 0.55 and 0.32. Local rather
+     than in :root because it is an alpha on one page's marks, not a palette value. */
+  .mk-svg { --mk-dim: 0.5; }
   .mk-grid { stroke: var(--line); stroke-width: 1; }
 
   /* Axis and label ink. Sizes come from the type scale; only the SVG geometry —
@@ -845,7 +975,18 @@ const reference = market.models
   .mk-tile-var { color: var(--muted); }
   .mk-spark { width: 100%; height: auto; display: block; }
   .mk-spark-line { fill: none; stroke: var(--text); stroke-width: 1.5; stroke-linejoin: round; }
-  .mk-spark-end { fill: var(--text); }
+  .mk-spark-end { fill: var(--text); stroke: var(--panel); stroke-width: 1.5; }
+
+  /* The flat-price strip. Grey rather than the series ink because no dot here is the subject:
+     the shape of the cluster is. The panel-coloured stroke is the gap that keeps a stack of
+     nine reading as nine dots rather than one column, and the hover darkens the dot under the
+     pointer so the tooltip that follows is clearly attached to it. */
+  .mk-flat-dot {
+    fill: var(--muted); fill-opacity: var(--mk-dim);
+    stroke: var(--panel); stroke-width: 1.5;
+    transition: fill var(--dur-base) var(--ease), fill-opacity var(--dur-base) var(--ease);
+  }
+  .mk-flat-dot:hover { fill: var(--text); fill-opacity: 1; }
 
   /* The measured pair. One ink on both bars: the length is the comparison, and a second
      colour would say the same thing twice. The value sits above its own bar at the lede
@@ -858,7 +999,7 @@ const reference = market.models
 
   /* The cohort strip. The nine routes not under discussion stay legible and visibly not the
      subject, which is what stops the pair reading as the whole experiment. */
-  .mk-strip-dot { fill: var(--muted); fill-opacity: 0.32; stroke: var(--panel); stroke-width: 1.5; }
+  .mk-strip-dot { fill: var(--muted); fill-opacity: var(--mk-dim); stroke: var(--panel); stroke-width: 1.5; }
   .mk-strip-dot-on { fill: var(--text); fill-opacity: 1; }
   .mk-strip-lede { margin-top: var(--space-7); }
 
