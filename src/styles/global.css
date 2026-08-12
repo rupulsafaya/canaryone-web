@@ -1771,8 +1771,22 @@ code, pre, .mono {
   border-left: 3px solid var(--accent-deep);
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
   padding: var(--space-4) var(--space-5);
-  max-width: var(--measure-wide);
   margin: var(--space-7) 0 0;
+  /* NO max-width, unlike .tm-note above it, and the omission is deliberate.
+
+     This carried --measure-wide, which capped it at 723px inside a 1072px column. The measure
+     scale exists to stop a line of prose running past the length an eye can track back from,
+     and for a lede that is right. It is the wrong trade for these: they are two- and
+     three-line notes under a chart, where the cost of a long line is the return sweep and
+     there are only two or three sweeps to make. Capping them bought little and spent real
+     vertical space on a page that is already eight chart panels tall.
+
+     Dropping it also lands them exactly on the panel width, so a note and the chart it
+     annotates now share both edges instead of the note stopping two thirds of the way across.
+
+     The pairing with .tm-note is the point: prose stays at prose measure, notes about data run
+     the full column. If a coverage note ever grows past about four lines at full width, the
+     note is too long rather than too wide. */
 }
 
 .tm-coverage:empty {
