@@ -2,7 +2,22 @@
 /**
  * /market — CanaryOne Market.
  *
- * Took over this route on 2026-08-11, replacing the tile-based version that had held it
+ * RESTRUCTURED 2026-08-13, from the review copy that briefly lived at /market-v3. The order is
+ * the argument: the measured finding leads, because it is the only thing on the page nobody
+ * else can publish, and the commercial ask sits directly under it rather than only at the foot.
+ * Then market breadth, price against speed, capability, and the price history last, as the
+ * closing evidence that this is a running system rather than as the opening hook.
+ *
+ * The model reference table went with that change. It was the "look up your own model" block —
+ * model, companies, cheapest, dearest, spread, weights pulled, with brand marks — and it is in
+ * git history if the lookup job turns out to be worth its screen. Deliberate, not an oversight.
+ *
+ * Section headings each carry one sentence a reader understands before inspecting the chart,
+ * which is the rule that shaped this pass: charts support a statement, they do not hide one.
+ *
+ * Its ancestor's history follows, because the machinery is unchanged.
+ *
+ * Took over the /market route on 2026-08-11, replacing the tile-based version that had held it
  * since /prices was renamed. That page is in git history if any of it is wanted back; what
  * it could not do was show host-level history, which is where the disagreement between
  * companies actually lives, so one line per model was the average of a market and hid the
@@ -282,7 +297,9 @@ const pairBar = (v: number) => (v / pairMax) * PCW;
    one block. Three stacked rows — dots, then each marked host's cost, then its name — each
    lining up with one line of the label column. */
 const STRIP_W = 800, STRIP_H = 100;
-const SL = PC1, SRX = PC2 + PCW;        /* the hero's own data edges */
+/* Full width now that the strip carries no label column of its own: the line above it names
+   it, so repeating that inside the panel was the third time the section said the same thing. */
+const SL = 90, SRX = 710;
 const SY = 32, S_PRICE_Y = 60, S_NAME_Y = 82;
 const routes = m ? [...m.routes].sort((a: any, b: any) => a.cost_per_task - b.cost_per_task) : [];
 const rLo = routes.length ? routes[0].cost_per_task : 0;
@@ -351,23 +368,63 @@ const capsMissing = caps.reduce((n: number, c: any) => n + c.missing, 0);
    width, because seven names leave three categories under five endpoints each. */
 const prec = market.precision;
 const PW = 800, PBAR = 52, PGAP = 2;
-const PREC_CLASS: Record<string, string> = {
-  '16-bit': 'mk-seg mk-seg-w16', '8-bit': 'mk-seg mk-seg-w8',
-  '4-bit': 'mk-seg mk-seg-w4', 'Other stated': 'mk-seg mk-seg-w4',
-  'Not stated': 'mk-seg mk-seg-none',
+/* ---- the experiment card ----
+   The measured pair was four comparable rows: price, completion, cost, reasoning. They are not
+   equally important, and giving them one shape made the module read as a worksheet. Rebuilt as
+   a hierarchy: the two controlled facts compact at the top, the cost gap taking most of the
+   visual weight, and reasoning demoted to the sentence that explains it.
+
+   HTML rather than SVG, unlike the charts here. The only graphical part is two bars, and a
+   percentage width draws those in CSS. It buys the thing an 800-unit viewBox costs: the card
+   reflows on a phone instead of needing a sideways swipe. */
+const expDear = pair ? pair.dear.cost_per_task : 0;
+const expCheap = pair ? pair.cheap.cost_per_task : 0;
+const expPct = (v: number) => (expDear ? (v / expDear) * 100 : 0);
+const expCheaperBy = pair
+  ? Math.round((1 - pair.dear_listed / pair.cheap_listed) * 100) : 0;
+const expThink = pair
+  ? pair.dear.reasoning_per_task / pair.cheap.reasoning_per_task : 0;
+
+/* ---- tool calling, as one bar per model ----
+   The dot matrix was credible and cryptic: a reader had to learn that a dot is a company, that
+   rows have different lengths, that filled means tools and a ring means none, and then count
+   the exceptions themselves. The insight underneath is one sentence, so the chart should
+   support a statement rather than hide one.
+
+   Only models with a gap are drawn, worst first. Bar length is proportional to how many
+   companies serve the model, so breadth still reads; the split inside it is supported against
+   not. The models with no gap collapse into a single line, because seven full bars would say
+   nothing seven times. */
+const capBars = market.models
+  .filter((x: any) => x.open_weights && (x.caps_grid ?? []).length > 1)
+  .map((x: any) => {
+    const grid = x.caps_grid;
+    const miss = grid.filter((g: any) => !g.tools).length;
+    return { short: x.short, or_url: x.or_url, total: grid.length, ok: grid.length - miss, miss };
+  })
+  .sort((a: any, b: any) => b.miss - a.miss || b.total - a.total);
+const capGap = capBars.filter((c: any) => c.miss > 0);
+const capClean = capBars.filter((c: any) => c.miss === 0);
+const capMaxTotal = capGap.length ? Math.max(...capGap.map((c: any) => c.total)) : 1;
+const capWorst = capGap[0];
+const capPairs = capBars.reduce((n: number, c: any) => n + c.total, 0);
+const capMissing = capBars.reduce((n: number, c: any) => n + c.miss, 0);
+
+/* ---- precision, as flex ratios rather than SVG geometry, so the bar can be built the same way as
+   the capability bars it now sits beside: one track, four segments, one row tall.
+
+   Two states, matching the rest of the page: a stated width is filled and "not stated" is
+   outlined. The three stated widths take three depths of one ink because they are ordered, and
+   nothing here says a narrower number is worse — we have not measured that. */
+const PREC_DEPTH: Record<string, string> = {
+  '16-bit': 'mk-p-16', '8-bit': 'mk-p-8', '4-bit': 'mk-p-4', 'Other stated': 'mk-p-4',
+  'Not stated': 'mk-p-none',
 };
-let pxAt = 0;
-const precSegs = prec.buckets.map((b: any) => {
-  const w = (b.n / prec.total) * (PW - PGAP * (prec.buckets.length - 1));
-  /* The narrowest segment is nine of 215 endpoints, so a label centred under it runs
-     off the left edge. Clamped rather than dropped: the count is the finding. */
-  const seg = {
-    ...b, x: pxAt, w, cls: PREC_CLASS[b.label] ?? 'mk-seg',
-    lx: Math.min(Math.max(pxAt + w / 2, 30), PW - 30),
-  };
-  pxAt += w + PGAP;
-  return seg;
-});
+const precSegs = prec.buckets.map((b: any) => ({
+  ...b, cls: PREC_DEPTH[b.label] ?? 'mk-p-4', pct: (b.n / prec.total) * 100,
+}));
+const precNone = prec.buckets.find((b: any) => b.label === 'Not stated');
+const precFour = prec.buckets.find((b: any) => b.label === '4-bit');
 
 /* 5. The scatter, on a log price axis for the same reason the ladder is, and now one per
    model with the model name as a selector rather than a title.
@@ -386,6 +443,10 @@ const precSegs = prec.buckets.map((b: any) => {
 const W = 800, H = 372, L = 62, R = 22, T = 32, B = 54;
 const SCATTER_MIN_PTS = 5;
 const SCATTER_DEFAULT = 'openai/gpt-oss-120b';
+/* How many chips stay on the rail. The rest hide behind a "more" toggle, because ten model
+   names in three rows is a wall and the point of the rail is to show at a glance that this is
+   not a one-model dataset. */
+const RAIL_VISIBLE = 5;
 
 /* Ticks derived per model rather than from one fixed list. A shared list of decade values left
    GLM 5.1 with a single tick at $1, because its whole range is 97 cents to $1.54 and nothing
@@ -462,11 +523,12 @@ const scatterCards = market.models
    scoped styles cannot carry a generated block. */
 const scatterCss = scatterCards.map((_c: any, i: number) => `
 .mk-sel > input:nth-of-type(${i + 1}):checked ~ .mk-cards > :nth-child(${i + 1}) { display: block }
-.mk-sel > input:nth-of-type(${i + 1}):checked ~ .mk-chips > label:nth-child(${i + 1}) {
+.mk-sel > input:nth-of-type(${i + 1}):checked ~ .mk-rail > label:nth-child(${i + 1}) {
+  display: inline-block;
   background: var(--accent); border-color: var(--accent-deep); color: var(--dark);
   font-weight: var(--weight-semibold);
 }
-.mk-sel > input:nth-of-type(${i + 1}):focus-visible ~ .mk-chips > label:nth-child(${i + 1}) {
+.mk-sel > input:nth-of-type(${i + 1}):focus-visible ~ .mk-rail > label:nth-child(${i + 1}) {
   outline: var(--focus-width) solid var(--focus-color); outline-offset: 2px;
 }`).join('');
 
@@ -484,7 +546,7 @@ const reference = market.models
 ---
 
 <Layout
-  title="CanaryOne Market — Open-weight model pricing, performance and hosting intelligence"
+  title="CanaryOne Market — what the same open-weight model costs to actually run"
   description="Track how open-weight models differ across hosts in price, latency, capabilities and real task economics. Market intelligence measured by CanaryOne."
   path="/market"
 >
@@ -498,18 +560,364 @@ const reference = market.models
           weights across the companies serving them to see what actually changes: price,
           latency, capabilities, and the cost of completing real work.
         </p>
+        {/* One line of standing, not a stat row. Four facts and no figure that needs a date
+            beside it, because every dated figure sits next to its own chart below. */}
+        <p class="mk-auth">
+          {market.totals.models_published} models · {market.totals.host_endpoints} live
+          endpoints · market read several times a day · measured workload sweeps
+        </p>
       </div>
     </header>
   </div>
 
   <section class="tm">
     <div class="container">
+
+      {pair && (
+        <>
+          <h2>
+            Same model. Same tasks. Cheaper tokens. {mult(pair.ratio)} the cost.
+          </h2>
+          {/* The experiment's own header line. Says who measured it, on what, at what scale
+              and when, before any figure appears. */}
+          <p class="mk-exp">
+            Measured by CanaryOne · {m.model_name} · {m.routes.length} routes ·
+            {' '}{m.tasks} coding tasks each · {fmt(m.night + 'T00:00:00Z', false)}
+          </p>
+
+          <div class="tm-panel">
+            {/* What was held, or near enough. Two rows, no operator glyphs: the third column
+                says in words what a "<" between two numbers was asking the reader to infer. */}
+            <dl class="mk-ctrl">
+              <div>
+                <dt>Advertised token price</dt>
+                <dd>{usdCol(pair.dear_listed)} vs {usdCol(pair.cheap_listed)}</dd>
+                <dd class="mk-ctrl-note">
+                  {routeLabel(pair.dear.tag)} {expCheaperBy} per cent cheaper
+                </dd>
+              </div>
+              <div>
+                <dt>Tasks completed</dt>
+                <dd>{pair.dear.passed} of {pair.dear.attempted} vs
+                  {' '}{pair.cheap.passed} of {pair.cheap.attempted}</dd>
+                <dd class="mk-ctrl-note">Same outcome</dd>
+              </div>
+            </dl>
+
+            {/* The reveal. The dearer bar carries the accent because the colour is saying "this
+                is the finding", not "these are two series" — which is why only one of them has
+                it. */}
+            <p class="mk-rev-label">Cost per successful task</p>
+            <div class="mk-rev">
+              <p class="mk-rev-name">{routeLabel(pair.dear.tag)}</p>
+              <p class="mk-rev-val">{usd4(expDear)}</p>
+              <div class="mk-rev-track">
+                <div class="mk-rev-bar mk-rev-bar-hi" style={`width:${expPct(expDear)}%`}></div>
+              </div>
+              <p class="mk-rev-delta">{mult(pair.ratio)} higher</p>
+
+              <p class="mk-rev-name">{routeLabel(pair.cheap.tag)}</p>
+              <p class="mk-rev-val">{usd4(expCheap)}</p>
+              <div class="mk-rev-track">
+                <div class="mk-rev-bar" style={`width:${expPct(expCheap)}%`}></div>
+              </div>
+              <p class="mk-rev-delta"></p>
+            </div>
+
+            <p class="mk-why">
+              <strong>Why the gap?</strong> {int(pair.dear.reasoning_per_task)} against
+              {' '}{int(pair.cheap.reasoning_per_task)} reasoning tokens per task, a
+              {' '}{mult(expThink)} difference on the same job.
+            </p>
+          </div>
+
+          <p class="mk-strip-head">All {routes.length} routes measured</p>
+          <div class="tm-panel mk-wrap">
+            <svg viewBox={`0 0 ${STRIP_W} ${STRIP_H}`} class="mk-svg" role="img"
+                 aria-label={`Cost per successful task across all ${routes.length} routes, from $${rLo.toFixed(4)} to $${rHi.toFixed(4)}. The two hosts discussed above sit at $${pair.cheap.cost_per_task.toFixed(4)} and $${pair.dear.cost_per_task.toFixed(4)}.`}>
+              {/* The label column, right-aligned to the same edge as the comparison above, one
+                  line per data row. The full range lives here rather than as a pair of axis
+                  end labels, because whether an end of the axis belongs to a marked host
+                  changes from night to night: on 9 August the dearest of the eleven was a
+                  third company, and a figure at the right-hand end with a name under the row
+                  below would have read as that company's number. */}
+              <line x1={SL} x2={SRX} y1={SY} y2={SY} class="mk-grid" />
+              {routes.map((r: any) => (
+                <circle cx={rx(r.cost_per_task)} cy={SY} r={isPairTag(r.tag) ? R_LG : R_SM}
+                        class={isPairTag(r.tag) ? 'mk-strip-dot mk-strip-dot-on' : 'mk-strip-dot'}>
+                  <title>{`${routeLabel(r.tag)} · ${usd4(r.cost_per_task)} per successful task · ${r.passed} of ${r.attempted} passed`}</title>
+                </circle>
+              ))}
+              {marked.map((r: any) => (
+                /* Anchored to the end rather than the start once a dot is near the right edge,
+                   because a marked host can also be the dearest of the cohort — on this night
+                   it is — and a label starting at that dot runs off the panel. */
+                <g class={rx(r.cost_per_task) > SRX - 90 ? 'mk-ax-end-r' : ''}>
+                  <text x={rx(r.cost_per_task)} y={S_PRICE_Y} class="mk-ax mk-ax-row">
+                    {usd4(r.cost_per_task)}
+                  </text>
+                  <text x={rx(r.cost_per_task)} y={S_NAME_Y} class="mk-ax mk-ax-row">
+                    {routeLabel(r.tag)}
+                  </text>
+                </g>
+              ))}
+            </svg>
+          </div>
+
+          <p class="tm-coverage">
+            Measured workload, run on the night of
+            {' '}{fmt(m.night + 'T00:00:00Z', false)}. Total spend divided by the tasks that
+            completed, so failed work stays in the cost. These figures cost money to reproduce
+            and hold that date until the next run. The size of a gap repeats from night to
+            night; which host sits at either end does not, so read the multiple rather than the
+            names.
+          </p>
+          {/* The highest-intent moment on the page: the reader has just learned that advertised
+              token economics can mislead. One action, and no second link competing with it. */}
+          <p class="mk-ask">
+            <strong>What does this look like on your workload?</strong>
+            <a href="/evals">Benchmark your workload →</a>
+          </p>
+        </>
+      )}
+
+
+
+      <h2>The same weights are priced very differently</h2>
       <p class="tm-note">
-        Updated {fmt(market.captured_at, false)}. {market.totals.models_published} models
-        and {market.totals.host_endpoints} live endpoints, read several times a day.
+        Each bar runs from the cheapest company serving that model to the dearest, with a tick
+        at the average of all of them. Dearest on average first. The axis is logarithmic: the
+        models are three hundred times apart in price.
+      </p>
+      <p class="mk-scope">
+        {ladder.length} models · {market.totals.host_endpoints} live endpoints
       </p>
 
-      <h2>One model, {hkHosts.length} companies, one week of prices</h2>
+      <div class="tm-panel mk-wrap">
+        <svg viewBox={`0 0 ${LW} ${LH}`} class="mk-svg" role="img"
+             aria-label={`Listed input price range across hosts for ${ladder.length} open-weight models. Every model's hosts differ in price, from ${ladderMin.ratio.toFixed(2)} times on the narrowest to ${ladderMax.ratio.toFixed(1)} times on the widest. The table lower down the page gives every figure.`}>
+          <g>
+            <circle cx={LL + 6} cy="12" r={R_SM} class="mk-end mk-end-lo" />
+            <text x={LL + 18} y="16" class="mk-ax">Cheapest company</text>
+            <line x1={LL + 156} x2={LL + 156} y1="5" y2="19" class="mk-mean" />
+            <text x={LL + 166} y="16" class="mk-ax">Average of all of them</text>
+            <circle cx={LL + 330} cy="12" r={R_SM} class="mk-end" />
+            <text x={LL + 342} y="16" class="mk-ax">Dearest company</text>
+          </g>
+          {lTicks.map((t) => (
+            <g>
+              <line x1={lx(t)} x2={lx(t)} y1={LT} y2={LT + ladder.length * LROW} class="mk-grid" />
+              <text x={lx(t)} y={LH - 22} class="mk-ax mk-ax-c">
+                {t < 1 ? `$${t.toFixed(2)}` : `$${t.toFixed(0)}`}
+              </text>
+            </g>
+          ))}
+          {ladder.map((r: any, i: number) => (
+            /* The band is the hover target and the highlight in one, and it is drawn first so
+               it sits behind the marks. `fill: transparent` rather than `none`, because a
+               `none` fill takes no pointer events and the row would only respond on the two
+               dots. It spans the full width so the model name and the ratio highlight with
+               their own row. */
+            <g class="mk-row" data-model={r.id}>
+              <rect x="0" y={ly(i) - LROW / 2} width={LW} height={LROW} class="mk-row-band" />
+              {brandIconFor(r.id) && (
+                <image href={brandIconFor(r.id)} x="6" y={ly(i) - L_ICON / 2}
+                       width={L_ICON} height={L_ICON} />
+              )}
+              <text x={6 + L_ICON + 8} y={ly(i) + 4} class="mk-ax mk-ax-row">{r.short}</text>
+              <line x1={lx(r.min)} x2={lx(r.max)} y1={ly(i)} y2={ly(i)} class="mk-range" />
+              <line x1={lx(r.mean)} x2={lx(r.mean)} y1={ly(i) - 6} y2={ly(i) + 6} class="mk-mean">
+                <title>{`${r.short} · ${usd(r.mean)} per 1M averaged across ${r.n} companies`}</title>
+              </line>
+              <circle cx={lx(r.min)} cy={ly(i)} r={R_SM} class="mk-end mk-end-lo">
+                <title>{`${r.short} · cheapest listed host ${usd(r.min)} per 1M`}</title>
+              </circle>
+              <circle cx={lx(r.max)} cy={ly(i)} r={R_SM} class="mk-end">
+                <title>{`${r.short} · dearest listed host ${usd(r.max)} per 1M`}</title>
+              </circle>
+              <text x={LW - 8} y={ly(i) + 4} class="mk-ax mk-ax-end-r">{mult(r.ratio)}</text>
+            </g>
+          ))}
+          <text x={LL} y={LH - 4} class="mk-ax">
+            Listed input price per 1M tokens · right column is dearest divided by cheapest
+          </text>
+        </svg>
+      </div>
+      <p class="tm-coverage">
+        There is no model here whose hosts agree on a price. At the narrowest, {ladderMin.short},
+        the dearest company still charges {times(ladderMin.ratio)} the cheapest. At the widest,
+        {' '}{ladderMax.short}, {ladderMax.n} companies serve the same weights and the dearest
+        charges {times(ladderMax.ratio)} the cheapest. Metadata read {captured}.
+        {' '}<a href={ladderMax.or_url} rel="noopener" target="_blank">Check the widest one on
+        OpenRouter →</a>
+      </p>
+
+      <h2>The same price doesn't buy the same speed</h2>
+      <p class="tm-note">
+        Every point is one company serving the same weights. Lower and further left is cheaper
+        and faster, and the shaded band holds the companies charging an identical price.
+      </p>
+
+      {/* Ten radios, a row of labels and ten pre-rendered charts. The radios are the state,
+          CSS does the switching, and no script is involved. .sr-only keeps them reachable by
+          keyboard while the label carries the visible chip. */}
+      <fieldset class="mk-sel">
+        <legend class="sr-only">Model</legend>
+        {scatterCards.map((c: any) => (
+          <input class="sr-only" type="radio" name="mk-model" id={`mk-m-${c.id}`}
+                 checked={c.id === SCATTER_DEFAULT} />
+        ))}
+        {/* Last among the inputs on purpose: the generated rules index the radios with
+            nth-of-type, so this must not sit among them. */}
+        <input class="sr-only" type="checkbox" id="mk-all" />
+
+        {/* The rail sits above the chart. Five names show, the rest arrive with the toggle, and
+            a chip stays visible whenever its own model is the one selected. */}
+        <div class="mk-rail">
+          {scatterCards.map((c: any, i: number) => (
+            <label for={`mk-m-${c.id}`} class={i < RAIL_VISIBLE ? '' : 'mk-rail-more'}>
+              {c.short}
+            </label>
+          ))}
+          <label class="mk-rail-toggle mk-rail-show" for="mk-all">
+            +{scatterCards.length - RAIL_VISIBLE} more
+          </label>
+          <label class="mk-rail-toggle mk-rail-hide" for="mk-all">Show fewer</label>
+        </div>
+
+        <div class="mk-cards">
+          {scatterCards.map((c: any) => (
+            <div>
+              <p class="mk-sum">
+                <strong>{c.listed} companies</strong> · {mult(c.priceRatio)} price spread
+                {c.ttftRatio && <> · {mult(c.ttftRatio)} first-token spread</>}
+              </p>
+              <div class="tm-panel mk-wrap">
+                <svg viewBox={`0 0 ${W} ${H}`} class="mk-svg" role="img"
+                     aria-label={`Listed price against reported first-token time for ${c.pts.length} companies serving ${c.short}. Price runs ${mult(c.priceRatio)} from cheapest to dearest.${c.tie ? ` ${c.tie.n} of them charge exactly ${priceWords(c.tie.price)} per million tokens, and their first token arrives after between ${(c.tie.lo / 1000).toFixed(1)} and ${(c.tie.hi / 1000).toFixed(1)} seconds.` : ''}`}>
+                  {/* The equal-price cluster, drawn first so the dots sit on top of it. A
+                      wash rather than a rule, because on cream yellow is a fill behind dark
+                      content and never a line. It is the finding this chart exists for: the
+                      companies inside the band charge the identical price. */}
+                  {c.tie && (
+                    <g>
+                      <rect x={c.sx(c.tie.price) - 11} y={T} width="22" height={H - T - B}
+                            rx="3" class="mk-band" />
+                      <text x={c.sx(c.tie.price)} y={T - 8} class="mk-ax mk-ax-c mk-ax-row">
+                        Same price: {c.tie.n} hosts at ${c.tie.price.toFixed(2)}
+                      </text>
+                    </g>
+                  )}
+                  {c.yt.map((t: number) => (
+                    <g>
+                      <line x1={L} x2={W - R} y1={c.sy(t)} y2={c.sy(t)} class="mk-grid" />
+                      <text x={L - 10} y={c.sy(t) + 4} class="mk-ax mk-ax-y">
+                        {(t / 1000).toFixed(1)}s
+                      </text>
+                    </g>
+                  ))}
+                  {c.xt.map((t: number) => (
+                    <text x={c.sx(t)} y={H - 28} class="mk-ax mk-ax-c">{tickLabel(t)}</text>
+                  ))}
+                  <text x={8} y="14" class="mk-ax">First token, seconds</text>
+                  <g>
+                    <circle cx={L + 6} cy={H - 12} r={R_SM} class="mk-dot mk-dot-off" />
+                    <text x={L + 18} y={H - 8} class="mk-ax">Not serving requests at this read</text>
+                    <text x={W - R} y={H - 8} class="mk-ax mk-ax-end-r">
+                      Listed price per 1M tokens, logarithmic
+                    </text>
+                  </g>
+                  {c.pts.map((pt: any) => (
+                    <circle cx={c.sx(pt.price)} cy={c.sy(pt.ttft)} r={R_SM}
+                            class={pt.status === 0 ? 'mk-dot' : 'mk-dot mk-dot-off'}>
+                      <title>{`${pt.tag} · ${usd(pt.price)} per 1M · ${(pt.ttft / 1000).toFixed(1)}s first token${pt.status === 0 ? '' : ' · not serving'}`}</title>
+                    </circle>
+                  ))}
+                </svg>
+              </div>
+              <p class="tm-coverage">
+                {c.listed} companies serve {c.short}, and the dearest charges
+                {' '}{times(c.priceRatio)} the cheapest.
+                {c.tie && (
+                  <> {cap(spell(c.tie.n))} of them charge exactly {priceWords(c.tie.price)} per
+                  million tokens, and inside that group the first token arrives after
+                  {' '}{(c.tie.lo / 1000).toFixed(1)} seconds at one end and
+                  {' '}{(c.tie.hi / 1000).toFixed(1)} seconds at the other. Paying the same does
+                  not buy the same.</>
+                )} First-token figures cover the {c.live.length} companies serving requests at
+                this read, each one their own reported median over the previous half hour.
+                Metadata read {captured}.
+                {' '}<a href={c.or_url} rel="noopener" target="_blank">Check these prices on
+                OpenRouter →</a>
+              </p>
+            </div>
+          ))}
+        </div>
+      </fieldset>
+
+      <h2>Same weights. Different capabilities.</h2>
+      <p class="mk-claim">
+        {capWorst.miss} of {capWorst.total} {capWorst.short} hosts don't advertise tool calling.
+      </p>
+      <p class="tm-note">
+        One bar per model, longest where most companies serve it. Filled advertises tool
+        calling and outlined does not. An agent that needs to call a function does not degrade
+        on a host without it; the loop stops.
+      </p>
+
+      <div class="tm-panel">
+        <ul class="mk-cap">
+          {capGap.map((c: any) => (
+            <li>
+              <span class="mk-cap-name">{c.short}</span>
+              <span class="mk-cap-track" style={`width:${(c.total / capMaxTotal) * 100}%`}>
+                <span class="mk-cap-ok" style={`flex:${c.ok}`}
+                      title={`${c.ok} of ${c.total} advertise tool calling`}></span>
+                <span class="mk-cap-no" style={`flex:${c.miss}`}
+                      title={`${c.miss} of ${c.total} do not`}></span>
+              </span>
+              <span class="mk-cap-num">{c.ok} / {c.total}</span>
+            </li>
+          ))}
+        </ul>
+        <p class="mk-cap-rest">
+          {cap(spell(capClean.length))} other models: every tracked host advertises tool calling.
+        </p>
+
+        {/* Precision, in the same panel and at the same bar height, because it is the second
+            way the same weights differ by who serves them and not a section of its own. */}
+        <div class="mk-prec">
+          <p class="mk-prec-head">
+            Stated precision, across all {prec.total} live endpoints
+          </p>
+          <div class="mk-prec-track">
+            {precSegs.map((seg: any) => (
+              <span class={`mk-prec-seg ${seg.cls}`} style={`flex:${seg.n}`}
+                    title={`${seg.n} of ${prec.total} endpoints · ${seg.label}`}></span>
+            ))}
+          </div>
+          <ul class="mk-prec-key">
+            {precSegs.map((seg: any) => (
+              <li>
+                <span class={`mk-prec-chip ${seg.cls}`}></span>
+                {seg.n} {seg.label.toLowerCase()}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+
+      <p class="tm-coverage">
+        {capMissing} of the {capPairs} company-and-model pairs we track do not advertise tool
+        calling, and {precNone.n} of {prec.total} endpoints do not say what precision they serve
+        at. Both are provider-advertised, not a CanaryOne functional test, and whether four bits
+        changes an answer is a question about output that nothing on this page measures.
+        Metadata read {captured}.
+        {' '}<a href={capWorst.or_url} rel="noopener" target="_blank">Check the capabilities on
+        OpenRouter →</a>
+      </p>
+
+      <h2>The market moves underneath you</h2>
       <p class="tm-note">
         One box per company, showing what it charged for
         {' '}{hook.name.split(': ').pop()} across {hkN} reads since
@@ -612,425 +1020,6 @@ const reference = market.models
         OpenRouter →</a>
       </p>
 
-      <h2>Every model, and what its companies charge</h2>
-      <p class="tm-note">
-        Every model we watch, with the number of companies serving it, what the cheapest and
-        the dearest of them charge, and how often the weights themselves are downloaded. Sorted
-        by how many companies serve the model, so the row order holds from one day to the next.
-      </p>
-      <!-- Wrapped in .tm-table-scroll because a mono table with nowrap heads is wider than a
-           phone and at 375px it scrolled the whole page sideways rather than itself. -->
-      <div class="tm-table-scroll">
-      <table class="tm-data-table">
-        <thead>
-          <tr>
-            <th scope="col">Model</th>
-            <th>Companies</th>
-            <th>Cheapest</th>
-            <th>Dearest</th>
-            <th>Spread</th>
-            <th>Weights pulled</th>
-          </tr>
-        </thead>
-        <tbody>
-          {reference.map((x: any) => (
-            <tr>
-              <!-- The display name rather than the slug. `nvidia/nemotron-3-super-120b-a12b`
-                   is 33 characters and at 375px the first column filled the viewport, so the
-                   table opened on a list of names with every number off-screen. The link
-                   still lands on the listing, which is where the slug lives.
-
-                   The mark identifies which lab's weights the row is about. It is not a
-                   logo row in the sense COPY.md governs — nothing here implies a
-                   relationship with us, and the labs are not the companies being priced
-                   beside them. alt is empty because the name it sits against already says
-                   the same thing, and .tm-brand-slot holds the width open for the one
-                   vendor the icon library does not cover, so the names stay in line. -->
-              <th scope="row">
-                <span class="tm-row-head">
-                  <span class="tm-brand-slot">
-                    {brandIconFor(x.id) && (
-                      <img class="tm-brand" src={brandIconFor(x.id)} alt=""
-                           width="16" height="16" loading="lazy" decoding="async" />
-                    )}
-                  </span>
-                  <a href={x.or_url} rel="noopener" target="_blank">{x.short}</a>
-                </span>
-              </th>
-              <td>{x.hosts_listed}</td>
-              <td>{usdCol(x.price_in.min)}</td>
-              <td>{usdCol(x.price_in.max)}</td>
-              <td class="mk-big">{mult(x.price_in.ratio)}</td>
-              <td>
-                {x.hf_downloads
-                  ? <a href={`https://huggingface.co/${x.weights_repo}`} rel="noopener"
-                       target="_blank">{int(x.hf_downloads)}</a>
-                  : '—'}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      </div>
-      <p class="tm-coverage">
-        Prices are per million input tokens, read {captured}, and every model name links to the
-        listing they came from. Weights pulled is the number of downloads of that model's own
-        weights from Hugging Face over the previous thirty days, read
-        {' '}{market.hf_captured_at ? fmt(market.hf_captured_at) : 'separately'}. It counts
-        people taking the weights to run themselves, which is not traffic through the companies
-        priced beside it.
-      </p>
-
-      {pair && (
-        <>
-          <h2>
-            Same model. Same tasks. Cheaper tokens. {mult(pair.ratio)} the cost.
-          </h2>
-          <p class="tm-note">
-            We ran the same {m.tasks} coding tasks on {m.model_name} across
-            {' '}{m.routes.length} host routes. One host advertises tokens
-            {' '}{Math.round((1 - pair.dear_listed / pair.cheap_listed) * 100)} per cent cheaper
-            than another and passed every task, and it cost {times(pair.ratio)} as much to
-            finish the work.
-          </p>
-
-          <div class="tm-panel mk-wrap">
-            <svg viewBox={`0 0 ${PAIR_W} ${PAIR_H}`} class="mk-svg" role="img"
-                 aria-label={`Two hosts serving ${m.model_name}. ${routeLabel(pair.dear.tag)} advertises $${pair.dear_listed.toFixed(3)} per million input tokens against $${pair.cheap_listed.toFixed(3)} for ${routeLabel(pair.cheap.tag)}, and both passed ${pair.dear.passed} of ${pair.dear.attempted} tasks. Cost per successful task ran the other way: $${pair.dear.cost_per_task.toFixed(4)} on the cheaper-advertised host against $${pair.cheap.cost_per_task.toFixed(4)}, which is ${pair.ratio.toFixed(1)} times more. They spent ${Math.round(pair.dear.reasoning_per_task)} and ${Math.round(pair.cheap.reasoning_per_task)} reasoning tokens per task respectively.`}>
-              {/* The host with the CHEAPER advertised price sits on the left, so the reader
-                  reads the columns in the order the argument runs: this one looks cheaper,
-                  then it turns out to cost more. `pair.dear` and `pair.cheap` are named for
-                  measured cost, which is why the dear one is on the left here. */}
-              <text x={PC1} y="22" class="mk-ax mk-ax-row">{routeLabel(pair.dear.tag)}</text>
-              <text x={PC2} y="22" class="mk-ax mk-ax-row">{routeLabel(pair.cheap.tag)}</text>
-
-              {/* Two comparators carry the setup: the advertised prices are NOT equal and the
-                  task counts are, so a reader gets "looks cheaper, did the same work" before
-                  the cost row contradicts it. Inside a diagram a glyph is a graphic rather
-                  than grammar, which is where COPY.md allows it. */}
-              <text x={PL} y="60" class="mk-ax mk-ax-y">Advertised price per 1M tokens</text>
-              <text x={PC1} y="60" class="mk-ax mk-ax-row">{usdCol(pair.dear_listed)}</text>
-              <text x={PEQ} y="60" class="mk-ax mk-ax-c">{'<'}</text>
-              <text x={PC2} y="60" class="mk-ax mk-ax-row">{usdCol(pair.cheap_listed)}</text>
-
-              <text x={PL} y="92" class="mk-ax mk-ax-y">Tasks completed</text>
-              <text x={PC1} y="92" class="mk-ax mk-ax-row">
-                {pair.dear.passed} of {pair.dear.attempted}
-              </text>
-              <text x={PEQ} y="92" class="mk-ax mk-ax-c">=</text>
-              <text x={PC2} y="92" class="mk-ax mk-ax-row">
-                {pair.cheap.passed} of {pair.cheap.attempted}
-              </text>
-
-              <line x1={PC1} x2={PC2 + PCW} y1="114" y2="114" class="mk-grid" />
-
-              {/* The reveal, and the only row with bars. The longer bar is now on the left,
-                  which is the point: the cheaper-advertised host is the dearer one. */}
-              <text x={PL} y="152" class="mk-ax mk-ax-y">Cost per successful task</text>
-              <text x={PC1} y="152" class="mk-hero-val">{usd4(pair.dear.cost_per_task)}</text>
-              <text x={PC2} y="152" class="mk-hero-val">{usd4(pair.cheap.cost_per_task)}</text>
-              <rect x={PC1} y="166" width={pairBar(pair.dear.cost_per_task)} height="20"
-                    rx="2" class="mk-hero-bar" />
-              <rect x={PC2} y="166" width={pairBar(pair.cheap.cost_per_task)} height="20"
-                    rx="2" class="mk-hero-bar" />
-              <text x={PC1} y="206" class="mk-ax mk-ax-row">{mult(pair.ratio)} higher</text>
-
-              <line x1={PC1} x2={PC2 + PCW} y1="232" y2="232" class="mk-grid" />
-
-              {/* Subordinate: smaller, muted, no bars. The mechanism rather than the finding. */}
-              <text x={PL} y="262" class="mk-ax mk-ax-y">Reasoning tokens per task</text>
-              <text x={PC1} y="262" class="mk-ax">
-                {int(pair.dear.reasoning_per_task)}
-              </text>
-              <text x={PC2} y="262" class="mk-ax">
-                {int(pair.cheap.reasoning_per_task)}
-              </text>
-              {/* Kept to one short line: at 11px mono a longer sentence starting at this x ran
-                  off the right edge of the viewBox. The compact multiplier is a diagram
-                  annotation rather than prose, where COPY.md allows it. */}
-              <text x={PC1} y="288" class="mk-ax">
-                {mult(pair.dear.reasoning_per_task / pair.cheap.reasoning_per_task)} the thinking
-                for the same job, which is one reason the cost diverges.
-              </text>
-            </svg>
-          </div>
-
-          <p class="tm-note mk-strip-lede">
-            The two hosts above are marked. The other {routes.length - 2} are the cohort they
-            sit in, so the pair reads as a notable comparison inside a controlled test rather
-            than as the whole of it.
-          </p>
-          <div class="tm-panel mk-wrap">
-            <svg viewBox={`0 0 ${STRIP_W} ${STRIP_H}`} class="mk-svg" role="img"
-                 aria-label={`Cost per successful task across all ${routes.length} routes, from $${rLo.toFixed(4)} to $${rHi.toFixed(4)}. The two hosts discussed above sit at $${pair.cheap.cost_per_task.toFixed(4)} and $${pair.dear.cost_per_task.toFixed(4)}.`}>
-              {/* The label column, right-aligned to the same edge as the comparison above, one
-                  line per data row. The full range lives here rather than as a pair of axis
-                  end labels, because whether an end of the axis belongs to a marked host
-                  changes from night to night: on 9 August the dearest of the eleven was a
-                  third company, and a figure at the right-hand end with a name under the row
-                  below would have read as that company's number. */}
-              <text x={PL} y={SY + 4} class="mk-ax mk-ax-y mk-ax-row">
-                Cost per successful task
-              </text>
-              <text x={PL} y={S_PRICE_Y} class="mk-ax mk-ax-y">
-                {usd4(rLo)} to {usd4(rHi)}
-              </text>
-              <text x={PL} y={S_NAME_Y} class="mk-ax mk-ax-y">
-                across {routes.length} routes, {m.tasks} tasks each
-              </text>
-
-              <line x1={SL} x2={SRX} y1={SY} y2={SY} class="mk-grid" />
-              {routes.map((r: any) => (
-                <circle cx={rx(r.cost_per_task)} cy={SY} r={isPairTag(r.tag) ? R_LG : R_SM}
-                        class={isPairTag(r.tag) ? 'mk-strip-dot mk-strip-dot-on' : 'mk-strip-dot'}>
-                  <title>{`${routeLabel(r.tag)} · ${usd4(r.cost_per_task)} per successful task · ${r.passed} of ${r.attempted} passed`}</title>
-                </circle>
-              ))}
-              {marked.map((r: any) => (
-                /* Anchored to the end rather than the start once a dot is near the right edge,
-                   because a marked host can also be the dearest of the cohort — on this night
-                   it is — and a label starting at that dot runs off the panel. */
-                <g class={rx(r.cost_per_task) > SRX - 90 ? 'mk-ax-end-r' : ''}>
-                  <text x={rx(r.cost_per_task)} y={S_PRICE_Y} class="mk-ax mk-ax-row">
-                    {usd4(r.cost_per_task)}
-                  </text>
-                  <text x={rx(r.cost_per_task)} y={S_NAME_Y} class="mk-ax mk-ax-row">
-                    {routeLabel(r.tag)}
-                  </text>
-                </g>
-              ))}
-            </svg>
-          </div>
-
-          <p class="tm-coverage">
-            Measured workload, run on the night of
-            {' '}{fmt(m.night + 'T00:00:00Z', false)}. Total spend divided by the tasks that
-            completed, so failed work stays in the cost. These figures cost money to reproduce
-            and hold that date until the next run. The size of a gap repeats from night to
-            night; which host sits at either end does not, so read the multiple rather than the
-            names.
-          </p>
-        </>
-      )}
-
-      <h2>Every model we watch, cheapest host to dearest</h2>
-      <p class="tm-note">
-        Each bar runs from the cheapest company serving that model to the dearest, with a tick
-        at the average of all of them. Dearest on average first. The axis is logarithmic: the
-        models are three hundred times apart in price.
-      </p>
-
-      <div class="tm-panel mk-wrap">
-        <svg viewBox={`0 0 ${LW} ${LH}`} class="mk-svg" role="img"
-             aria-label={`Listed input price range across hosts for ${ladder.length} open-weight models. Every model's hosts differ in price, from ${ladderMin.ratio.toFixed(2)} times on the narrowest to ${ladderMax.ratio.toFixed(1)} times on the widest. The table lower down the page gives every figure.`}>
-          <g>
-            <circle cx={LL + 6} cy="12" r={R_SM} class="mk-end mk-end-lo" />
-            <text x={LL + 18} y="16" class="mk-ax">Cheapest company</text>
-            <line x1={LL + 156} x2={LL + 156} y1="5" y2="19" class="mk-mean" />
-            <text x={LL + 166} y="16" class="mk-ax">Average of all of them</text>
-            <circle cx={LL + 330} cy="12" r={R_SM} class="mk-end" />
-            <text x={LL + 342} y="16" class="mk-ax">Dearest company</text>
-          </g>
-          {lTicks.map((t) => (
-            <g>
-              <line x1={lx(t)} x2={lx(t)} y1={LT} y2={LT + ladder.length * LROW} class="mk-grid" />
-              <text x={lx(t)} y={LH - 22} class="mk-ax mk-ax-c">
-                {t < 1 ? `$${t.toFixed(2)}` : `$${t.toFixed(0)}`}
-              </text>
-            </g>
-          ))}
-          {ladder.map((r: any, i: number) => (
-            /* The band is the hover target and the highlight in one, and it is drawn first so
-               it sits behind the marks. `fill: transparent` rather than `none`, because a
-               `none` fill takes no pointer events and the row would only respond on the two
-               dots. It spans the full width so the model name and the ratio highlight with
-               their own row. */
-            <g class="mk-row" data-model={r.id}>
-              <rect x="0" y={ly(i) - LROW / 2} width={LW} height={LROW} class="mk-row-band" />
-              {brandIconFor(r.id) && (
-                <image href={brandIconFor(r.id)} x="6" y={ly(i) - L_ICON / 2}
-                       width={L_ICON} height={L_ICON} />
-              )}
-              <text x={6 + L_ICON + 8} y={ly(i) + 4} class="mk-ax mk-ax-row">{r.short}</text>
-              <line x1={lx(r.min)} x2={lx(r.max)} y1={ly(i)} y2={ly(i)} class="mk-range" />
-              <line x1={lx(r.mean)} x2={lx(r.mean)} y1={ly(i) - 6} y2={ly(i) + 6} class="mk-mean">
-                <title>{`${r.short} · ${usd(r.mean)} per 1M averaged across ${r.n} companies`}</title>
-              </line>
-              <circle cx={lx(r.min)} cy={ly(i)} r={R_SM} class="mk-end mk-end-lo">
-                <title>{`${r.short} · cheapest listed host ${usd(r.min)} per 1M`}</title>
-              </circle>
-              <circle cx={lx(r.max)} cy={ly(i)} r={R_SM} class="mk-end">
-                <title>{`${r.short} · dearest listed host ${usd(r.max)} per 1M`}</title>
-              </circle>
-              <text x={LW - 8} y={ly(i) + 4} class="mk-ax mk-ax-end-r">{mult(r.ratio)}</text>
-            </g>
-          ))}
-          <text x={LL} y={LH - 4} class="mk-ax">
-            Listed input price per 1M tokens · right column is dearest divided by cheapest
-          </text>
-        </svg>
-      </div>
-      <p class="tm-coverage">
-        There is no model here whose hosts agree on a price. At the narrowest, {ladderMin.short},
-        the dearest company still charges {times(ladderMin.ratio)} the cheapest. At the widest,
-        {' '}{ladderMax.short}, {ladderMax.n} companies serve the same weights and the dearest
-        charges {times(ladderMax.ratio)} the cheapest. Metadata read {captured}.
-        {' '}<a href={ladderMax.or_url} rel="noopener" target="_blank">Check the widest one on
-        OpenRouter →</a>
-      </p>
-
-      <h2>Same weights, different price and speed</h2>
-      <p class="tm-note">
-        Every point is one company serving the same weights. Lower and further left is cheaper
-        and faster. Pick a model to see its own market.
-      </p>
-
-      {/* Ten radios, a row of labels and ten pre-rendered charts. The radios are the state,
-          CSS does the switching, and no script is involved. .sr-only keeps them reachable by
-          keyboard while the label carries the visible chip. */}
-      <fieldset class="mk-sel">
-        <legend class="sr-only">Model</legend>
-        {scatterCards.map((c: any) => (
-          <input class="sr-only" type="radio" name="mk-model" id={`mk-m-${c.id}`}
-                 checked={c.id === SCATTER_DEFAULT} />
-        ))}
-        <div class="mk-chips">
-          {scatterCards.map((c: any) => (
-            <label for={`mk-m-${c.id}`}>{c.short}</label>
-          ))}
-        </div>
-        <div class="mk-cards">
-          {scatterCards.map((c: any) => (
-            <div>
-              <p class="mk-sum">
-                <strong>{c.listed} companies</strong> · {mult(c.priceRatio)} price spread
-                {c.ttftRatio && <> · {mult(c.ttftRatio)} first-token spread</>}
-              </p>
-              <div class="tm-panel mk-wrap">
-                <svg viewBox={`0 0 ${W} ${H}`} class="mk-svg" role="img"
-                     aria-label={`Listed price against reported first-token time for ${c.pts.length} companies serving ${c.short}. Price runs ${mult(c.priceRatio)} from cheapest to dearest.${c.tie ? ` ${c.tie.n} of them charge exactly ${priceWords(c.tie.price)} per million tokens, and their first token arrives after between ${(c.tie.lo / 1000).toFixed(1)} and ${(c.tie.hi / 1000).toFixed(1)} seconds.` : ''}`}>
-                  {c.yt.map((t: number) => (
-                    <g>
-                      <line x1={L} x2={W - R} y1={c.sy(t)} y2={c.sy(t)} class="mk-grid" />
-                      <text x={L - 10} y={c.sy(t) + 4} class="mk-ax mk-ax-y">
-                        {(t / 1000).toFixed(1)}s
-                      </text>
-                    </g>
-                  ))}
-                  {c.xt.map((t: number) => (
-                    <text x={c.sx(t)} y={H - 28} class="mk-ax mk-ax-c">{tickLabel(t)}</text>
-                  ))}
-                  <text x={8} y="14" class="mk-ax">First token, seconds</text>
-                  <g>
-                    <circle cx={L + 6} cy={H - 12} r={R_SM} class="mk-dot mk-dot-off" />
-                    <text x={L + 18} y={H - 8} class="mk-ax">Not serving requests at this read</text>
-                    <text x={W - R} y={H - 8} class="mk-ax mk-ax-end-r">
-                      Listed price per 1M tokens, logarithmic
-                    </text>
-                  </g>
-                  {c.pts.map((pt: any) => (
-                    <circle cx={c.sx(pt.price)} cy={c.sy(pt.ttft)} r={R_SM}
-                            class={pt.status === 0 ? 'mk-dot' : 'mk-dot mk-dot-off'}>
-                      <title>{`${pt.tag} · ${usd(pt.price)} per 1M · ${(pt.ttft / 1000).toFixed(1)}s first token${pt.status === 0 ? '' : ' · not serving'}`}</title>
-                    </circle>
-                  ))}
-                </svg>
-              </div>
-              <p class="tm-coverage">
-                {c.listed} companies serve {c.short}, and the dearest charges
-                {' '}{times(c.priceRatio)} the cheapest.
-                {c.tie && (
-                  <> {cap(spell(c.tie.n))} of them charge exactly {priceWords(c.tie.price)} per
-                  million tokens, and inside that group the first token arrives after
-                  {' '}{(c.tie.lo / 1000).toFixed(1)} seconds at one end and
-                  {' '}{(c.tie.hi / 1000).toFixed(1)} seconds at the other. Paying the same does
-                  not buy the same.</>
-                )} First-token figures cover the {c.live.length} companies serving requests at
-                this read, each one their own reported median over the previous half hour.
-                Metadata read {captured}.
-                {' '}<a href={c.or_url} rel="noopener" target="_blank">Check these prices on
-                OpenRouter →</a>
-              </p>
-            </div>
-          ))}
-        </div>
-      </fieldset>
-
-      <h2>Tool calling is not part of the weights</h2>
-      <p class="tm-note">
-        Each dot is one company serving that model. A filled dot advertises tool calling and a
-        hollow dot does not. An agent that needs to call a function does not degrade on a host
-        without it; the loop stops.
-      </p>
-
-      <div class="tm-panel mk-wrap">
-        <svg viewBox={`0 0 ${CW} ${CH}`} class="mk-svg" role="img"
-             aria-label={`Tool-calling support across ${capsTotal} live endpoints serving ${caps.length} models. ${capsMissing} endpoints do not advertise tool calling, concentrated on ${caps[0].short}, where ${caps[0].missing} of ${caps[0].grid.length} hosts lack it.`}>
-          <g>
-            <circle cx={CL + 6} cy="14" r={R_SM} class="mk-cell" />
-            <text x={CL + 18} y="18" class="mk-ax">Advertises tool calling</text>
-            <circle cx={CL + 200} cy="14" r={R_SM} class="mk-cell mk-cell-off" />
-            <text x={CL + 212} y="18" class="mk-ax">Does not</text>
-          </g>
-          {caps.map((c: any, i: number) => (
-            <g>
-              <text x={CL - 14} y={CT + i * CCELL + CCELL / 2 + 4} class="mk-ax mk-ax-y mk-ax-row">
-                {c.short}
-              </text>
-              {c.grid.map((g: any, j: number) => (
-                <circle cx={CL + j * CCELL + CCELL / 2} cy={CT + i * CCELL + CCELL / 2} r={R_SM}
-                        class={g.tools ? 'mk-cell' : 'mk-cell mk-cell-off'}>
-                  <title>{`${c.short} · ${g.tag} · ${g.tools ? 'tool calling' : 'no tool calling'}`}</title>
-                </circle>
-              ))}
-              {c.missing > 0 && (
-                <text x={CL + c.grid.length * CCELL + 10}
-                      y={CT + i * CCELL + CCELL / 2 + 4} class="mk-ax">
-                  {c.missing} without
-                </text>
-              )}
-            </g>
-          ))}
-        </svg>
-      </div>
-      <p class="tm-coverage">
-        Across the {capsTotal} company-and-model pairs above, {capsMissing} do not advertise
-        tool calling, and they are not spread evenly. On {caps[0].short},
-        {' '}{spell(caps[0].missing)} of the {caps[0].grid.length} companies serving it offer no
-        tool calling at all, so the same weights either drive an agent or do not depending on
-        where the request goes. Metadata read {captured}.
-        {' '}<a href={caps[0].or_url} rel="noopener" target="_blank">Check the capabilities on
-        OpenRouter →</a>
-      </p>
-
-      <h2>A third of endpoints do not say how the model is quantised</h2>
-      <p class="tm-note">
-        Numerical precision decides how much memory the weights need and how the host runs
-        them. It is a field on the listing, and it is the field most often left empty.
-      </p>
-
-      <div class="tm-panel mk-wrap">
-        <svg viewBox={`0 0 ${PW} 116`} class="mk-svg" role="img"
-             aria-label={`Stated numerical precision across ${prec.total} live endpoints: ${precSegs.map((s: any) => `${s.n} ${s.label}`).join(', ')}.`}>
-          {precSegs.map((s: any) => (
-            <g>
-              <rect x={s.x} y="8" width={s.w} height={PBAR} rx="3" class={s.cls}>
-                <title>{`${s.n} of ${prec.total} endpoints · ${s.label}`}</title>
-              </rect>
-              <text x={s.lx} y={PBAR + 32} class="mk-ax mk-ax-c mk-ax-row">{s.n}</text>
-              <text x={s.lx} y={PBAR + 50} class="mk-ax mk-ax-c">{s.label}</text>
-            </g>
-          ))}
-        </svg>
-      </div>
-      <p class="tm-coverage">
-        {prec.buckets.find((b: any) => b.label === 'Not stated').n} of the {prec.total} live
-        endpoints leave the precision field empty. Of the ones that fill it in,
-        {' '}{prec.buckets.find((b: any) => b.label === '4-bit').n} serve at four bits.
-        Whether that changes an answer is a question about output rather than about listings,
-        and nothing on this page measures it. Metadata read {captured}.
-      </p>
-
       <h2>How we measure it</h2>
       <p class="tm-note">
         Two layers, kept apart. Host metadata is public: prices, capabilities, advertised
@@ -1049,10 +1038,16 @@ const reference = market.models
         are each company's own reported median over the half hour before we read it.
       </p>
 
+
+      <h2>What happens on your workload?</h2>
+      <p class="tm-note">
+        Market averages can tell you where to look. Your own workload tells you what to deploy.
+      </p>
       <p class="mk-cta">
         <a class="btn primary" href="/evals">Benchmark your workload →</a>
         <a href="/#waitlist">Get early access →</a>
       </p>
+
     </div>
   </section>
 </Layout>
@@ -1159,20 +1154,6 @@ const reference = market.models
   .mk-row:hover .mk-row-band { fill: var(--accent-bg); }
   .mk-row:hover .mk-range { stroke: var(--muted); }
 
-  /* Capability matrix. Shape carries the meaning and the red is secondary, because a
-     hollow dot has to read as absent in greyscale and in forced colours too. */
-  .mk-cell { fill: var(--text); fill-opacity: 0.8; stroke: var(--panel); stroke-width: 1.5; }
-  .mk-cell-off { fill: var(--panel); stroke: var(--danger); stroke-width: 1.75; fill-opacity: 1; }
-
-  /* Precision bar. One ink at three depths for the three stated widths, which are
-     ordered, and a hollow segment for the endpoints that state nothing. */
-  .mk-seg { fill: var(--text); }
-  .mk-seg-w16 { fill-opacity: 0.3; }
-  .mk-seg-w8 { fill-opacity: 0.55; }
-  .mk-seg-w4 { fill-opacity: 0.8; }
-  /* A warm fill rather than a lighter grey, so the undisclosed group reads as a different
-     class than the lightest step of the ramp instead of as another step in it. */
-  .mk-seg-none { fill: var(--bg-tint); stroke: var(--line-strong); stroke-width: 1.5; }
 
   .mk-dot { fill: var(--text); fill-opacity: 0.8; stroke: var(--panel); stroke-width: 1.5; }
   .mk-dot-off { fill: var(--panel); stroke: var(--muted); stroke-width: 1.5; }
@@ -1210,10 +1191,216 @@ const reference = market.models
   }
   .mk-sum strong { color: var(--text); font-weight: var(--weight-semibold); }
 
+  /* The hero's authority line: four facts in one mono row on the dark band. */
+  .mk-auth {
+    font-family: var(--font-mono); font-size: var(--text-sm);
+    color: var(--muted-on-dark); margin: var(--space-5) 0 0;
+  }
+  /* The mid-page ask. A link, not a button: the button is the close, and two yellow buttons on
+     one page would make neither of them the call to action. */
+  /* Scope note trailing the breadth chart's own sentence, so the count sits with the claim
+     rather than in a stat row of its own. */
+  .mk-scope {
+    font-family: var(--font-mono); font-size: var(--text-sm); color: var(--muted);
+    margin: calc(-1 * var(--space-3)) 0 var(--space-5);
+  }
+  /* ---- the experiment card ---- */
+  .mk-exp {
+    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted);
+    letter-spacing: var(--tracking-label); text-transform: uppercase;
+    margin: 0 0 var(--space-3);
+  }
+  /* Two controlled facts, three columns: what was held, the two values, and what that means in
+     words. The third column is what the old "<" and "=" glyphs were asking a reader to infer. */
+  .mk-ctrl { margin: 0 0 var(--space-8); display: grid; gap: var(--space-2); }
+  .mk-ctrl > div {
+    display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 12rem) 1fr;
+    gap: var(--space-4); align-items: baseline;
+    padding-bottom: var(--space-2); border-bottom: 1px solid var(--line);
+  }
+  .mk-ctrl dt, .mk-ctrl dd { margin: 0; font-size: var(--text-sm); }
+  .mk-ctrl dt { color: var(--muted); }
+  .mk-ctrl dd { font-family: var(--font-mono); color: var(--text); }
+  .mk-ctrl-note { color: var(--muted) !important; font-family: var(--font-sans) !important; }
+
+  /* The reveal, which carries the section. Four columns so the values and the bars line up
+     across both rows; the bars are the only graphic on the card and a percentage width draws
+     them, which is what lets the whole thing reflow on a phone. */
+  .mk-rev-label {
+    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted);
+    letter-spacing: var(--tracking-label); text-transform: uppercase; margin: 0 0 var(--space-3);
+  }
+  .mk-rev {
+    display: grid; grid-template-columns: minmax(0, 11rem) auto minmax(0, 1fr) auto;
+    gap: var(--space-3) var(--space-4); align-items: center; margin-bottom: var(--space-6);
+  }
+  .mk-rev p { margin: 0; }
+  .mk-rev-name { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text); }
+  .mk-rev-val {
+    font-family: var(--font-mono); font-size: var(--text-xl);
+    font-weight: var(--weight-semibold); color: var(--text);
+  }
+  .mk-rev-track { background: var(--bg-tint); border-radius: var(--radius-sm); }
+  .mk-rev-bar { height: var(--space-6); border-radius: var(--radius-sm); background: var(--text); }
+  /* Canary on the dearer bar only. Yellow here is saying "this is the finding" rather than
+     naming a series, which is why exactly one bar has it; --accent-deep rather than --accent
+     because the lighter one has too little to say against a white panel. */
+  .mk-rev-bar-hi { background: var(--accent-deep); }
+  .mk-rev-delta {
+    font-family: var(--font-mono); font-size: var(--text-sm);
+    font-weight: var(--weight-semibold); color: var(--text); white-space: nowrap;
+  }
+  /* The mechanism, demoted. It explains the finding and is not another finding. */
+  .mk-why { font-size: var(--text-base); color: var(--muted); margin: 0; }
+  .mk-why strong { color: var(--text); }
+
+  .mk-strip-head {
+    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted);
+    letter-spacing: var(--tracking-label); text-transform: uppercase;
+    margin: var(--space-8) 0 var(--space-3);
+  }
+
+  /* ---- the model rail ---- */
+  .mk-rail { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
+  .mk-rail label {
+    font-family: var(--font-mono); font-size: var(--text-sm);
+    color: var(--muted); background: var(--panel);
+    border: 1px solid var(--line); border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-4); cursor: pointer;
+    transition: background var(--dur-base) var(--ease), color var(--dur-base) var(--ease),
+                border-color var(--dur-base) var(--ease);
+  }
+  .mk-rail label:hover { color: var(--text); background: var(--bg-tint); }
+  /* Beyond the fifth chip, hidden until the toggle. A generated rule overrides this for
+     whichever model is selected, so a chosen chip is never invisible. */
+  .mk-rail-more { display: none; }
+  .mk-rail-toggle { border-style: dashed !important; }
+  .mk-rail-hide { display: none; }
+  #mk-all:checked ~ .mk-rail > .mk-rail-more { display: inline-block; }
+  #mk-all:checked ~ .mk-rail > .mk-rail-show { display: none; }
+  #mk-all:checked ~ .mk-rail > .mk-rail-hide { display: inline-block; }
+
+  /* ---- tool calling, one bar per model ---- */
+  /* The single sentence a reader should leave with, above the chart that supports it. */
+  .mk-claim {
+    font-size: var(--text-lg); color: var(--text); font-weight: var(--weight-medium);
+    max-width: var(--measure-prose); margin: 0 0 var(--space-4);
+  }
+  .mk-cap { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .mk-cap li {
+    display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) auto;
+    gap: var(--space-4); align-items: center;
+  }
+  .mk-cap-name { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text); }
+  /* The track's own width carries how many companies serve the model, so breadth still reads
+     off the chart; the split inside it is supported against not. */
+  /* No border-radius and no overflow here, deliberately. Rounding the track and clipping the
+     children curved the OUTER edge of an outlined segment's border while its inner edge stayed
+     square, so the stroke wedged out at each corner and the end looked chipped. Each segment
+     rounds its own outer corners instead — see the shared rule below — so a border follows a
+     real curve on both sides. */
+  .mk-cap-track { display: flex; height: var(--space-5); }
+  /* Two states and no third colour. --danger was in the palette but read as a different design
+     system: one saturated red block on a page whose ink is near-black and whose only accent is
+     canary. Filled means the capability is advertised and outlined means it is not, which is the
+     idiom the rest of the page already uses for absence — the hollow dot on the scatter for a
+     company not serving, and the hollow end of a ladder bar for the cheapest. */
+  .mk-cap-ok { background: var(--text); }
+  .mk-cap-no {
+    background: var(--panel);
+    border: 1px solid var(--text);
+    border-left: 0;
+  }
+  .mk-cap-num {
+    font-family: var(--font-mono); font-size: var(--text-sm); color: var(--muted);
+    font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  /* Precision, at the same bar height as the capability rows above it so the two read as one
+     panel rather than two charts that happen to be adjacent. */
+  .mk-prec { margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--line); }
+  .mk-prec-head {
+    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted);
+    letter-spacing: var(--tracking-label); text-transform: uppercase; margin: 0 0 var(--space-3);
+  }
+  .mk-prec-track { display: flex; height: var(--space-5); }
+  .mk-prec-seg { background: var(--text); }
+  .mk-prec-key {
+    list-style: none; margin: var(--space-3) 0 0; padding: 0;
+    display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-5);
+    font-family: var(--font-mono); font-size: var(--text-xs); color: var(--muted);
+  }
+  .mk-prec-key li { display: flex; align-items: center; gap: var(--space-2); }
+  .mk-prec-chip {
+    width: var(--space-3); height: var(--space-3); border-radius: var(--radius-sm);
+    background: var(--text); flex: 0 0 auto;
+  }
+  /* AFTER both base rules above, and that ordering is the whole reason this works. The depth
+     and outline classes sit on the segment and on the key chip, so at equal specificity they
+     have to come last — defined earlier, .mk-prec-chip's own background won and "not stated"
+     rendered as a filled square in the key while the bar itself was correctly outlined. */
+  .mk-p-16 { opacity: 0.3; }
+  .mk-p-8 { opacity: 0.55; }
+  .mk-p-4 { opacity: 0.8; }
+  /* The two segmented bars round their own ends. Individual corner properties rather than the
+     shorthand, so the first-child and last-child rules set different corners and neither has to
+     override the other — and a single segment that is both gets all four. */
+  .mk-cap-track > *,
+  .mk-prec-track > * { border-radius: 0; }
+  .mk-cap-track > :first-child,
+  .mk-prec-track > :first-child {
+    border-top-left-radius: var(--radius-sm);
+    border-bottom-left-radius: var(--radius-sm);
+  }
+  .mk-cap-track > :last-child,
+  .mk-prec-track > :last-child {
+    border-top-right-radius: var(--radius-sm);
+    border-bottom-right-radius: var(--radius-sm);
+  }
+
+  /* Outlined, the same way a missing capability is. In the bar the left border drops out so the
+     segment reads as continuous with the filled ones beside it; the key chip keeps all four.
+
+     Compound selectors rather than a bare .mk-p-none, so this wins on specificity instead of on
+     source order. Order alone was not enough: the built stylesheet had it last and correct, and
+     the dev server emitted a different order, so the key chip rendered filled while the bar was
+     right. Anything that must override a base rule here is a compound now. */
+  .mk-prec-seg.mk-p-none,
+  .mk-prec-chip.mk-p-none {
+    background: var(--panel); border: 1px solid var(--text); opacity: 1;
+  }
+  .mk-prec-seg.mk-p-none { border-left: 0; }
+
+  .mk-cap-rest {
+    font-size: var(--text-base); color: var(--muted);
+    margin: var(--space-6) 0 0; padding-top: var(--space-4); border-top: 1px solid var(--line);
+  }
+
+  /* CTA one: a claim and a single action, inside the section that earns it. */
+  .mk-ask {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-4);
+    font-size: var(--text-md); margin: var(--space-7) 0 0;
+  }
+  .mk-band { fill: var(--accent-bg); }
+
   .mk-big { font-weight: 650; }
   .mk-cta {
     display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6);
     margin-top: var(--space-10);
+  }
+  /* LAST IN THE BLOCK ON PURPOSE. These override base rules of the same specificity, so source
+     order decides and an earlier @media block simply loses — which is exactly what happened:
+     the bars collapsed to zero width on a phone because the four-column rule still won.
+
+     The three grids have fixed first columns, right on a wide column and wrong on a narrow
+     one. Below the phone breakpoint they stack, and the bar takes the full width beneath. */
+  @media (max-width: 640px) {
+    .mk-ctrl > div,
+    .mk-rev,
+    .mk-cap li { grid-template-columns: 1fr; gap: var(--space-1); }
+    .mk-rev { gap: var(--space-2); margin-bottom: var(--space-8); }
+    .mk-rev-track { margin-bottom: var(--space-4); }
+    .mk-cap-track { width: 100% !important; }
+    .mk-cap li { padding-bottom: var(--space-3); }
   }
 </style>
 
