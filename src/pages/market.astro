@@ -67,6 +67,10 @@ const times = (r: number) => {
      ratio of 4.62 came out as "nearly four and a half times" when it is past four and a
      half, which is the wrong side to round on a page with a number gate. */
   if (frac >= 0.28 && frac < 0.4) return `nearly ${spell(f)} and a half times`;
+  /* Past the half. "More than two times" for a ratio of 2.69 is true and reads as an
+     understatement next to a heading saying 2.7, so the sentence names the half it has
+     already cleared. */
+  if (frac > 0.6) return `more than ${spell(f)} and a half times`;
   return `more than ${spell(f)} times`;
 };
 const int = (n: number) => Math.round(n).toLocaleString('en-GB');
