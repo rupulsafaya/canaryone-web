@@ -369,30 +369,106 @@ const precSegs = prec.buckets.map((b: any) => {
   return seg;
 });
 
-/* 5. The scatter, on a log price axis for the same reason the ladder is. Hosts
-   cluster between three and fifteen cents with one at thirty-five. */
-const model = market.models.find((x) => x.id === 'openai/gpt-oss-120b') ?? lead;
-const pts = (model.scatter ?? []).filter((p: any) => p.price && p.ttft);
-const W = 800, H = 372, L = 62, R = 22, T = 32, B = 54;
-const yMax = pts.length ? Math.max(...pts.map((p: any) => p.ttft)) * 1.1 : 1;
-const sLo = pts.length ? Math.min(...pts.map((p: any) => p.price)) / 1.6 : 0.01;
-const sHi = pts.length ? Math.max(...pts.map((p: any) => p.price)) * 1.6 : 1;
-const sx = (v: number) => L + ((lg(v) - lg(sLo)) / (lg(sHi) - lg(sLo))) * (W - L - R);
-const sy = (v: number) => T + (1 - v / yMax) * (H - T - B);
-const xt = [0.01, 0.03, 0.1, 0.3, 1].filter((v) => v >= sLo && v <= sHi);
-const yt = Array.from({ length: 4 }, (_, i) => (yMax / 3) * i);
+/* 5. The scatter, on a log price axis for the same reason the ladder is, and now one per
+   model with the model name as a selector rather than a title.
 
-/* The largest group of companies listing this model at one identical price, and the range of
-   first-token times inside that group. Restricted to hosts currently serving requests, because
-   a paused host's reported latency is whatever it was when it stopped. */
-const sBuckets: Record<string, any[]> = {};
-pts.filter((p: any) => p.status === 0)
-  .forEach((p: any) => (sBuckets[p.price.toFixed(3)] ??= []).push(p));
-const sTie = Object.entries(sBuckets)
-  .map(([price, group]) => ({ price: Number(price), group }))
-  .sort((a, b) => b.group.length - a.group.length)[0];
-const sTieLo = sTie && Math.min(...sTie.group.map((p: any) => p.ttft));
-const sTieHi = sTie && Math.max(...sTie.group.map((p: any) => p.ttft));
+   NO CLIENT JAVASCRIPT, which is the constraint that shapes this. A dropdown that filters a
+   chart is a script, and this page ships none. So every model's chart is rendered at build
+   time and CSS shows the one whose radio is checked: ten hidden radios, a row of labels
+   styled as chips, and generated rules pairing the two. The cost is markup for ten charts in
+   one document; the gain is that a visitor changes model with no request and no script, and
+   the page does not grow by ten charts' worth of height.
+
+   Ten rather than fourteen: a model needs at least five companies reporting both a price and
+   a first-token median before a scatter says anything, which drops Nemotron 3 Super,
+   Ling-3.0-flash and Qwen3 Coder Next, and Claude Opus 5 goes for the same reason it is
+   absent from the ladder — no public weights. */
+const W = 800, H = 372, L = 62, R = 22, T = 32, B = 54;
+const SCATTER_MIN_PTS = 5;
+const SCATTER_DEFAULT = 'openai/gpt-oss-120b';
+
+/* Ticks derived per model rather than from one fixed list. A shared list of decade values left
+   GLM 5.1 with a single tick at $1, because its whole range is 97 cents to $1.54 and nothing
+   else fell inside it. Decade steps first; if a range is narrow enough that fewer than three
+   land in it, the finer sequence fills it in. */
+const logTicks = (lo: number, hi: number) => {
+  const build = (steps: number[]) => {
+    const out: number[] = [];
+    for (let k = -3; k <= 2; k++) {
+      for (const st of steps) {
+        const v = st * 10 ** k;
+        if (v >= lo && v <= hi) out.push(v);
+      }
+    }
+    return out;
+  };
+  const coarse = build([1, 2, 5]);
+  return coarse.length >= 3 ? coarse : build([1, 1.5, 2, 3, 5, 7]);
+};
+/* Trims the trailing zeros a fixed precision would leave, so a tick reads $2 and $0.05 rather
+   than $2.00 and $0.05 side by side. */
+const tickLabel = (v: number) => `$${String(+v.toFixed(3))}`;
+
+const scatterCards = market.models
+  .filter((x: any) => x.open_weights)
+  .map((x: any) => ({ x, pts: (x.scatter ?? []).filter((p: any) => p.price && p.ttft) }))
+  .filter((c: any) => c.pts.length >= SCATTER_MIN_PTS)
+  /* The default first, then most companies first. The default is gpt-oss-120b because its
+     story needs no explaining: twenty companies serve it, the dearest charges nearly twelve
+     times the cheapest, and six of them charge exactly the same price for first-token times
+     that differ four-fold. */
+  .sort((a: any, b: any) =>
+    (b.x.id === SCATTER_DEFAULT ? 1 : 0) - (a.x.id === SCATTER_DEFAULT ? 1 : 0)
+    || b.pts.length - a.pts.length)
+  .map(({ x, pts }: any) => {
+    /* Latency figures come from companies currently serving requests only. A paused company
+       still reports a median, and it is whatever it was when it stopped. Its point is still
+       drawn, hollow, because being listed and not serving is worth seeing — it is only kept
+       out of the arithmetic. */
+    const live = pts.filter((p: any) => p.status === 0);
+    const tts = live.map((p: any) => p.ttft);
+    const prices = pts.map((p: any) => p.price);
+    const lo = Math.min(...prices) / 1.6, hi = Math.max(...prices) * 1.6;
+    const yMax = Math.max(...pts.map((p: any) => p.ttft)) * 1.1;
+
+    /* The largest group of companies charging one identical price, and the spread of
+       first-token times inside it. This is the finding the chart exists for, and every one of
+       the ten has one. */
+    const buckets: Record<string, any[]> = {};
+    live.forEach((p: any) => (buckets[p.price.toFixed(3)] ??= []).push(p));
+    const tie = Object.entries(buckets)
+      .map(([price, group]) => ({ price: Number(price), group }))
+      .sort((a, b) => b.group.length - a.group.length)[0];
+
+    return {
+      id: x.id, short: x.short, or_url: x.or_url, listed: x.hosts_listed,
+      priceRatio: x.price_in?.ratio,   /* the LISTED spread, so it matches the ladder's column */
+      pts, live,
+      ttftRatio: tts.length > 1 ? Math.max(...tts) / Math.min(...tts) : null,
+      sx: (v: number) => L + ((lg(v) - lg(lo)) / (lg(hi) - lg(lo))) * (W - L - R),
+      sy: (v: number) => T + (1 - v / yMax) * (H - T - B),
+      xt: logTicks(lo, hi),
+      yt: Array.from({ length: 4 }, (_, i) => (yMax / 3) * i),
+      tie: tie && tie.group.length > 2 ? {
+        price: tie.price, n: tie.group.length,
+        lo: Math.min(...tie.group.map((p: any) => p.ttft)),
+        hi: Math.max(...tie.group.map((p: any) => p.ttft)),
+      } : null,
+    };
+  });
+
+/* The pairing rules, generated because there is one set per model. Selectors are all under
+   .mk-sel, which exists only on this page, so injecting them globally is safe — Astro's
+   scoped styles cannot carry a generated block. */
+const scatterCss = scatterCards.map((_c: any, i: number) => `
+.mk-sel > input:nth-of-type(${i + 1}):checked ~ .mk-cards > :nth-child(${i + 1}) { display: block }
+.mk-sel > input:nth-of-type(${i + 1}):checked ~ .mk-chips > label:nth-child(${i + 1}) {
+  background: var(--accent); border-color: var(--accent-deep); color: var(--dark);
+  font-weight: var(--weight-semibold);
+}
+.mk-sel > input:nth-of-type(${i + 1}):focus-visible ~ .mk-chips > label:nth-child(${i + 1}) {
+  outline: var(--focus-width) solid var(--focus-color); outline-offset: 2px;
+}`).join('');
 
 /* The model reference. This replaced a four-row "market pulse" table whose rows were four
    unrelated superlatives — a price ratio, a latency ratio, a cost ratio and a token count —
@@ -805,53 +881,80 @@ const reference = market.models
 
       <h2>Same weights, different price and speed</h2>
       <p class="tm-note">
-        Every point is the same model weights running on a different host. Lower and further
-        left is cheaper and faster.
+        Every point is one company serving the same weights. Lower and further left is cheaper
+        and faster. Pick a model to see its own market.
       </p>
 
-      {pts.length > 2 ? (
-        <div class="tm-panel mk-wrap">
-          <svg viewBox={`0 0 ${W} ${H}`} class="mk-svg" role="img"
-               aria-label={`Blended price against first-token latency for ${pts.length} hosts serving ${model.name}. The table below gives the same figures.`}>
-            {yt.map((t) => (
-              <g>
-                <line x1={L} x2={W - R} y1={sy(t)} y2={sy(t)} class="mk-grid" />
-                <text x={L - 10} y={sy(t) + 4} class="mk-ax mk-ax-y">{(t / 1000).toFixed(1)}s</text>
-              </g>
-            ))}
-            {xt.map((t) => <text x={sx(t)} y={H - 28} class="mk-ax mk-ax-c">${t.toFixed(2)}</text>)}
-            <text x={8} y="14" class="mk-ax">First token, seconds</text>
-            <g>
-              <circle cx={L + 6} cy={H - 12} r={R_SM} class="mk-dot mk-dot-off" />
-              <text x={L + 18} y={H - 8} class="mk-ax">Not serving requests at this read</text>
-              <text x={W - R} y={H - 8} class="mk-ax mk-ax-end-r">
-                Blended price per 1M tokens, logarithmic
-              </text>
-            </g>
-            {pts.map((p: any) => (
-              <circle cx={sx(p.price)} cy={sy(p.ttft)} r={R_SM}
-                      class={p.status === 0 ? 'mk-dot' : 'mk-dot mk-dot-off'}>
-                <title>{`${p.tag} · ${usd(p.price)} per 1M · ${(p.ttft / 1000).toFixed(1)}s first token`}</title>
-              </circle>
-            ))}
-          </svg>
+      {/* Ten radios, a row of labels and ten pre-rendered charts. The radios are the state,
+          CSS does the switching, and no script is involved. .sr-only keeps them reachable by
+          keyboard while the label carries the visible chip. */}
+      <fieldset class="mk-sel">
+        <legend class="sr-only">Model</legend>
+        {scatterCards.map((c: any) => (
+          <input class="sr-only" type="radio" name="mk-model" id={`mk-m-${c.id}`}
+                 checked={c.id === SCATTER_DEFAULT} />
+        ))}
+        <div class="mk-chips">
+          {scatterCards.map((c: any) => (
+            <label for={`mk-m-${c.id}`}>{c.short}</label>
+          ))}
         </div>
-      ) : (
-        <div class="tm-panel mk-wrap"><p class="tm-status">No latency figures for this model at the latest read.</p></div>
-      )}
-
-      <p class="tm-coverage">
-        {model.hosts_listed} companies serve {model.short}, and the dearest charges
-        {' '}{times(model.price_in.ratio)} the cheapest.
-        {sTie && sTie.group.length > 2 && (
-          <> {cap(spell(sTie.group.length))} of them list it at exactly
-          {' '}{priceWords(sTie.price)} per million tokens, and inside that group the first token
-          arrives after {(sTieLo / 1000).toFixed(1)} seconds at one end and
-          {' '}{(sTieHi / 1000).toFixed(1)} seconds at the other. Paying the same does not buy
-          the same.</>
-        )} Metadata read {captured}. <a href={model.or_url} rel="noopener" target="_blank">Check
-        these prices on OpenRouter →</a>
-      </p>
+        <div class="mk-cards">
+          {scatterCards.map((c: any) => (
+            <div>
+              <p class="mk-sum">
+                <strong>{c.listed} companies</strong> · {mult(c.priceRatio)} price spread
+                {c.ttftRatio && <> · {mult(c.ttftRatio)} first-token spread</>}
+              </p>
+              <div class="tm-panel mk-wrap">
+                <svg viewBox={`0 0 ${W} ${H}`} class="mk-svg" role="img"
+                     aria-label={`Listed price against reported first-token time for ${c.pts.length} companies serving ${c.short}. Price runs ${mult(c.priceRatio)} from cheapest to dearest.${c.tie ? ` ${c.tie.n} of them charge exactly ${priceWords(c.tie.price)} per million tokens, and their first token arrives after between ${(c.tie.lo / 1000).toFixed(1)} and ${(c.tie.hi / 1000).toFixed(1)} seconds.` : ''}`}>
+                  {c.yt.map((t: number) => (
+                    <g>
+                      <line x1={L} x2={W - R} y1={c.sy(t)} y2={c.sy(t)} class="mk-grid" />
+                      <text x={L - 10} y={c.sy(t) + 4} class="mk-ax mk-ax-y">
+                        {(t / 1000).toFixed(1)}s
+                      </text>
+                    </g>
+                  ))}
+                  {c.xt.map((t: number) => (
+                    <text x={c.sx(t)} y={H - 28} class="mk-ax mk-ax-c">{tickLabel(t)}</text>
+                  ))}
+                  <text x={8} y="14" class="mk-ax">First token, seconds</text>
+                  <g>
+                    <circle cx={L + 6} cy={H - 12} r={R_SM} class="mk-dot mk-dot-off" />
+                    <text x={L + 18} y={H - 8} class="mk-ax">Not serving requests at this read</text>
+                    <text x={W - R} y={H - 8} class="mk-ax mk-ax-end-r">
+                      Listed price per 1M tokens, logarithmic
+                    </text>
+                  </g>
+                  {c.pts.map((pt: any) => (
+                    <circle cx={c.sx(pt.price)} cy={c.sy(pt.ttft)} r={R_SM}
+                            class={pt.status === 0 ? 'mk-dot' : 'mk-dot mk-dot-off'}>
+                      <title>{`${pt.tag} · ${usd(pt.price)} per 1M · ${(pt.ttft / 1000).toFixed(1)}s first token${pt.status === 0 ? '' : ' · not serving'}`}</title>
+                    </circle>
+                  ))}
+                </svg>
+              </div>
+              <p class="tm-coverage">
+                {c.listed} companies serve {c.short}, and the dearest charges
+                {' '}{times(c.priceRatio)} the cheapest.
+                {c.tie && (
+                  <> {cap(spell(c.tie.n))} of them charge exactly {priceWords(c.tie.price)} per
+                  million tokens, and inside that group the first token arrives after
+                  {' '}{(c.tie.lo / 1000).toFixed(1)} seconds at one end and
+                  {' '}{(c.tie.hi / 1000).toFixed(1)} seconds at the other. Paying the same does
+                  not buy the same.</>
+                )} First-token figures cover the {c.live.length} companies serving requests at
+                this read, each one their own reported median over the previous half hour.
+                Metadata read {captured}.
+                {' '}<a href={c.or_url} rel="noopener" target="_blank">Check these prices on
+                OpenRouter →</a>
+              </p>
+            </div>
+          ))}
+        </div>
+      </fieldset>
 
       <h2>Tool calling is not part of the weights</h2>
       <p class="tm-note">
@@ -1074,9 +1177,47 @@ const reference = market.models
   .mk-dot { fill: var(--text); fill-opacity: 0.8; stroke: var(--panel); stroke-width: 1.5; }
   .mk-dot-off { fill: var(--panel); stroke: var(--muted); stroke-width: 1.5; }
 
+  /* The model selector. A fieldset because that is what a group of radios is; its border and
+     padding are cleared because the chips carry their own. */
+  /* min-inline-size is the load-bearing line. A fieldset defaults to min-content width, so it
+     refused to shrink below its widest child — and its widest child is a chart carrying
+     min-width: var(--chart-min). That pushed the whole page to 862px of scroll on a 375px
+     phone. Zeroing it lets the fieldset take the column width and the chart scroll inside its
+     own panel, which is what every other chart on the page already does. */
+  .mk-sel { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
+  .mk-chips {
+    display: flex; flex-wrap: wrap; gap: var(--space-2);
+    margin-bottom: var(--space-5);
+  }
+  /* Same shape as .tm-chip, minus the checkbox row it is built around. Yellow arrives on the
+     checked one through a generated rule, which is a fill behind dark text on cream and so one
+     of the uses DESIGN.md allows. */
+  .mk-chips label {
+    font-family: var(--font-mono); font-size: var(--text-sm);
+    color: var(--muted); background: var(--panel);
+    border: 1px solid var(--line); border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-4); cursor: pointer;
+    transition: background var(--dur-base) var(--ease), color var(--dur-base) var(--ease),
+                border-color var(--dur-base) var(--ease);
+  }
+  .mk-chips label:hover { color: var(--text); background: var(--bg-tint); }
+
+  /* Every card is rendered and all but one hidden. The generated rules turn one back on. */
+  .mk-cards > * { display: none; }
+  .mk-sum {
+    font-family: var(--font-mono); font-size: var(--text-sm); color: var(--muted);
+    margin: 0 0 var(--space-4);
+  }
+  .mk-sum strong { color: var(--text); font-weight: var(--weight-semibold); }
+
   .mk-big { font-weight: 650; }
   .mk-cta {
     display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-6);
     margin-top: var(--space-10);
   }
 </style>
+
+<!-- One rule set per model, pairing radio N with chip N and card N. Generated because the
+     count is data-driven, and injected globally because Astro's scoped styles cannot carry a
+     generated block. Every selector is under .mk-sel, which exists only on this page. -->
+<style is:global set:html={scatterCss}></style>\n
