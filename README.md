@@ -149,7 +149,31 @@ pnpm build:logos      # lobehub + brand/partners/ -> public/logos/ and public/lo
 pnpm build:og         # public/c1-logo.svg + receipt -> public/og.png
 pnpm sync:model-icons # lobehub -> public/logos/models/ (16px model icons; unused since /market replaced the /prices chart)
 pnpm redact:report    # prepare public/demo-report/ for publication
+pnpm extract:example-run  # public/demo-report/index.html -> src/data/example-run.json
+pnpm extract:adapters     # ../canaryone route registry -> src/data/adapters.json
 ```
+
+**The two extractors turn a claim into a read.** `/evals-v2` states figures off the example run
+and counts off the shipped adapter registry, and both used to be typed into the page by hand —
+which is how the coverage section came to claim nine direct providers over a registry carrying
+fourteen. `extract:example-run` reads every figure off the `data-sort-value` attributes in the
+report the page links to, so the page and the artefact cannot disagree; run it after
+`redact:report`. `extract:adapters` reads `ROUTERS` and `DIRECT_PROVIDERS` out of
+`../canaryone/src/proxy/providers.ts`, which is a sibling repository and absent on Vercel, so
+its output is committed like every other generated asset here and the build never looks for it.
+Both throw rather than writing a short file, because a silently truncated list looks exactly
+like a smaller registry.
+
+**`extract:adapters` also writes the marks, into `public/logos/providers/`.** They are the
+monochrome variants from the icon library, one per adapter, which is the opposite preference to
+`public/logos/models/` — that directory takes each brand's colour variant because a mark there
+renders at 16px beside a model name, where colour is what identifies a brand. A coverage row is
+seventeen brands at once, and seventeen palettes drawn in seventeen typefaces is the noise the
+row is trying not to be, so every mark takes one ink and the company's name is set beside it in
+our own type. It also settles the contrast rule: OpenRouter's colour mark is `#C8FF00`, which
+measures roughly 1.3:1 on cream. The script reports any adapter with no monochrome variant
+instead of copying a coloured one, because a single coloured mark in that row would look like a
+mistake nobody could explain.
 
 `build:logo` is the CanaryOne brand mark and `build:logos` is everyone else's. The singular
 name predates the plural one and the two are easy to confuse; they share the ink measurement in

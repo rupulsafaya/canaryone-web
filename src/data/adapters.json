@@ -1,0 +1,115 @@
+{
+  "source": "../canaryone/src/proxy/providers.ts",
+  "generator": "scripts/extract-adapters.mjs",
+  "marks": "public/logos/providers/ — monochrome, filled with currentColor",
+  "routers": [
+    {
+      "slug": "openrouter",
+      "name": "OpenRouter",
+      "shipped": true,
+      "mark": "openrouter.svg"
+    },
+    {
+      "slug": "vercel",
+      "name": "Vercel AI Gateway",
+      "shipped": true,
+      "mark": "vercel.svg"
+    },
+    {
+      "slug": "bedrock",
+      "name": "AWS Bedrock",
+      "shipped": true,
+      "mark": "bedrock.svg"
+    }
+  ],
+  "direct": [
+    {
+      "slug": "direct:moonshot-intl",
+      "name": "Moonshot AI (intl)",
+      "shipped": true,
+      "mark": "moonshot.svg"
+    },
+    {
+      "slug": "direct:moonshot-cn",
+      "name": "Moonshot AI (cn)",
+      "shipped": true,
+      "mark": "moonshot.svg"
+    },
+    {
+      "slug": "direct:nebius",
+      "name": "Nebius",
+      "shipped": true,
+      "mark": "nebius.svg"
+    },
+    {
+      "slug": "direct:fireworks",
+      "name": "Fireworks AI",
+      "shipped": true,
+      "mark": "fireworks.svg"
+    },
+    {
+      "slug": "direct:together",
+      "name": "Together AI",
+      "shipped": true,
+      "mark": "together.svg"
+    },
+    {
+      "slug": "direct:groq",
+      "name": "Groq",
+      "shipped": true,
+      "mark": "groq.svg"
+    },
+    {
+      "slug": "direct:deepseek",
+      "name": "DeepSeek",
+      "shipped": true,
+      "mark": "deepseek.svg"
+    },
+    {
+      "slug": "direct:baseten",
+      "name": "Baseten",
+      "shipped": true,
+      "mark": "baseten.svg"
+    },
+    {
+      "slug": "direct:cerebras",
+      "name": "Cerebras",
+      "shipped": true,
+      "mark": "cerebras.svg"
+    },
+    {
+      "slug": "direct:openai",
+      "name": "OpenAI",
+      "shipped": true,
+      "mark": "openai.svg"
+    },
+    {
+      "slug": "direct:anthropic",
+      "name": "Anthropic",
+      "shipped": true,
+      "mark": "anthropic.svg"
+    },
+    {
+      "slug": "direct:xai",
+      "name": "xAI",
+      "shipped": true,
+      "mark": "xai.svg"
+    },
+    {
+      "slug": "direct:zai",
+      "name": "Z.ai",
+      "shipped": true,
+      "mark": "zai.svg"
+    },
+    {
+      "slug": "direct:google-gemini",
+      "name": "Google Gemini",
+      "shipped": true,
+      "mark": "gemini.svg"
+    }
+  ],
+  "counts": {
+    "routers": 3,
+    "direct": 14
+  }
+}

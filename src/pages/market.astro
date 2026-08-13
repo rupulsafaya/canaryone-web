@@ -46,7 +46,9 @@ import { brandIconFor } from '../lib/model-brand';
 
 const fmt = (iso: string, time = true) =>
   new Date(iso).toLocaleString('en-GB', {
-    day: 'numeric', month: 'short', year: 'numeric',
+    /* 'long', matching day() in src/lib/prose.ts. The two pages carried 'short' and 'long'
+       and printed the same run date two ways. */
+    day: 'numeric', month: 'long', year: 'numeric',
     ...(time ? { hour: '2-digit', minute: '2-digit' } : {}),
     timeZone: 'UTC',
   }) + (time ? ' UTC' : '');
@@ -624,10 +626,13 @@ const reference = market.models
               <p class="mk-rev-delta"></p>
             </div>
 
+            {/* COPY.md § Prose: a multiplier is spelled out in prose and the compact form is
+                for a table cell, a chart label or a heading. This read "a 27× difference" and
+                opened on a verbless fragment. */}
             <p class="mk-why">
-              <strong>Why the gap?</strong> {int(pair.dear.reasoning_per_task)} against
-              {' '}{int(pair.cheap.reasoning_per_task)} reasoning tokens per task, a
-              {' '}{mult(expThink)} difference on the same job.
+              <strong>Why the gap?</strong> One route spent {times(expThink)} as many reasoning
+              tokens per task as the other on the same job — {int(pair.dear.reasoning_per_task)}
+              {' '}against {int(pair.cheap.reasoning_per_task)}.
             </p>
           </div>
 
@@ -1045,7 +1050,10 @@ const reference = market.models
       </p>
       <p class="mk-cta">
         <a class="btn primary" href="/evals">Benchmark your workload →</a>
-        <a href="/#waitlist">Get early access →</a>
+        {/* Not "/#waitlist": the opener in Layout binds a[href="#waitlist"] and nothing
+            handles the hash on load, so a root-relative link landed on the home page with
+            no dialog. The dialog is in the layout, so it is on this page too. */}
+        <a href="#waitlist">Get early access →</a>
       </p>
 
     </div>

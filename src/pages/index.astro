@@ -26,14 +26,16 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
           </div>
 
           <p class="sub">
-            Test every provider on your own workload. Fine-tune the best model.
+            Benchmark your workload on the routes you could ship on. Fine-tune the best model.
             Deploy it alongside your current stack. Catch drift before your users do.
           </p>
           <div class="ctas">
             <a class="btn primary" href={GITHUB_URL} target="_blank" rel="noopener">
               View on GitHub →
             </a>
-            <a class="btn ghost" href="#install">
+            {/* /evals#install: this page has no element with that id, so the anchor did
+                nothing. The install terminal lives on /evals. */}
+            <a class="btn ghost" href="/evals#install">
               <span>$&nbsp;npx&nbsp;canaryone</span>
             </a>
           </div>
@@ -98,9 +100,9 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
 
         <div class="pillar-card">
           <p class="kicker">TEST</p>
-          <h2 class="pillar-card__h">Benchmark every provider<br />on your own workload.</h2>
-          <p class="pillar-card__body">Point CanaryOne at your repo. It runs your tests against every route your production traffic could take — real cost and quality, not a leaderboard someone else built.</p>
-          <a class="btn primary" href="/evals">Run your evals →</a>
+          <h2 class="pillar-card__h">Find the route that wins<br />on your workload.</h2>
+          <p class="pillar-card__body">Point CanaryOne at your repository. It runs the tests you already have against routers and direct providers, and reports cost per completed task rather than a leaderboard someone else built.</p>
+          <a class="btn primary" href="/evals">Benchmark your workload →</a>
         </div>
 
         <div class="pillar-card">
@@ -150,29 +152,29 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
         <div class="tune-step">
           <h3 class="tune-step__title">Prepare Dataset</h3>
           <p class="tune-step__desc">
-            We filter by outcome, deduplicate, and curate a clean training set —
-            no data wrangling on your end.
+            We plan to filter by outcome, deduplicate and curate a clean training
+            set, so there is no data wrangling on your end.
           </p>
         </div>
         <div class="tune-step">
           <h3 class="tune-step__title">Fine-tune</h3>
           <p class="tune-step__desc">
-            We run and manage the training job. A production-ready model tuned
-            to your workload comes back.
+            We plan to run and manage the training job, and to hand back a model
+            tuned to your workload.
           </p>
         </div>
       </div>
 
       <div class="tune-partners">
         <div class="partner-row">
-          <span class="partner-label">Ingests traces from</span>
+          <span class="partner-label">Planned support · trace sources</span>
           <div class="partner-logos">
             <img src="/logos/langchain.svg"  alt="LangChain"  title="LangChain"  />
             <img src="/logos/llamaindex.svg" alt="LlamaIndex" title="LlamaIndex" />
           </div>
         </div>
         <div class="partner-row">
-          <span class="partner-label">Fine-tunes via</span>
+          <span class="partner-label">Planned support · fine-tuning</span>
           <div class="partner-logos">
             <img src="/logos/together.svg"  alt="Together AI"  title="Together AI"  />
             <img src="/logos/fireworks.svg" alt="Fireworks AI" title="Fireworks AI" />
@@ -183,7 +185,7 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
 
       <div class="waitlist-row">
         <a class="btn primary" href="#waitlist">Get early access →</a>
-        <span class="waitlist-note">fine-tuning pipeline in private beta</span>
+        <span class="waitlist-note">we're building the fine-tuning pipeline</span>
       </div>
     </div>
   </section>
@@ -216,7 +218,7 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
 
       <div class="deploy-targets">
         <div class="partner-row">
-          <span class="partner-label">EU</span>
+          <span class="partner-label">Planned support · EU</span>
           <div class="partner-logos">
             <img src="/logos/nebius.svg"   alt="Nebius"   title="Nebius"   />
             <img src="/logos/nscale.svg"   alt="nscale"   title="nscale"   />
@@ -224,7 +226,7 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
           </div>
         </div>
         <div class="partner-row">
-          <span class="partner-label">US</span>
+          <span class="partner-label">Planned support · US</span>
           <div class="partner-logos">
             <img src="/logos/coreweave.svg" alt="CoreWeave"   title="CoreWeave"   />
             <img src="/logos/vultr.svg"     alt="Vultr"       title="Vultr"       />
@@ -235,7 +237,7 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
 
       <div class="waitlist-row">
         <a class="btn primary" href="#waitlist">Get early access →</a>
-        <span class="waitlist-note">canary deploy in private beta</span>
+        <span class="waitlist-note">we're building canary deploys</span>
       </div>
     </div>
   </section>
@@ -253,25 +255,25 @@ const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your 
       <div class="drift-signals">
         <div class="drift-signal">
           <h3 class="drift-signal__title">Quality drift</h3>
-          <p class="drift-signal__desc">Output scores fall below threshold</p>
+          <p class="drift-signal__desc">Output scores fall below your threshold.</p>
         </div>
         <div class="drift-signal">
           <h3 class="drift-signal__title">Behavioral drift</h3>
-          <p class="drift-signal__desc">Provider silently updates the model</p>
+          <p class="drift-signal__desc">A provider updates the model without saying so.</p>
         </div>
         <div class="drift-signal">
           <h3 class="drift-signal__title">Data drift</h3>
-          <p class="drift-signal__desc">New inputs the fine-tune hasn't seen</p>
+          <p class="drift-signal__desc">Your traffic moves away from what the fine-tune saw.</p>
         </div>
         <div class="drift-signal">
           <h3 class="drift-signal__title">Cost drift</h3>
-          <p class="drift-signal__desc">Spend per correct answer rises</p>
+          <p class="drift-signal__desc">Spend per correct answer starts rising.</p>
         </div>
       </div>
 
       <div class="waitlist-row">
         <a class="btn primary" href="#waitlist">Get early access →</a>
-        <span class="waitlist-note">drift detection in private beta</span>
+        <span class="waitlist-note">we're building drift detection</span>
       </div>
     </div>
   </section>

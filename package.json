@@ -13,7 +13,9 @@
     "build:logos": "node scripts/build-logos.mjs",
     "build:og": "node scripts/build-og.mjs",
     "redact:report": "node scripts/redact-report.mjs",
-    "sync:model-icons": "node scripts/sync-model-icons.mjs"
+    "sync:model-icons": "node scripts/sync-model-icons.mjs",
+    "extract:example-run": "node scripts/extract-example-run.mjs",
+    "extract:adapters": "node scripts/extract-adapters.mjs"
   },
   "dependencies": {
     "astro": "^5.14.0"
