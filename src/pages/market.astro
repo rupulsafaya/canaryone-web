@@ -34,7 +34,9 @@
  *   .boundary::before injects the literal text "your machine". It is the install box on the
  *   homepage, not a generic bordered container.
  *
- * Tabular content uses .tm-data-table. Prose uses .tm-note. Callouts use .tm-coverage.
+ * Tabular content uses .tm-data-table. Every section is the shared shell in global.css —
+ * .sec-copy, .claim, .sec-note, .panel and .evidence — which replaced this page's own
+ * .tm-note prose and its fifteen .tm-coverage callouts on 2026-08-13.
  * Charts sit in .tm-panel, are build-time inline SVG, and ship no client JavaScript.
  *
  * Every figure is labelled metadata (free, read several times a day) or measured workload
@@ -43,54 +45,16 @@
 import Layout from '../layouts/Layout.astro';
 import market from '../data/market.json';
 import { brandIconFor } from '../lib/model-brand';
+import { selectorCss } from '../lib/selector';
+import {
+  spell, cap, times, mult, day, stamp, usd, usdCol, usd4, priceWords, int,
+} from '../lib/prose';
 
-const fmt = (iso: string, time = true) =>
-  new Date(iso).toLocaleString('en-GB', {
-    /* 'long', matching day() in src/lib/prose.ts. The two pages carried 'short' and 'long'
-       and printed the same run date two ways. */
-    day: 'numeric', month: 'long', year: 'numeric',
-    ...(time ? { hour: '2-digit', minute: '2-digit' } : {}),
-    timeZone: 'UTC',
-  }) + (time ? ' UTC' : '');
-
-const captured = fmt(market.captured_at);
-const usd = (n: number) => (n >= 1 ? `$${n.toFixed(2)}` : `$${n.toFixed(3)}`);
-const usd4 = (n: number) => `$${n.toFixed(4)}`;
-/* Fixed decimals for a price column. `usd` switches from three places to two above a
-   dollar, which is right in a sentence and wrong in a column: Kimi K3's $2.80 beside
-   Ling's $0.021 put the decimal points out of line down the whole table, which is the one
-   thing DESIGN.md says a cost table must not do. */
-const usdCol = (n: number) => `$${n.toFixed(3)}`;
-const mult = (n: number) => `${n < 10 ? n.toFixed(1) : Math.round(n)}×`;
-
-/* COPY.md allows the compact "4.6×" inside a table cell and forbids it in prose, because a
-   multiplier in a sentence has to read aloud. This is the prose form. */
-const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine',
-  'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen',
-  'eighteen', 'nineteen', 'twenty'];
-const spell = (n: number) => (n <= 20 ? WORDS[n] : String(n));
-const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
-/* "$0.150" belongs in a table column, not in a sentence. */
-const priceWords = (n: number) => (n < 1 ? `${Math.round(n * 100)} cents` : usd(n));
-const times = (r: number) => {
-  /* Under two, a ratio reads better as the gap than as the multiple: a 1.25 spread is a
-     quarter more, and "more than one times" is not English. */
-  if (r < 1.95) return `${Math.round((r - 1) * 100)} per cent above`;
-  const f = Math.floor(r), frac = r - f;
-  if (frac >= 0.4 && frac <= 0.6) return `${spell(f)} and a half times`;
-  if (frac > 0.85) return `nearly ${spell(f + 1)} times`;
-  if (frac < 0.15) return `${spell(f)} times`;
-  /* Approaching a half from below. Bounded above by 0.4 on purpose: without that bound a
-     ratio of 4.62 came out as "nearly four and a half times" when it is past four and a
-     half, which is the wrong side to round on a page with a number gate. */
-  if (frac >= 0.28 && frac < 0.4) return `nearly ${spell(f)} and a half times`;
-  /* Past the half. "More than two times" for a ratio of 2.69 is true and reads as an
-     understatement next to a heading saying 2.7, so the sentence names the half it has
-     already cleared. */
-  if (frac > 0.6) return `more than ${spell(f)} and a half times`;
-  return `more than ${spell(f)} times`;
-};
-const int = (n: number) => Math.round(n).toLocaleString('en-GB');
+/* Every formatter comes from one module. This page used to declare its own spell(), cap(),
+   times(), mult(), usd4() and date formatter beside the copies in src/lib/prose.ts, which meant
+   two implementations of the banding that decides how a ratio is rounded on a page with a
+   number gate. See that file's header. */
+const captured = stamp(market.captured_at);
 
 const m = market.measured;
 /* Only the scatter's fallback now. `market.first_token` is deliberately not read any more:
@@ -520,19 +484,9 @@ const scatterCards = market.models
     };
   });
 
-/* The pairing rules, generated because there is one set per model. Selectors are all under
-   .mk-sel, which exists only on this page, so injecting them globally is safe — Astro's
-   scoped styles cannot carry a generated block. */
-const scatterCss = scatterCards.map((_c: any, i: number) => `
-.mk-sel > input:nth-of-type(${i + 1}):checked ~ .mk-cards > :nth-child(${i + 1}) { display: block }
-.mk-sel > input:nth-of-type(${i + 1}):checked ~ .mk-rail > label:nth-child(${i + 1}) {
-  display: inline-block;
-  background: var(--accent); border-color: var(--accent-deep); color: var(--dark);
-  font-weight: var(--weight-semibold);
-}
-.mk-sel > input:nth-of-type(${i + 1}):focus-visible ~ .mk-rail > label:nth-child(${i + 1}) {
-  outline: var(--focus-width) solid var(--focus-color); outline-offset: 2px;
-}`).join('');
+/* The pairing rules for the model rail and its ten charts. The cards are a direct sibling of the
+   radios here, so no descendant step is needed. */
+const scatterCss = selectorCss(scatterCards.length);
 
 /* The model reference. This replaced a four-row "market pulse" table whose rows were four
    unrelated superlatives — a price ratio, a latency ratio, a cost ratio and a token count —
@@ -548,7 +502,7 @@ const reference = market.models
 ---
 
 <Layout
-  title="CanaryOne Market — what the same open-weight model costs to actually run"
+  title="CanaryOne Market — what the same open-weight model costs to run"
   description="Track how open-weight models differ across hosts in price, latency, capabilities and real task economics. Market intelligence measured by CanaryOne."
   path="/market"
 >
@@ -582,9 +536,9 @@ const reference = market.models
           </h2>
           {/* The experiment's own header line. Says who measured it, on what, at what scale
               and when, before any figure appears. */}
-          <p class="mk-exp">
+          <p class="micro">
             Measured by CanaryOne · {m.model_name} · {m.routes.length} routes ·
-            {' '}{m.tasks} coding tasks each · {fmt(m.night + 'T00:00:00Z', false)}
+            {' '}{m.tasks} coding tasks each · {day(m.night + 'T00:00:00Z')}
           </p>
 
           <div class="tm-panel">
@@ -609,7 +563,7 @@ const reference = market.models
             {/* The reveal. The dearer bar carries the accent because the colour is saying "this
                 is the finding", not "these are two series" — which is why only one of them has
                 it. */}
-            <p class="mk-rev-label">Cost per successful task</p>
+            <p class="micro">Cost per successful task</p>
             <div class="mk-rev">
               <p class="mk-rev-name">{routeLabel(pair.dear.tag)}</p>
               <p class="mk-rev-val">{usd4(expDear)}</p>
@@ -636,7 +590,7 @@ const reference = market.models
             </p>
           </div>
 
-          <p class="mk-strip-head">All {routes.length} routes measured</p>
+          <p class="micro mk-strip-head">All {routes.length} routes measured</p>
           <div class="tm-panel mk-wrap">
             <svg viewBox={`0 0 ${STRIP_W} ${STRIP_H}`} class="mk-svg" role="img"
                  aria-label={`Cost per successful task across all ${routes.length} routes, from $${rLo.toFixed(4)} to $${rHi.toFixed(4)}. The two hosts discussed above sit at $${pair.cheap.cost_per_task.toFixed(4)} and $${pair.dear.cost_per_task.toFixed(4)}.`}>
@@ -669,14 +623,16 @@ const reference = market.models
             </svg>
           </div>
 
-          <p class="tm-coverage">
+          <div class="evidence">
+            <p class="evidence-note">
             Measured workload, run on the night of
-            {' '}{fmt(m.night + 'T00:00:00Z', false)}. Total spend divided by the tasks that
+            {' '}{day(m.night + 'T00:00:00Z')}. Total spend divided by the tasks that
             completed, so failed work stays in the cost. These figures cost money to reproduce
             and hold that date until the next run. The size of a gap repeats from night to
             night; which host sits at either end does not, so read the multiple rather than the
             names.
           </p>
+          </div>
           {/* The highest-intent moment on the page: the reader has just learned that advertised
               token economics can mislead. One action, and no second link competing with it. */}
           <p class="mk-ask">
@@ -688,8 +644,8 @@ const reference = market.models
 
 
 
-      <h2>The same weights are priced very differently</h2>
-      <p class="tm-note">
+      <h2>The same weights are priced very differently.</h2>
+      <p class="sec-note">
         Each bar runs from the cheapest company serving that model to the dearest, with a tick
         at the average of all of them. Dearest on average first. The axis is logarithmic: the
         models are three hundred times apart in price.
@@ -748,7 +704,8 @@ const reference = market.models
           </text>
         </svg>
       </div>
-      <p class="tm-coverage">
+      <div class="evidence">
+        <p class="evidence-note">
         There is no model here whose hosts agree on a price. At the narrowest, {ladderMin.short},
         the dearest company still charges {times(ladderMin.ratio)} the cheapest. At the widest,
         {' '}{ladderMax.short}, {ladderMax.n} companies serve the same weights and the dearest
@@ -756,9 +713,10 @@ const reference = market.models
         {' '}<a href={ladderMax.or_url} rel="noopener" target="_blank">Check the widest one on
         OpenRouter →</a>
       </p>
+      </div>
 
-      <h2>The same price doesn't buy the same speed</h2>
-      <p class="tm-note">
+      <h2>The same price doesn't buy the same speed.</h2>
+      <p class="sec-note">
         Every point is one company serving the same weights. Lower and further left is cheaper
         and faster, and the shaded band holds the companies charging an identical price.
       </p>
@@ -766,7 +724,7 @@ const reference = market.models
       {/* Ten radios, a row of labels and ten pre-rendered charts. The radios are the state,
           CSS does the switching, and no script is involved. .sr-only keeps them reachable by
           keyboard while the label carries the visible chip. */}
-      <fieldset class="mk-sel">
+      <fieldset class="sel">
         <legend class="sr-only">Model</legend>
         {scatterCards.map((c: any) => (
           <input class="sr-only" type="radio" name="mk-model" id={`mk-m-${c.id}`}
@@ -774,23 +732,23 @@ const reference = market.models
         ))}
         {/* Last among the inputs on purpose: the generated rules index the radios with
             nth-of-type, so this must not sit among them. */}
-        <input class="sr-only" type="checkbox" id="mk-all" />
+        <input class="sr-only sel-all" type="checkbox" id="mk-all" />
 
         {/* The rail sits above the chart. Five names show, the rest arrive with the toggle, and
             a chip stays visible whenever its own model is the one selected. */}
-        <div class="mk-rail">
+        <div class="sel-rail">
           {scatterCards.map((c: any, i: number) => (
-            <label for={`mk-m-${c.id}`} class={i < RAIL_VISIBLE ? '' : 'mk-rail-more'}>
+            <label for={`mk-m-${c.id}`} class={i < RAIL_VISIBLE ? '' : 'sel-more'}>
               {c.short}
             </label>
           ))}
-          <label class="mk-rail-toggle mk-rail-show" for="mk-all">
+          <label class="sel-toggle sel-show" for="mk-all">
             +{scatterCards.length - RAIL_VISIBLE} more
           </label>
-          <label class="mk-rail-toggle mk-rail-hide" for="mk-all">Show fewer</label>
+          <label class="sel-toggle sel-hide" for="mk-all">Show fewer</label>
         </div>
 
-        <div class="mk-cards">
+        <div class="sel-cards">
           {scatterCards.map((c: any) => (
             <div>
               <p class="mk-sum">
@@ -840,7 +798,8 @@ const reference = market.models
                   ))}
                 </svg>
               </div>
-              <p class="tm-coverage">
+              <div class="evidence">
+                <p class="evidence-note">
                 {c.listed} companies serve {c.short}, and the dearest charges
                 {' '}{times(c.priceRatio)} the cheapest.
                 {c.tie && (
@@ -855,16 +814,17 @@ const reference = market.models
                 {' '}<a href={c.or_url} rel="noopener" target="_blank">Check these prices on
                 OpenRouter →</a>
               </p>
+              </div>
             </div>
           ))}
         </div>
       </fieldset>
 
       <h2>Same weights. Different capabilities.</h2>
-      <p class="mk-claim">
+      <p class="claim">
         {capWorst.miss} of {capWorst.total} {capWorst.short} hosts don't advertise tool calling.
       </p>
-      <p class="tm-note">
+      <p class="sec-note">
         One bar per model, longest where most companies serve it. Filled advertises tool
         calling and outlined does not. An agent that needs to call a function does not degrade
         on a host without it; the loop stops.
@@ -892,7 +852,7 @@ const reference = market.models
         {/* Precision, in the same panel and at the same bar height, because it is the second
             way the same weights differ by who serves them and not a section of its own. */}
         <div class="mk-prec">
-          <p class="mk-prec-head">
+          <p class="micro">
             Stated precision, across all {prec.total} live endpoints
           </p>
           <div class="mk-prec-track">
@@ -912,7 +872,8 @@ const reference = market.models
         </div>
       </div>
 
-      <p class="tm-coverage">
+      <div class="evidence">
+        <p class="evidence-note">
         {capMissing} of the {capPairs} company-and-model pairs we track do not advertise tool
         calling, and {precNone.n} of {prec.total} endpoints do not say what precision they serve
         at. Both are provider-advertised, not a CanaryOne functional test, and whether four bits
@@ -921,16 +882,17 @@ const reference = market.models
         {' '}<a href={capWorst.or_url} rel="noopener" target="_blank">Check the capabilities on
         OpenRouter →</a>
       </p>
+      </div>
 
-      <h2>The market moves underneath you</h2>
-      <p class="tm-note">
+      <h2>The market moves underneath you.</h2>
+      <p class="sec-note">
         One box per company, showing what it charged for
         {' '}{hook.name.split(': ').pop()} across {hkN} reads since
-        {' '}{fmt(hook.stamps[0], false)}. Identical weights in all {hkHosts.length}. Every box
+        {' '}{day(hook.stamps[0])}. Identical weights in all {hkHosts.length}. Every box
         shares one vertical scale, and a line that drops away is a discount.
       </p>
 
-      <p class="tm-group-label">
+      <p class="micro tm-group-label">
         Changed price during the week
         <span class="tm-picker-count">{hkMoved.length} of {hkHosts.length} companies</span>
       </p>
@@ -953,7 +915,7 @@ const reference = market.models
         ))}
       </ul>
 
-      <p class="tm-note mk-strip-lede">
+      <p class="sec-note mk-strip-lede">
         The other {hkFlat.length} never moved. One dot per company, stacked where several
         charge the same price. Hover a dot for its precision and context window.
       </p>
@@ -1016,7 +978,8 @@ const reference = market.models
           </table>
         </div>
       </details>
-      <p class="tm-coverage">
+      <div class="evidence">
+        <p class="evidence-note">
         The steepest move was a discount that cut one company's price by
         {' '}{Math.round((1 - 1 / hkSwing) * 100)} per cent before expiring above where the week
         started. Every price here is what a buyer pays after whatever discount was running at
@@ -1024,16 +987,18 @@ const reference = market.models
         {' '}<a href={hook.or_url} rel="noopener" target="_blank">Check these prices on
         OpenRouter →</a>
       </p>
+      </div>
 
-      <h2>How we measure it</h2>
-      <p class="tm-note">
+      <h2>How we measure it.</h2>
+      <p class="sec-note">
         Two layers, kept apart. Host metadata is public: prices, capabilities, advertised
         throughput and availability, read several times a day. Measured workloads are ours:
         the same task suite run against multiple hosts serving identical weights, where total
         spend is divided by the tasks that actually completed, so failed work stays in the
         economics instead of disappearing from it.
       </p>
-      <p class="tm-coverage">
+      <div class="evidence">
+        <p class="evidence-note">
         We compare hosts within one model and never treat different weights as equivalent
         workloads. Timestamps sit beside measurements. Snapshots are not trends, and this
         record is days old rather than months. Relative positions between hosts change
@@ -1042,10 +1007,11 @@ const reference = market.models
         published capability is a claim rather than a test we have run. First-token figures
         are each company's own reported median over the half hour before we read it.
       </p>
+      </div>
 
 
       <h2>What happens on your workload?</h2>
-      <p class="tm-note">
+      <p class="sec-note">
         Market averages can tell you where to look. Your own workload tells you what to deploy.
       </p>
       <p class="mk-cta">
@@ -1162,37 +1128,14 @@ const reference = market.models
   .mk-row:hover .mk-row-band { fill: var(--accent-bg); }
   .mk-row:hover .mk-range { stroke: var(--muted); }
 
-
   .mk-dot { fill: var(--text); fill-opacity: 0.8; stroke: var(--panel); stroke-width: 1.5; }
   .mk-dot-off { fill: var(--panel); stroke: var(--muted); stroke-width: 1.5; }
 
-  /* The model selector. A fieldset because that is what a group of radios is; its border and
-     padding are cleared because the chips carry their own. */
-  /* min-inline-size is the load-bearing line. A fieldset defaults to min-content width, so it
-     refused to shrink below its widest child — and its widest child is a chart carrying
-     min-width: var(--chart-min). That pushed the whole page to 862px of scroll on a 375px
-     phone. Zeroing it lets the fieldset take the column width and the chart scroll inside its
-     own panel, which is what every other chart on the page already does. */
-  .mk-sel { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
-  .mk-chips {
-    display: flex; flex-wrap: wrap; gap: var(--space-2);
-    margin-bottom: var(--space-5);
-  }
   /* Same shape as .tm-chip, minus the checkbox row it is built around. Yellow arrives on the
      checked one through a generated rule, which is a fill behind dark text on cream and so one
      of the uses DESIGN.md allows. */
-  .mk-chips label {
-    font-family: var(--font-mono); font-size: var(--text-sm);
-    color: var(--muted); background: var(--panel);
-    border: 1px solid var(--line); border-radius: var(--radius-md);
-    padding: var(--space-2) var(--space-4); cursor: pointer;
-    transition: background var(--dur-base) var(--ease), color var(--dur-base) var(--ease),
-                border-color var(--dur-base) var(--ease);
-  }
-  .mk-chips label:hover { color: var(--text); background: var(--bg-tint); }
 
   /* Every card is rendered and all but one hidden. The generated rules turn one back on. */
-  .mk-cards > * { display: none; }
   .mk-sum {
     font-family: var(--font-mono); font-size: var(--text-sm); color: var(--muted);
     margin: 0 0 var(--space-4);
@@ -1212,17 +1155,11 @@ const reference = market.models
     font-family: var(--font-mono); font-size: var(--text-sm); color: var(--muted);
     margin: calc(-1 * var(--space-3)) 0 var(--space-5);
   }
-  /* ---- the experiment card ---- */
-  .mk-exp {
-    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted);
-    letter-spacing: var(--tracking-label); text-transform: uppercase;
-    margin: 0 0 var(--space-3);
-  }
   /* Two controlled facts, three columns: what was held, the two values, and what that means in
      words. The third column is what the old "<" and "=" glyphs were asking a reader to infer. */
   .mk-ctrl { margin: 0 0 var(--space-8); display: grid; gap: var(--space-2); }
   .mk-ctrl > div {
-    display: grid; grid-template-columns: minmax(0, 15rem) minmax(0, 12rem) 1fr;
+    display: grid; grid-template-columns: minmax(0, var(--col-label)) minmax(0, var(--col-value)) 1fr;
     gap: var(--space-4); align-items: baseline;
     padding-bottom: var(--space-2); border-bottom: 1px solid var(--line);
   }
@@ -1231,15 +1168,8 @@ const reference = market.models
   .mk-ctrl dd { font-family: var(--font-mono); color: var(--text); }
   .mk-ctrl-note { color: var(--muted) !important; font-family: var(--font-sans) !important; }
 
-  /* The reveal, which carries the section. Four columns so the values and the bars line up
-     across both rows; the bars are the only graphic on the card and a percentage width draws
-     them, which is what lets the whole thing reflow on a phone. */
-  .mk-rev-label {
-    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted);
-    letter-spacing: var(--tracking-label); text-transform: uppercase; margin: 0 0 var(--space-3);
-  }
   .mk-rev {
-    display: grid; grid-template-columns: minmax(0, 11rem) auto minmax(0, 1fr) auto;
+    display: grid; grid-template-columns: minmax(0, var(--col-label)) auto minmax(0, 1fr) auto;
     gap: var(--space-3) var(--space-4); align-items: center; margin-bottom: var(--space-6);
   }
   .mk-rev p { margin: 0; }
@@ -1262,41 +1192,13 @@ const reference = market.models
   .mk-why { font-size: var(--text-base); color: var(--muted); margin: 0; }
   .mk-why strong { color: var(--text); }
 
-  .mk-strip-head {
-    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted);
-    letter-spacing: var(--tracking-label); text-transform: uppercase;
-    margin: var(--space-8) 0 var(--space-3);
-  }
+  /* .micro, with the space above it that separates the cohort strip from the card it belongs
+     to. Only the margin differs. */
+  .mk-strip-head { margin-top: var(--space-8); }
 
-  /* ---- the model rail ---- */
-  .mk-rail { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
-  .mk-rail label {
-    font-family: var(--font-mono); font-size: var(--text-sm);
-    color: var(--muted); background: var(--panel);
-    border: 1px solid var(--line); border-radius: var(--radius-md);
-    padding: var(--space-2) var(--space-4); cursor: pointer;
-    transition: background var(--dur-base) var(--ease), color var(--dur-base) var(--ease),
-                border-color var(--dur-base) var(--ease);
-  }
-  .mk-rail label:hover { color: var(--text); background: var(--bg-tint); }
-  /* Beyond the fifth chip, hidden until the toggle. A generated rule overrides this for
-     whichever model is selected, so a chosen chip is never invisible. */
-  .mk-rail-more { display: none; }
-  .mk-rail-toggle { border-style: dashed !important; }
-  .mk-rail-hide { display: none; }
-  #mk-all:checked ~ .mk-rail > .mk-rail-more { display: inline-block; }
-  #mk-all:checked ~ .mk-rail > .mk-rail-show { display: none; }
-  #mk-all:checked ~ .mk-rail > .mk-rail-hide { display: inline-block; }
-
-  /* ---- tool calling, one bar per model ---- */
-  /* The single sentence a reader should leave with, above the chart that supports it. */
-  .mk-claim {
-    font-size: var(--text-lg); color: var(--text); font-weight: var(--weight-medium);
-    max-width: var(--measure-prose); margin: 0 0 var(--space-4);
-  }
   .mk-cap { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
   .mk-cap li {
-    display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) auto;
+    display: grid; grid-template-columns: minmax(0, var(--col-label)) minmax(0, 1fr) auto;
     gap: var(--space-4); align-items: center;
   }
   .mk-cap-name { font-family: var(--font-mono); font-size: var(--text-sm); color: var(--text); }
@@ -1326,10 +1228,6 @@ const reference = market.models
   /* Precision, at the same bar height as the capability rows above it so the two read as one
      panel rather than two charts that happen to be adjacent. */
   .mk-prec { margin-top: var(--space-6); padding-top: var(--space-4); border-top: 1px solid var(--line); }
-  .mk-prec-head {
-    font-family: var(--font-mono); font-size: var(--text-2xs); color: var(--muted);
-    letter-spacing: var(--tracking-label); text-transform: uppercase; margin: 0 0 var(--space-3);
-  }
   .mk-prec-track { display: flex; height: var(--space-5); }
   .mk-prec-seg { background: var(--text); }
   .mk-prec-key {
@@ -1414,5 +1312,5 @@ const reference = market.models
 
 <!-- One rule set per model, pairing radio N with chip N and card N. Generated because the
      count is data-driven, and injected globally because Astro's scoped styles cannot carry a
-     generated block. Every selector is under .mk-sel, which exists only on this page. -->
+     generated block; every selector is under .sel. -->
 <style is:global set:html={scatterCss}></style>\n

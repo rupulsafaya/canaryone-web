@@ -81,6 +81,30 @@ instead of grounding it. Write the mechanism, not the decimal, when the decimal 
 eighteen-host study with its 2.87 times spread, and "73% of enterprises are over budget on AI." Both
 travelled in collateral without anything behind them. Neither goes on the site.
 
+## Naming a host, and when not to
+
+**The rule inherited from `CLAUDE.md` in fantastic-dollop is publish the magnitude, never the
+winner:** the size of a gap reproduces from run to run and the identity of whoever sits at either
+end does not. The two pages resolve that rule in opposite directions, both deliberately, and the
+difference is the kind of run behind the figure.
+
+**`/market` names hosts.** Its comparison comes from the nightly commissioned sweep, which runs
+again every night, so a reader can be told which two routes were measured and the page can carry
+the caveat that the names will change while the size of the gap will not. `routeLabel()` is the
+single place those names are resolved, which is also the single place to neutralise them if that
+call is ever reversed.
+
+**`/evals` letters them — Route A, Route B, Route C.** Its comparison is one local tool run on one
+repository, its archive file in `outreach/results/` is set aside, and the route with the lowest
+completion count has a slowest step close to the runner's own six-minute session timeout. That
+last detail is decisive: `outreach/results/README.md` names publishing a false failure about a
+named host as the worst unforced error available to us, and a timeout artefact presented as a
+route's quality is exactly that. The full report is one click away and names all ten.
+
+**The test, for a third page later:** can a reader reproduce this, and would being wrong about it
+be a statement about a company? A commissioned sweep that reruns nightly can carry names. A single
+local run cannot, however tempting the specificity is.
+
 ## A logo is a claim
 
 A grid of third-party marks under a bare heading invites the most generous reading available, and the

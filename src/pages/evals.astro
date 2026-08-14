@@ -72,9 +72,10 @@ import viewSession from '../assets/report-view-session.png';
 import run from '../data/example-run.json';
 import adapters from '../data/adapters.json';
 import market from '../data/market.json';
-import { spell, cap, times, day, usd4, secs } from '../lib/prose';
+import { spell, cap, times, day, usd4, secs, pctMore } from '../lib/prose';
+import { selectorCss } from '../lib/selector';
 
-const TITLE = 'CanaryOne — find the route that wins on your workload';
+const TITLE = 'CanaryOne Evals — find the route that wins on your workload';
 const DESCRIPTION =
   'Run the tests already in your repository against the same model across routers and direct providers. Compare completion, cost per completed task and latency before you move production traffic.';
 
@@ -112,10 +113,6 @@ const costRatio = shown[shown.length - 1].costPerPass / shown[0].costPerPass;
 /* And the gap between the cheapest route and the cheapest one that finished most of the work,
    which is the sentence that makes "cheapest" stop meaning "cheapest to finish". */
 const reliablePremium = reliable.costPerPass / cheapest.costPerPass;
-/* times() renders a ratio under two as "46 per cent above", which is right in a comparison of
-   two named things and stilted in "cost 46 per cent above". This is the plainer phrasing for a
-   sentence whose referent is the row above it. */
-const pctMore = (r: number) => `${Math.round((r - 1) * 100)} per cent more`;
 
 /* The runner stops a session at six minutes, and the caveat below needs that number in
    minutes beside a slowest step measured in milliseconds. Held here rather than inline
@@ -219,22 +216,9 @@ const views = [
   },
 ];
 
-/* One rule set per view, pairing radio N with chip N and card N. Generated because the count is
-   data-driven, and injected globally because Astro's scoped styles cannot carry a generated
-   block. Every selector sits under .ev-sel, which exists only on this page.
-   The card step is a descendant of .ev-obj rather than a sibling of the radio: the cards live
-   inside the panel, so the chain is sibling to the panel and then down into it. */
-const viewCss = views.map((_v, i) => `
-.ev-sel > input:nth-of-type(${i + 1}):checked ~ .ev-obj .ev-cards > :nth-child(${i + 1}) {
-  display: block;
-}
-.ev-sel > input:nth-of-type(${i + 1}):checked ~ .ev-rail > label:nth-child(${i + 1}) {
-  background: var(--accent); border-color: var(--accent-deep); color: var(--dark);
-  font-weight: var(--weight-semibold);
-}
-.ev-sel > input:nth-of-type(${i + 1}):focus-visible ~ .ev-rail > label:nth-child(${i + 1}) {
-  outline: var(--focus-width) solid var(--focus-color); outline-offset: var(--focus-offset);
-}`).join('');
+/* The pairing rules for the rail and the cards. The cards sit inside the panel that carries the
+   run's identity bar, so the generator needs that descendant step. */
+const viewCss = selectorCss(views.length, { inner: ' .panel' });
 
 /* The report's own identity line, in place of the browser chrome that used to sit here. Four
    facts about the run, which is what a reader needs to know before reading a figure off it. */
@@ -275,7 +259,7 @@ const runBar = [
 
       <div class="ev-flow">
         <div class="ev-stage">
-          <p class="ev-stage-label">Your repository</p>
+          <p class="micro ev-stage-label">Your repository</p>
           <div class="ev-card">
             <p class="ev-card-title">your-repo/</p>
             <dl class="ev-kv">
@@ -289,7 +273,7 @@ const runBar = [
         <p class="ev-arrow" aria-hidden="true">→</p>
 
         <div class="ev-stage">
-          <p class="ev-stage-label">The same tests, every route</p>
+          <p class="micro ev-stage-label">The same tests, every route</p>
           <div class="ev-card">
             <p class="ev-card-title">{run.totals.lanes} routes</p>
             <dl class="ev-kv">
@@ -304,7 +288,7 @@ const runBar = [
         <p class="ev-arrow" aria-hidden="true">→</p>
 
         <div class="ev-stage">
-          <p class="ev-stage-label">What it cost to finish</p>
+          <p class="micro ev-stage-label">What it cost to finish</p>
           <div class="ev-card">
             <table class="ev-mini">
               <thead>
@@ -340,7 +324,7 @@ const runBar = [
        differ; it is three routes differing, with the run one click away. -->
   <section class="section ev-mod">
     <div class="container">
-      <div class="ev-copy">
+      <div class="sec-copy">
         <p class="kicker">MEASURED WITH CANARYONE</p>
         <h2>Token price is not<br /><span class="em">workload cost.</span></h2>
         <p class="lede">
@@ -348,13 +332,13 @@ const runBar = [
           same money. Three routes out of one run below, on identical tasks and identical
           weights, with the measures a price list cannot show you.
         </p>
-        <p class="ev-claim">
+        <p class="claim">
           The lowest-cost route completed only {spell(cheapest.passed)} of
           {' '}{spell(cheapest.attempted)} attempts.
         </p>
       </div>
 
-      <div class="ev-obj ev-table-obj">
+      <div class="panel ev-table-obj">
         <table class="tm-data-table ev-compare">
           <caption class="sr-only">
             Three of the {run.totals.lanes} routes measured in run {run.runId.split('-')[0]},
@@ -387,8 +371,8 @@ const runBar = [
         </table>
       </div>
 
-      <div class="ev-foot">
-        <p class="ev-src">
+      <div class="evidence">
+        <p class="evidence-src">
           Run <code>{run.runId.split('-')[0]}</code> · {day(run.startedAt)} ·
           {' '}{run.totals.lanes} routes · {run.totals.tasks} tasks ·
           {' '}{run.totals.repeats} repeats each ·
@@ -400,17 +384,17 @@ const runBar = [
             explanation of the judge and two caveats, and it made the strongest section on the
             page the heaviest thing to read. The claim line above the table opens the argument;
             this closes it. */}
-        <p class="ev-note">
+        <p class="evidence-note">
           The cheapest route that completed most of the work cost
           {' '}{pctMore(reliablePremium)}.
         </p>
-        <p class="ev-caveat">
+        <p class="evidence-caveat">
           This is one measured run, not a claim about any provider.
         </p>
 
-        <details class="ev-disclose">
+        <details class="disclose">
           <summary>How to read this result</summary>
-          <div class="ev-disclose-body">
+          <div class="disclose-body">
             <p>
               Across the three routes, cost per completed task runs {times(costRatio)} from one
               end to the other on identical work.
@@ -442,8 +426,8 @@ const runBar = [
             from the nightly sweep and a failed night leaves it absent, which should drop the
             note rather than fail the build. */}
         {pair && (
-        <p class="ev-evidence">
-          <span class="ev-evidence-label">
+        <p class="evidence-cite">
+          <span class="evidence-cite-label">
             Also measured · {day(`${m.night}T00:00:00Z`)}
           </span>
           On the nightly sweep, the route with the cheaper advertised token price cost
@@ -460,7 +444,7 @@ const runBar = [
        coverage, so a reader met eleven logos before knowing what the machine does. -->
   <section class="section ev-mod">
     <div class="container">
-      <div class="ev-copy">
+      <div class="sec-copy">
         <p class="kicker">HOW IT WORKS</p>
         <h2>Your tests in.<br />Comparable routes out.</h2>
       </div>
@@ -504,7 +488,7 @@ const runBar = [
        good property and a bad benefit, so it moved to the footer. -->
   <section class="section ev-mod">
     <div class="container">
-      <div class="ev-copy">
+      <div class="sec-copy">
         <p class="kicker">THE REPORT</p>
         <h2>See why one route won.</h2>
         <p class="lede">
@@ -516,14 +500,14 @@ const runBar = [
       {/* A fieldset because that is what a group of radios is. min-inline-size is the
           load-bearing line — a fieldset defaults to min-content width and refuses to shrink
           below its widest child, which on a phone is a 1100px screenshot. */}
-      <fieldset class="ev-sel">
+      <fieldset class="sel">
         <legend class="sr-only">Report view</legend>
         {views.map((v, i) => (
           <input class="sr-only" type="radio" name="ev-view" id={`ev-v-${v.num}`}
                  checked={i === 0} />
         ))}
 
-        <div class="ev-rail">
+        <div class="sel-rail">
           {views.map((v) => (
             <label for={`ev-v-${v.num}`}>
               <span class="ev-rail-num">{v.num}</span> {v.name}
@@ -531,15 +515,15 @@ const runBar = [
           ))}
         </div>
 
-        <div class="ev-obj">
+        <div class="panel">
           {/* The run's identity, in place of the browser chrome that used to sit here. Four
               facts a reader needs before taking a figure off the image behind it. */}
           <div class="ev-obj-bar">
-            <p class="ev-obj-id">{runBar}</p>
+            <p class="micro ev-obj-id">{runBar}</p>
             <a href={DEMO_REPORT} target="_blank" rel="noopener">Open example report →</a>
           </div>
 
-          <div class="ev-cards">
+          <div class="sel-cards">
             {views.map((v) => (
               <div>
                 <p class="ev-view-blurb">{v.blurb}</p>
@@ -551,8 +535,8 @@ const runBar = [
         </div>
       </fieldset>
 
-      <div class="ev-foot">
-        <p class="ev-src">
+      <div class="evidence">
+        <p class="evidence-src">
           Saved as <code>&lt;repo&gt;/.c1/runs/&lt;runId&gt;/report/index.html</code> — one
           static file with no external requests, so it opens from disk and travels in a pull
           request.
@@ -578,7 +562,7 @@ const runBar = [
        exactly where the crossing happens and still passes. -->
   <section class="section ev-mod">
     <div class="container">
-      <div class="ev-copy">
+      <div class="sec-copy">
         <p class="kicker">WHAT LEAVES</p>
         <h2>Runs on your machine.<br />See exactly what leaves.</h2>
         <p class="lede">
@@ -588,8 +572,8 @@ const runBar = [
       </div>
 
       <div class="ev-machine">
-        <div class="ev-obj ev-inside">
-          <p class="ev-inside-label">Your machine</p>
+        <div class="panel ev-inside">
+          <p class="micro ev-inside-label">Your machine</p>
           <div class="ev-chain">
             <div class="ev-node">
               <p class="ev-node-name">Your tests</p>
@@ -613,7 +597,7 @@ const runBar = [
         </div>
 
         <div class="ev-outside">
-          <p class="ev-outside-label">Leaves your machine</p>
+          <p class="micro">Leaves your machine</p>
           <dl class="ev-egress">
             <div>
               <dt>Model requests</dt>
@@ -640,10 +624,10 @@ const runBar = [
         <li>The report stays in your repository</li>
       </ul>
 
-      <div class="ev-foot">
-        <details class="ev-disclose">
+      <div class="evidence">
+        <details class="disclose">
           <summary>Exactly what leaves your machine</summary>
-          <div class="ev-disclose-body">
+          <div class="disclose-body">
             <p>
               <strong>Model traffic.</strong> Every LLM call your test makes is rewritten for the
               route under test and forwarded to that provider's own endpoint. The full request
@@ -683,7 +667,7 @@ const runBar = [
        each pill to its own name, which made two ragged rows out of one list. -->
   <section class="section ev-mod">
     <div class="container">
-      <div class="ev-copy">
+      <div class="sec-copy">
         <p class="kicker">COVERAGE</p>
         <h2>Across routers and direct providers.</h2>
         <p class="ev-stat">
@@ -705,10 +689,10 @@ const runBar = [
         { label: 'Direct providers · works with', items: shippedDirect, cls: 'ev-grid-5' },
       ].map((row) => (
         <div class="ev-cov-row">
-          <p class="ev-cov-label">{row.label}</p>
+          <p class="micro ev-cov-label">{row.label}</p>
           <ul class={`ev-grid ${row.cls}`}>
             {row.items.map((a) => (
-              <li class="ev-obj ev-cell">
+              <li class="panel ev-cell">
                 {a.mark && (
                   <img class="ev-cell-mark" src={`/logos/providers/${a.mark}`} alt=""
                        width="26" height="26" loading="lazy" />
@@ -723,7 +707,7 @@ const runBar = [
       {/* One line, no container and no label. Every other section closes on a bordered footer;
           this one has two small facts to add and a block around them made the section end on a
           second visual object. */}
-      <p class="ev-src ev-cov-note">
+      <p class="evidence-src ev-cov-note">
         Coverage note: Bedrock currently carries gpt-oss routes only, and direct-provider prices
         are maintained here rather than read from each provider's API.
         {' '}<a href={GITHUB_URL} target="_blank" rel="noopener">See the route registry →</a>
@@ -821,14 +805,9 @@ const runBar = [
     padding-bottom: var(--space-16);
   }
   .ev-stage { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
-  .ev-stage-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--muted-on-dark);
-    margin: 0;
-  }
+  /* .micro, minus its bottom margin: the label sits in a flex column with its own gap, and the
+     dark band supplies the colour. */
+  .ev-stage-label { margin: 0; }
   /* One step darker than the band, which is what --dark-deep exists for: a surface sitting on
      top of a dark panel. The inset hairline in --shadow-dark reads as a lit top edge. */
   .ev-card {
@@ -921,51 +900,11 @@ const runBar = [
      them read as one.
      =========================================================================== */
 
-  /* The copy block. .section h2 and .section .lede already carry the type; what this adds is
-     one measure for the group and one gap to the object, so a section with a claim line and a
-     section without one still hand off to their object at the same distance. */
-  .ev-copy { max-width: var(--measure-lede); }
   /* Zeroed here and paid by .ev-obj's own top margin instead. .section .lede carries 64px of
      bottom margin, which is the right gap when the lede is the last line of copy and the wrong
      one when a claim or a stat line follows it. */
   .ev-copy .lede { margin-bottom: 0; }
 
-  /* THE OBJECT. One surface for every section's main content: the comparison table, the report
-     viewer, the machine panel, a coverage cell. One border weight, one radius, one background.
-     Anything that wants to look different from this is a decision to argue for. */
-  .ev-obj {
-    margin-top: var(--space-12);
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-lg);
-  }
-
-  /* THE FOOTER. Provenance, caveats and disclosures, quietly, at the foot of the section that
-     earned them. This replaces the yellow-ruled callout that used to carry them: three of those
-     on one page competed with the sections they were annotating, and the widest of them was the
-     single biggest reason the page read as documentation. The evidence still has to be visible
-     rather than folded away — that is the number gate — so it is small and grey, not hidden. */
-  .ev-foot {
-    margin-top: var(--space-6);
-    padding-top: var(--space-4);
-    border-top: 1px solid var(--line);
-  }
-  .ev-foot-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0 0 var(--space-3);
-  }
-  /* Mono, for a run identifier, a date, a count or a path. */
-  .ev-src {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    line-height: var(--leading-relaxed);
-    color: var(--muted);
-    margin: 0;
-  }
   .ev-src code, .ev-notes code {
     background: var(--bg-tint);
     border: 1px solid var(--line);
@@ -974,41 +913,8 @@ const runBar = [
   }
   .ev-src a { color: var(--text); border-bottom: 1px solid var(--line-strong); }
   .ev-src a:hover { border-bottom-color: currentColor; }
-  /* Sans, for a caveat that is prose rather than a reference. */
-  .ev-note {
-    font-size: var(--text-base);
-    line-height: var(--leading-relaxed);
-    color: var(--muted);
-    margin: var(--space-3) 0 0;
-  }
   .ev-note:first-child { margin-top: 0; }
   .ev-note strong { color: var(--text); }
-  /* The one caveat that stays on the page, deliberately quieter than the conclusion above it. */
-  .ev-caveat {
-    font-size: var(--text-sm);
-    line-height: var(--leading-relaxed);
-    color: var(--muted);
-    margin: var(--space-2) 0 0;
-  }
-  /* A second measurement cited in support, which is not a second paragraph of argument. The
-     rule down its left edge is what separates it from prose without adding a box; it is ink
-     rather than canary, because on cream a yellow rule is only allowed where the label beside
-     it carries the meaning, and here the note is the meaning. */
-  .ev-evidence {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    line-height: var(--leading-relaxed);
-    color: var(--muted);
-    border-left: 1px solid var(--line-strong);
-    padding-left: var(--space-4);
-    margin: var(--space-6) 0 0;
-  }
-  .ev-evidence-label {
-    display: block;
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--text);
-  }
   .ev-evidence a { color: var(--text); border-bottom: 1px solid var(--line-strong); }
   .ev-evidence a:hover { border-bottom-color: currentColor; }
   .ev-notes {
@@ -1021,16 +927,12 @@ const runBar = [
     line-height: var(--leading-relaxed);
     color: var(--muted);
   }
-  /* Progressive disclosure for the implementation detail behind a section. Nothing a figure
-     depends on goes in here. */
-  .ev-disclose { margin-top: var(--space-4); }
   .ev-disclose summary {
     font-family: var(--font-mono);
     font-size: var(--text-sm);
     color: var(--text);
     cursor: pointer;
   }
-  .ev-disclose-body { margin-top: var(--space-4); max-width: var(--measure-prose); }
   .ev-disclose-body p {
     font-size: var(--text-base);
     line-height: var(--leading-relaxed);
@@ -1046,16 +948,6 @@ const runBar = [
     padding: var(--space-0-5) var(--space-1);
   }
 
-  /* ---- 2. proof ---- */
-  /* The one sentence a visitor should leave the section with, above the table that carries it.
-     Inside the copy block now, so it needs no negative margin to sit under the lede. */
-  .ev-claim {
-    font-size: var(--text-xl);
-    line-height: var(--leading-snug);
-    color: var(--text);
-    font-weight: var(--weight-medium);
-    margin: var(--space-6) 0 0;
-  }
   /* The table's own object. Padded, and scrolling sideways rather than shrinking its columns. */
   .ev-table-obj { padding: var(--space-2) var(--space-5); overflow-x: auto; }
   .ev-compare { min-width: 0; }
@@ -1099,33 +991,9 @@ const runBar = [
     margin: 0;
   }
 
-  /* ---- 4. the report ---- */
-  /* A fieldset because a group of radios is one. min-inline-size: 0 is load-bearing: a fieldset
-     defaults to min-content and will not shrink below its widest child, and its widest child
-     here is a 1100px screenshot, which put the whole page into horizontal scroll on a phone. */
-  .ev-sel { border: 0; padding: 0; margin: 0; min-inline-size: 0; }
-  /* The rail sits above the object, because a control discovered after the thing it controls has
-     been read is a control nobody used. */
-  .ev-rail {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-top: var(--space-12);
-  }
-  .ev-rail label {
-    font-family: var(--font-mono);
-    font-size: var(--text-sm);
-    color: var(--muted);
-    background: var(--panel);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    padding: var(--space-2) var(--space-4);
-    cursor: pointer;
-    transition: background var(--dur-base) var(--ease), color var(--dur-base) var(--ease),
-                border-color var(--dur-base) var(--ease);
-  }
-  .ev-rail label:hover { color: var(--text); background: var(--bg-tint); }
-  /* The number stays muted on the selected chip too, so the chip's yellow reads as one block
+  /* .sel-rail, moved down to clear the copy block above it. */
+  .sel-rail { margin-top: var(--space-12); }
+    /* The number stays muted on the selected chip too, so the chip's yellow reads as one block
      with a label on it rather than as two competing pieces of text. */
   .ev-rail-num { color: var(--muted); }
   /* The object's own top bar: what run this is, and the way out to the full artefact. This is
@@ -1141,14 +1009,8 @@ const runBar = [
     background: var(--bg-tint);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
   }
-  .ev-obj-id {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0;
-  }
+  /* .micro, minus its bottom margin: this one sits in a flex bar rather than above a block. */
+  .ev-obj-id { margin: 0; }
   .ev-obj-bar a {
     font-family: var(--font-mono);
     font-size: var(--text-xs);
@@ -1157,12 +1019,9 @@ const runBar = [
     white-space: nowrap;
   }
   .ev-obj-bar a:hover { border-bottom-color: currentColor; }
-  /* Every view is rendered and all but one hidden; a generated rule turns one back on.
-     Scrolls sideways rather than shrinking its content, for the reason --chart-min exists: a
-     crop of a ten-row, nine-column table squeezed into 335px of phone is not a smaller version
-     of the same image, it is an unreadable one. */
-  .ev-cards { padding: var(--space-5); overflow-x: auto; }
-  .ev-cards > * { display: none; }
+  /* .sel-cards, plus the padding and the sideways scroll a crop needs: a ten-row, nine-column
+     table squeezed into 335px of phone is not a smaller image, it is an unreadable one. */
+  .sel-cards { padding: var(--space-5); overflow-x: auto; }
   .ev-view-blurb {
     font-size: var(--text-md);
     line-height: var(--leading-relaxed);
@@ -1196,7 +1055,7 @@ const runBar = [
     border-color: var(--line-strong);
     padding: var(--space-8) var(--space-6) var(--space-5);
   }
-  /* The boundary's label, straddling its top edge the way .boundary does on the live page. */
+  /* .micro, lifted onto the panel's top edge so the boundary carries its own name. */
   .ev-inside-label {
     position: absolute;
     top: calc(-1 * var(--space-3));
@@ -1204,10 +1063,6 @@ const runBar = [
     margin: 0;
     background: var(--bg);
     padding: 0 var(--space-3);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    text-transform: uppercase;
-    letter-spacing: var(--tracking-label);
     color: var(--muted);
   }
   .ev-chain {
@@ -1272,14 +1127,6 @@ const runBar = [
   }
 
   .ev-outside { text-align: center; }
-  .ev-outside-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0 0 var(--space-3);
-  }
   /* Three destinations, each one what leaves and where it goes. A list rather than a slab,
      because "the judge is optional" was the thing a reader most needed to see and it was
      buried mid-sentence in the middle of one. */
@@ -1293,7 +1140,7 @@ const runBar = [
   }
   .ev-egress > div {
     display: grid;
-    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+    grid-template-columns: minmax(0, var(--col-label)) minmax(0, 1fr);
     gap: var(--space-4);
     align-items: baseline;
     padding-bottom: var(--space-2);
@@ -1342,14 +1189,8 @@ const runBar = [
     margin: var(--space-4) 0 var(--space-5);
   }
   .ev-cov-row { margin-top: var(--space-6); }
-  .ev-cov-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--muted);
-    margin: 0 0 var(--space-2);
-  }
+  /* .micro, tightened: a coverage row's label sits closer to its grid than a block label does. */
+  .ev-cov-label { margin-bottom: var(--space-2); }
   /* A fixed grid, not a wrapping row of pills. Every cell is the same width and the same height
      whatever its name is; the previous version sized each pill to its own content, which turned
      one list into two ragged rows and read as a bag of logos. */
@@ -1371,7 +1212,7 @@ const runBar = [
      Its top margin is the section's copy-to-object gap and is wrong inside a grid. */
   .ev-cell {
     margin-top: 0;
-    min-height: var(--space-16);
+    min-height: var(--cell-min);
     display: flex;
     align-items: center;
     gap: var(--space-3);
@@ -1381,8 +1222,8 @@ const runBar = [
      its height. These are square marks beside one line of type, so they want the wordmark
      height, not the hero glyph size. */
   .ev-cell-mark {
-    width: var(--logo-h);
-    height: var(--logo-h);
+    width: var(--logo-icon-sm);
+    height: var(--logo-icon-sm);
     display: block;
     flex: 0 0 auto;
   }
@@ -1430,7 +1271,6 @@ const runBar = [
   }
 </style>
 
-<!-- One rule set per report view, pairing radio N with chip N and card N. Generated because the
-     count is data-driven, and injected globally because Astro's scoped styles cannot carry a
-     generated block. Every selector is under .ev-sel, which exists only on this page. -->
+<!-- The generated pairing rules for the report's view selector. Injected globally because
+     Astro's scoped styles cannot carry a generated block; every selector is under .sel. -->
 <style is:global set:html={viewCss}></style>

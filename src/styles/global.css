@@ -45,7 +45,8 @@
      carries no -on-dark suffix because it is the light-surface value, and at 12% it is strong
      enough to read as "this row" against #fafaf7 where the 4% on-dark value would vanish.
      Two use sites: the hovered row of the /market price ladder, and the winner row of the
-     route scoreboard, which held this value as a literal rgba until the token existed. */
+     route comparison on /evals, which held this value as a literal rgba until the token
+     existed. */
   --accent-bg: rgba(253, 224, 71, 0.12);
 
   /* ---------- Semantic ----------
@@ -62,7 +63,7 @@
   --info: #78716c;
   --info-bg: rgba(120, 113, 108, 0.1);
 
-  /* One step below --dark, for a surface that sits on top of a dark panel: the receipt
+  /* One step below --dark, for a surface that sits on top of a dark panel: the cards in the
      bezel inside the hero. Neutral, not slate, for the same reason --dark is. */
   --dark-deep: #0a0a0b;
 
@@ -107,7 +108,7 @@
   --radius-sm: 4px;    /* inline code, swatches, badges */
   --radius-md: 8px;    /* buttons, inputs, nav pills, chips */
   --radius-lg: 12px;   /* cards, panels, tables */
-  --radius-xl: 16px;   /* hero frames, terminal windows, the boundary diagram */
+  --radius-xl: 16px;   /* hero frames and terminal windows */
   --radius-full: 9999px;  /* jump pills and other stadium shapes */
   /* True circles keep `border-radius: 50%` at the use site rather than --radius-full. On a
      square element the two are equivalent, and 50% says "circle" where 9999px says "pill
@@ -189,7 +190,7 @@
 
   /* The weight rule, which the file did not have: display and page headings are medium,
      UI and card titles and table heads are semibold, and bold is reserved for the
-     hub-and-spoke centre, which reads as a mark rather than as text. The old 650 was a
+     home page's flywheel hub, which reads as a mark rather than as text. The old 650 was a
      synthetic weight the system stack approximates differently per platform. */
   --weight-normal: 400;
   --weight-medium: 500;
@@ -202,8 +203,8 @@
      height the wordmark actually draws at — which was not true before and is what made the
      rows look ragged. See DESIGN.md § Third-party logos.
 
-     --logo-h is the bare strips on the home page. --logo-h-lg is the /evals hub, where each
-     logo sits inside its own card and can afford to be larger. There is deliberately no
+     --logo-h is the bare strips on the home page. --logo-icon-sm is a square provider mark
+     beside one line of type, in the /evals coverage grid. There is deliberately no
      max-width companion: a width clamp on an element with a set height silently overrides
      that height, which is how nscale ended up rendering 12.4px tall in a 20px row. */
   --logo-h: 26px;
@@ -215,6 +216,13 @@
      a 26px-tall wordmark, because the wordmark's ink runs the full width of the row. */
   --logo-icon: 32px;
 
+  /* A square mark beside one line of type, which is a different job from --logo-icon's hero
+     glyph and from --logo-h's wordmark ink height. Added 2026-08-13 because the /evals coverage
+     grid was rendering a 26px provider mark through --logo-h, a token documented as a wordmark
+     height: at --logo-icon's 32px the mark became the tallest thing in the cell and set the
+     cell's height, and no token named the size that a labelled mark actually wants. */
+  --logo-icon-sm: 26px;
+
   /* ---------- Measure ----------
      Down from nine ad-hoc ch values. */
   --measure-display: 22ch;
@@ -224,6 +232,18 @@
   /* The width reserved for a row label sitting to the left of a logo strip, so the strips in
      a stack of rows all start at the same x. */
   --measure-label: 14ch;
+
+  /* ---------- Grid columns ----------
+     A dense row is a label, sometimes a value, and then whatever fills the rest. Those two
+     columns are artwork-adjacent rather than prose, so they are lengths rather than measures.
+     They exist because four ad-hoc rem values — 11, 12, 13 and 15 — were doing this job across
+     two pages, which is how a scale rots one use site at a time. */
+  --col-label: 13rem;
+  --col-value: 12rem;
+
+  /* The height of a one-line labelled cell: a mark, a name, and nothing else. A spacing token
+     was standing in for this, which reads as rhythm rather than as the size of a thing. */
+  --cell-min: 64px;
 
   /* ---------- Component widths ----------
      Two elements are capped below --content-max because they are artwork rather than text,
@@ -248,8 +268,8 @@
      documentation rather than something the queries reference. Four is three too many to
      leave unnamed, which is why they are written down here:
        380px  small phones — the nav stacks below this
-       640px  phone/tablet boundary — type and hub sizing step down
-       900px  tablet — the hub and the boundary diagram go vertical
+       640px  phone/tablet boundary — type steps down and dense grids halve their columns
+       900px  tablet — multi-column sections stack and horizontal chains go vertical
       1024px  the page band's tall variant stops being worth the vertical space
      Anything new should reuse one of these rather than invent a fifth. */
 
@@ -335,7 +355,7 @@ code, pre, .mono {
 
    One treatment for the whole site. Before this the file carried exactly one
    :focus-visible rule, on a card component since removed, so the nav, both segmented
-   controls, the model chips, the copy button and the receipt frame all fell back to the
+   controls, the model chips and the copy button all fell back to the
    user-agent ring.
 
    This uses `outline` rather than `box-shadow` deliberately. An outline follows the
@@ -627,82 +647,8 @@ code, pre, .mono {
   transform: translateY(1px);
 }
 
-/* Receipt inside hero */
-.hero .receipt {
-  margin-top: var(--space-16);
-}
-
-.hero .receipt-frame {
-  position: relative;
-  border-radius: var(--radius-xl);
-  background: var(--dark-deep);
-  border: 1px solid rgba(253, 224, 71, 0.16);
-  padding: var(--space-2);
-  cursor: zoom-in;
-  overflow: hidden;
-  box-shadow: var(--shadow-dark);
-}
-
-.hero .receipt-frame::before {
-  content: "";
-  position: absolute;
-  left: 20px;
-  right: 20px;
-  top: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0.75;
-}
-
-.hero .receipt-frame img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: var(--radius-md);
-}
-
-/* The frame is a button with cursor: zoom-in and nothing else saying so. A mono chip in the
-   corner says it out loud. Text rather than a magnifying-glass emoji: this is a tool whose
-   entire pitch is precision, and the caption beneath is already mono. */
-.hero .receipt-frame::after {
-  content: "click to expand";
-  position: absolute;
-  right: var(--space-4);
-  bottom: var(--space-4);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-sm);
-  background: rgba(15, 15, 16, 0.82);
-  border: 1px solid var(--line-dark);
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--muted-on-dark);
-  opacity: 0;
-  transition: opacity var(--dur-base) var(--ease);
-  pointer-events: none;
-}
-
-.hero .receipt-frame:hover::after,
-.hero .receipt-frame:focus-visible::after {
-  opacity: 1;
-}
-
 /* Touch has no hover, so the affordance is always visible there. */
 @media (hover: none) {
-  .hero .receipt-frame::after { opacity: 1; }
-}
-
-.hero .receipt-caption {
-  margin: var(--space-5) 0 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--muted-on-dark);
-  text-align: center;
-}
-
-.hero .receipt-caption .warn {
-  color: var(--warn);
 }
 
 /* ---------- The page band ----------
@@ -784,110 +730,292 @@ code, pre, .mono {
   margin: 0 0 var(--space-16);
 }
 
-/* ---------- Hub-and-spoke grid ---------- */
+/* =============================================================================
+   THE SECTION SHELL
 
-.hub {
-  position: relative;
-  display: grid;
-  grid-template-rows: auto auto auto;
-  row-gap: var(--space-14);
-  align-items: center;
-  padding: var(--space-6) 0;
+   Every section below a page's hero is the same five parts in the same order: an eyebrow, a
+   statement, a short paragraph, exactly one main object, and a quiet evidence footer. These
+   classes are that shell. A page describes what goes inside its own object and nothing else.
+
+   It was built on /evals in August 2026 and promoted here when /market was rebuilt on the same
+   grammar. Before that each page invented its own: logo pills on one, an architecture diagram
+   on another, a fake browser window below it, and three different footer treatments. /market
+   reads as one page because its charts are exhibits in one museum; the site now does the same.
+
+   The rule that keeps it working: hold the copy measure, the gap from copy to object, the
+   object's border and radius, and the footer treatment identical. Anything that wants to look
+   different from this is a decision to argue for, not a class to add.
+   ============================================================================= */
+
+/* The copy block: eyebrow, statement, paragraph, at one measure. */
+.sec-copy {
+  max-width: var(--measure-lede);
 }
 
-.hub-row {
-  display: grid;
-  gap: var(--space-6);
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  z-index: 2;
+/* Zeroed here and paid by the object's own top margin instead. .section .lede carries 64px of
+   bottom margin, which is right when the lede is the last line of copy and wrong when a claim
+   or a stat line follows it. */
+.sec-copy .lede {
+  margin-bottom: 0;
 }
 
-.hub-row.routers  { grid-template-columns: repeat(3, minmax(140px, 200px)); }
-.hub-row.direct-a { grid-template-columns: repeat(4, minmax(120px, 160px)); }
-.hub-row.direct-b { grid-template-columns: repeat(4, minmax(120px, 160px)); }
+/* One bold sentence a visitor understands before inspecting the thing below it. Charts and
+   tables support a statement; they do not hide one. Two pages carried this at two sizes. */
+.claim {
+  font-size: var(--text-xl);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
+  font-weight: var(--weight-medium);
+  max-width: var(--measure-prose);
+  margin: 0;
+}
 
-.hub-card {
+/* Inside the copy block the claim follows the lede, so the gap between them is the shell's to
+   own rather than something each page sets. A claim used on its own keeps margin: 0. */
+.sec-copy .claim {
+  margin-top: var(--space-6);
+}
+
+/* A note about data rather than prose for its own sake: what a chart is showing, how to read a
+   row. Prose keeps a prose measure; notes run the full column. */
+.sec-note {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--muted);
+  max-width: var(--measure-prose);
+  margin: 0 0 var(--space-6);
+}
+
+/* THE OBJECT. One surface for every section's main content: a chart panel, a comparison table,
+   a diagram, a grid cell. One border weight, one radius, one background, site-wide.
+   .tm-panel shares the surface and adds the padding a chart wants — that pairing is why the
+   declaration is here rather than duplicated in both. */
+.panel,
+.tm-panel {
   background: var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  padding: var(--space-6) var(--space-4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 78px;
-  transition: transform var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease);
 }
 
-.hub-card:hover {
-  border-color: var(--line-strong);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+.panel {
+  margin-top: var(--space-12);
 }
 
-.hub-card.small { min-height: 66px; padding: var(--space-4) var(--space-3); }
-.hub-card img {
-  height: var(--logo-h-lg);
-  width: auto;
-  max-width: 100%;
-}
-.hub-card.small img { height: var(--logo-h); }
-
-.hub-center {
-  display: flex;
-  justify-content: center;
-  position: relative;
-  z-index: 2;
-}
-
-.hub-center .core {
-  background: var(--accent);
-  color: var(--dark);
-  border-radius: var(--radius-xl);
-  padding: var(--space-7) var(--space-10);
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-4);
-  /* Bold is reserved for this one element. It reads as a mark rather than as text, which is
-     why it is the only thing on the site heavier than semibold. */
-  font-weight: var(--weight-bold);
-  font-size: var(--text-xl);
-  letter-spacing: var(--tracking-tight);
-  box-shadow: var(--shadow-cta);
-}
-
-.hub-center .core .glyph {
-  width: 42px;
-  height: 42px;
-  border-radius: var(--radius-lg);
-  background: var(--dark);
-  color: var(--accent);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* An uppercase mono micro-label: the one above a block, the one on an axis, the one naming a
+   run. NINE classes across two pages were this same rule with a different margin, which is the
+   token rule playing out one class at a time instead of one value at a time. The margin is the
+   common case; a use site that wants another overrides just that. */
+.micro {
   font-family: var(--font-mono);
-  font-weight: var(--weight-bold);
-  font-size: var(--text-xl);
-  letter-spacing: 0;
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 var(--space-3);
 }
 
-#hub-lines {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
+/* On the dark band, the same way .kicker opts into yellow there rather than carrying it. */
+.page-band .micro,
+.hero .micro {
+  color: var(--muted-on-dark);
 }
 
-#hub-lines path,
-#hub-lines line {
-  fill: none;
-  stroke: var(--line-strong);
-  stroke-width: 1;
-  opacity: 0.7;
+/* THE EVIDENCE FOOTER. Provenance, caveats and disclosures, quietly, at the foot of the section
+   that earned them. This replaced a tinted callout with a yellow left rule: /market carried
+   fifteen of those and they competed with the charts they were annotating. The evidence still
+   has to be visible rather than folded away — that is the number gate — so it is small and
+   grey, not hidden. */
+.evidence {
+  margin-top: var(--space-6);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+/* Mono, for a run identifier, a date, a count or a path. */
+.evidence-src {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-relaxed);
+  color: var(--muted);
+  margin: 0;
+}
+
+/* Sans, for a caveat that is prose rather than a reference. No max-width: these run the full
+   column, for the reason the old .tm-coverage did. */
+.evidence-note {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--muted);
+  margin: var(--space-3) 0 0;
+}
+
+.evidence-note:first-child {
+  margin-top: 0;
+}
+
+.evidence-src strong,
+.evidence-note strong {
+  color: var(--text);
+}
+
+/* The one caveat that stays on the page when the rest goes behind a disclosure, quieter than
+   the conclusion above it. */
+.evidence-caveat {
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+  color: var(--muted);
+  margin: var(--space-2) 0 0;
+}
+
+/* A second measurement cited in support, which is not a second paragraph of argument. The rule
+   down its left edge separates it from prose without adding a box; it is ink rather than
+   canary, because on cream yellow may only carry a label that means something beside it, and
+   here the note is the meaning. */
+.evidence-cite {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  line-height: var(--leading-relaxed);
+  color: var(--muted);
+  border-left: 1px solid var(--line-strong);
+  padding-left: var(--space-4);
+  margin: var(--space-6) 0 0;
+}
+
+.evidence-cite-label {
+  display: block;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.evidence-src a,
+.evidence-cite a {
+  color: var(--text);
+  border-bottom: 1px solid var(--line-strong);
+}
+
+.evidence-src a:hover,
+.evidence-cite a:hover {
+  border-bottom-color: currentColor;
+}
+
+.evidence-src code,
+.evidence-note code,
+.disclose-body code {
+  background: var(--bg-tint);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: var(--space-0-5) var(--space-1);
+}
+
+/* =============================================================================
+   THE SELECTOR — a control with no JavaScript
+
+   Hidden radios, a rail of labels styled as chips, and one card per option with all but one
+   hidden. Every variant renders at build time and CSS shows one, so changing model or view costs
+   no request and no script. The rules that pair radio N with chip N and card N are generated —
+   see src/lib/selector.ts, which also records why they must win on specificity.
+
+   Both /market and /evals had their own copy of this, including the same two hard-won comments.
+   ============================================================================= */
+
+/* A fieldset, because a group of radios is one. min-inline-size is the load-bearing line: a
+   fieldset defaults to min-content and will not shrink below its widest child, and that child is
+   a chart or a screenshot carrying a min-width. Left alone it put 862px of horizontal scroll on
+   a 375px phone. */
+.sel {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-inline-size: 0;
+}
+
+/* The rail sits ABOVE what it controls. A control discovered after the thing it controls has
+   been read is a control nobody used. */
+.sel-rail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+/* Same shape as a chip elsewhere on the site, minus the checkbox row one is built around. The
+   yellow arrives on the checked one through a generated rule, which is a fill behind dark text
+   on cream and so one of the uses DESIGN.md allows. */
+.sel-rail label {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  transition: background var(--dur-base) var(--ease), color var(--dur-base) var(--ease),
+              border-color var(--dur-base) var(--ease);
+}
+
+.sel-rail label:hover {
+  color: var(--text);
+  background: var(--bg-tint);
+}
+
+/* Every card is rendered and all but one hidden; a generated rule turns one back on. */
+.sel-cards > * {
+  display: none;
+}
+
+/* The overflow toggle, for a rail too long to show whole. Beyond the visible few a chip is
+   hidden until the toggle; a generated rule overrides this for whichever option is selected, so
+   a chosen chip is never invisible. */
+.sel-more {
+  display: none;
+}
+
+.sel-toggle {
+  border-style: dashed !important;
+}
+
+.sel-hide {
+  display: none;
+}
+
+.sel-all:checked ~ .sel-rail > .sel-more { display: inline-block; }
+.sel-all:checked ~ .sel-rail > .sel-show { display: none; }
+.sel-all:checked ~ .sel-rail > .sel-hide { display: inline-block; }
+
+/* Progressive disclosure, for the implementation detail behind a section. Nothing a figure
+   depends on goes in here — a number's date and its link stay on the page. */
+.disclose {
+  margin-top: var(--space-4);
+}
+
+.disclose summary {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.disclose-body {
+  margin-top: var(--space-4);
+  max-width: var(--measure-prose);
+}
+
+.disclose-body p {
+  font-size: var(--text-base);
+  line-height: var(--leading-relaxed);
+  color: var(--muted);
+  margin: 0 0 var(--space-3);
+}
+
+.disclose-body p:last-child {
+  margin-bottom: 0;
+}
+
+.disclose-body strong {
+  color: var(--text);
 }
 
 /* ---------- Scoreboard (route matters) ---------- */
@@ -895,7 +1023,7 @@ code, pre, .mono {
 /* =============================================================================
    TABLE CONTRACT
 
-   Two tables on this site — the scoreboard on /evals and the Time Machine data table on
+   Two tables on this site — the route comparison on /evals and the model table on
    /prices — and they had different header treatments, paddings and font sizes. Data density
    is the point of this product, so they share one contract and only differ where they must.
    There were three until the run reports were removed on 2026-08-05; the contract is worth
@@ -908,14 +1036,12 @@ code, pre, .mono {
    prices visibly ragged, which is the one thing a cost table must not be.
    ============================================================================= */
 
-.scoreboard table,
 .tm-data-table {
   width: 100%;
   border-collapse: collapse;
   font-family: var(--font-mono);
 }
 
-.scoreboard thead th,
 .tm-data-table thead th {
   background: var(--bg-tint);
   color: var(--muted);
@@ -930,8 +1056,6 @@ code, pre, .mono {
   border-bottom: 1px solid var(--line-strong);
 }
 
-.scoreboard tbody td,
-.scoreboard tbody th,
 .tm-data-table tbody td,
 .tm-data-table tbody th {
   padding: var(--space-3) var(--space-4);
@@ -940,249 +1064,9 @@ code, pre, .mono {
   font-variant-numeric: tabular-nums;
 }
 
-.scoreboard tbody tr:last-child td,
 .tm-data-table tbody tr:last-child td,
 .tm-data-table tbody tr:last-child th {
   border-bottom: 0;
-}
-
-.scoreboard {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  box-shadow: var(--shadow-md);
-}
-
-/* Numeric columns right-align so the decimal points stack. Combined with tabular-nums from
-   the contract above, a column of prices becomes directly comparable by eye. */
-.scoreboard thead th.num,
-.scoreboard tbody td.num {
-  text-align: right;
-}
-
-.scoreboard tbody td {
-  color: var(--text);
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.scoreboard tbody td .via {
-  color: var(--muted);
-}
-
-/* A flat 8% tint rather than a 34%-to-14% gradient wash. At 34% the yellow competed with
-   the text sitting on it, and a gradient implied a direction the data does not have. The
-   left bar below carries the emphasis; the fill only has to say "this row". */
-.scoreboard tbody tr.winner td {
-  background: var(--accent-bg);
-}
-
-.scoreboard tbody tr.winner td:first-child {
-  position: relative;
-  padding-left: var(--space-6);
-}
-
-.scoreboard tbody tr.winner td:first-child::before {
-  content: "";
-  position: absolute;
-  left: var(--space-2);
-  top: 50%;
-  width: 3px;
-  height: 60%;
-  background: var(--accent-deep);
-  border-radius: var(--radius-sm);
-  transform: translateY(-50%);
-}
-
-.scoreboard tbody tr.narrator td:last-child {
-  color: var(--warn);
-}
-
-/* ---------- Localhost boundary diagram ---------- */
-
-.boundary {
-  position: relative;
-  border: 1.5px dashed var(--line-strong);
-  border-radius: var(--radius-xl);
-  padding: var(--space-12) var(--space-8) var(--space-8);
-  background: var(--bg-tint);
-}
-
-.boundary::before {
-  content: "your machine";
-  position: absolute;
-  top: -13px;
-  left: 32px;
-  background: var(--bg);
-  padding: 0 var(--space-3);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-label);
-  color: var(--muted);
-}
-
-.boundary .row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-  margin-bottom: var(--space-6);
-}
-
-.boundary .row:last-child { margin-bottom: 0; }
-
-.boundary .node {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: var(--space-4) var(--space-5);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--text);
-  white-space: nowrap;
-}
-
-.boundary .node .sub {
-  display: block;
-  font-size: var(--text-2xs);
-  color: var(--muted);
-  margin-top: var(--space-1);
-  text-transform: none;
-  letter-spacing: 0;
-}
-
-.boundary .arrow {
-  color: var(--muted);
-  font-family: var(--font-mono);
-  font-size: var(--text-lg);
-}
-
-.boundary .egress {
-  margin-top: var(--space-10);
-  padding: var(--space-5) var(--space-6);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  background: var(--panel);
-  text-align: center;
-  color: var(--text);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  position: relative;
-}
-
-.boundary .egress::before {
-  content: "▼ only outbound";
-  position: absolute;
-  top: -34px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
-  color: var(--muted);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-}
-
-.boundary .egress .kv {
-  color: var(--muted);
-  margin-right: var(--space-2);
-}
-
-/* ---------- Report section ---------- */
-
-.report-section .report-frame {
-  display: block;
-  position: relative;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  overflow: hidden;
-  background: var(--panel);
-  box-shadow: var(--shadow-lg);
-  transition: transform var(--dur-slow) var(--ease), box-shadow var(--dur-slow) var(--ease), border-color var(--dur-slow) var(--ease);
-  text-decoration: none;
-}
-
-.report-section .report-frame:hover {
-  transform: translateY(-2px);
-  border-color: var(--line-strong);
-  box-shadow: var(--shadow-lg);
-}
-
-.report-section .report-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-3) var(--space-4);
-  background: var(--bg-tint);
-  border-bottom: 1px solid var(--line);
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--muted);
-}
-
-/* Shared with the install terminal below — see the .dot rule there. */
-
-.report-section .report-toolbar .path {
-  margin-left: var(--space-2);
-  color: var(--muted);
-}
-
-.report-section .report-toolbar .open {
-  margin-left: auto;
-  color: var(--text);
-  font-weight: var(--weight-semibold);
-  padding: var(--space-1) var(--space-3);
-  border-radius: var(--radius-sm);
-  background: var(--accent);
-  transition: background var(--dur-base) var(--ease);
-}
-
-.report-section .report-frame:hover .open {
-  background: var(--accent-deep);
-}
-
-.report-section .report-shots {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 0;
-  background: var(--panel);
-}
-
-.report-section .report-shots .shot {
-  margin: 0;
-  padding: var(--space-8) var(--space-6) var(--space-2);
-  border-bottom: 1px solid var(--line);
-}
-
-.report-section .report-shots .shot:last-child {
-  border-bottom: 0;
-  padding-bottom: var(--space-10);
-}
-
-.report-section .report-shots img {
-  display: block;
-  width: 100%;
-  height: auto;
-  max-width: 1100px;
-  margin: 0 auto;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--bg-tint);
-}
-
-.report-section .report-shots figcaption {
-  margin: var(--space-4) auto 0;
-  max-width: 1100px;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  color: var(--muted);
-  text-align: center;
-  letter-spacing: 0;
 }
 
 @media (max-width: 640px) {
@@ -1233,11 +1117,8 @@ code, pre, .mono {
   flex: 0 0 auto;
 }
 
-.report-section .report-toolbar .r,
 .install .terminal-bar .r { background: var(--traffic-red); }
-.report-section .report-toolbar .y,
 .install .terminal-bar .y { background: var(--traffic-amber); }
-.report-section .report-toolbar .g,
 .install .terminal-bar .g { background: var(--traffic-green); }
 
 .install .terminal-bar .label {
@@ -1362,38 +1243,9 @@ code, pre, .mono {
 
 .footer .spacer { flex: 1; }
 
-/* ---------- Lightbox ---------- */
-
-.lightbox {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.9);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-  padding: var(--space-6);
-  cursor: zoom-out;
-}
-
-.lightbox.open { display: flex; }
-
-.lightbox img {
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-lg);
-}
-
 /* ---------- Responsive ---------- */
 
 @media (max-width: 900px) {
-  .hub-row.routers  { grid-template-columns: repeat(3, 1fr); }
-  .hub-row.direct-a,
-  .hub-row.direct-b { grid-template-columns: repeat(4, 1fr); }
-  .hub-center .core { padding: var(--space-6) var(--space-7); font-size: var(--text-lg); }
-  .boundary .row { flex-direction: column; align-items: stretch; }
-  .boundary .arrow { transform: rotate(90deg); }
 }
 
 @media (max-width: 640px) {
@@ -1413,19 +1265,8 @@ code, pre, .mono {
      the mobile sizes, which is the entire point of using clamp. Fighting a clamp with a
      fixed override in a media query is how the file ended up with six display sizes. */
   .hero .container { padding-top: var(--space-12); padding-bottom: var(--space-14); }
-  .hero .receipt { margin-top: var(--space-12); }
   .hero .sub { font-size: var(--text-md); }
-  .hub-row.routers  { grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
-  .hub-row.direct-a,
-  .hub-row.direct-b { grid-template-columns: repeat(4, 1fr); gap: var(--space-3); }
-  .hub-card { padding: var(--space-4) var(--space-2); min-height: 58px; }
-  .hub-card.small { min-height: 52px; padding: var(--space-3) var(--space-2); }
-  .hub-card img { max-height: 20px; }
-  .hub-card.small img { max-height: 18px; }
-  .hub-center .core { padding: var(--space-5) var(--space-6); font-size: var(--text-md); }
-  .hub-center .core .glyph { width: 34px; height: 34px; font-size: var(--text-lg); }
   .install .terminal-body { padding: var(--space-6) var(--space-5); }
-  #hub-lines { display: none; }
 }
 
 /* Below about 380px there is no width left to win: the lockup plus four links cannot share
@@ -1501,157 +1342,25 @@ code, pre, .mono {
   border: 0;
 }
 
-/* Provenance line under an on-page results table. Every figure on this site should be
-   one click from the artefact it came out of. */
-.table-source {
-  margin: var(--space-5) 0 0;
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  line-height: var(--leading-relaxed);
-  color: var(--muted);
-}
-
-.table-source code {
-  font-size: var(--text-xs);
-  background: var(--bg-tint);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: var(--space-0-5) var(--space-1);
-  color: var(--muted);
-}
-
-.table-source a {
-  color: var(--text);
-  border-bottom: 1px solid var(--line-strong);
-  white-space: nowrap;
-}
-
-.table-source a:hover {
-  border-bottom-color: currentColor;
-}
-
-/* The outbound line has to name what actually leaves the machine, so it needs room for
-   a second line rather than a single label. */
-.boundary .egress-note {
-  display: block;
-  margin-top: var(--space-3);
-  font-size: var(--text-xs);
-  line-height: var(--leading-relaxed);
-  color: var(--muted);
-  text-align: center;
-}
-
-.boundary .egress-note code {
-  font-size: var(--text-xs);
-  background: var(--bg-tint);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-  padding: var(--space-0-5) var(--space-1);
-  color: var(--muted);
-}
-
 /* ---------- /prices — the Time Machine chart ---------- */
 
 .tm {
   padding: var(--space-12) 0 clamp(64px, 9vw, 120px);
 }
 
-/* flex-start, not flex-end. The metric toggle is written by the client script after the
-   fetch resolves, so while prices are loading it has no height and flex-end dropped the
-   "Price" label below the "Axis" label — a visible misalignment on first paint. */
-.tm-controls {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-7);
-  align-items: flex-start;
-  margin-bottom: var(--space-5);
-}
-
+/* .micro at one size up: this labels a group of cards rather than a block, and it carries a
+   count on its right, so it holds its own against the row beneath it. */
 .tm-group-label {
   display: block;
-  font-family: var(--font-mono);
   font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-label);
-  color: var(--muted);
   margin-bottom: var(--space-2);
 }
 
-/* A segmented control. The pressed segment carries canary yellow, which is why no data
-   series is allowed to use that colour. */
-.tm-toggle {
-  display: inline-flex;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: var(--space-1);
-  gap: var(--space-0-5);
-}
 
-.tm-toggle button {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--muted);
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--radius-md);
-  padding: var(--space-2) var(--space-4);
-  cursor: pointer;
-  transition: background var(--dur-base) var(--ease), color var(--dur-base) var(--ease);
-}
-
-.tm-toggle button:hover {
-  color: var(--text);
-  background: var(--bg-tint);
-}
-
-.tm-toggle button[aria-pressed='true'] {
-  background: var(--accent);
-  border-color: var(--accent-deep);
-  color: var(--dark);
-  font-weight: var(--weight-semibold);
-}
-
-.tm-note {
-  font-size: var(--text-base);
-  line-height: var(--leading-relaxed);
-  color: var(--muted);
-  max-width: var(--measure-prose);
-  margin: 0 0 var(--space-6);
-}
-
+/* The chart panel: .panel's surface, declared with it above, plus the padding a chart needs. */
 .tm-panel {
   position: relative;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
   padding: var(--space-5) var(--space-5) var(--space-3);
-}
-
-/* Fixed height with the canvas absolutely filling it, so Chart.js has a box to measure and
-   the panel never grows without bound on resize. */
-.tm-canvas-wrap {
-  position: relative;
-  height: clamp(320px, 46vw, 520px);
-}
-
-.tm-canvas-wrap canvas {
-  position: absolute;
-  inset: 0;
-}
-
-.tm-status {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  line-height: var(--leading-relaxed);
-  color: var(--muted);
-  margin: 0;
-  padding: var(--space-7) var(--space-1);
-  max-width: var(--measure-prose);
-}
-
-.tm-status.error {
-  color: var(--danger);
 }
 
 /* ---------- Legend and filter in one ---------- */
@@ -1685,113 +1394,6 @@ code, pre, .mono {
   gap: var(--space-2);
 }
 
-.tm-chip {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-2) var(--space-3);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  background: var(--panel);
-  font-size: var(--text-sm);
-  cursor: pointer;
-  transition: border-color var(--dur-base) var(--ease), background var(--dur-base) var(--ease);
-}
-
-.tm-chip:hover {
-  border-color: var(--line-strong);
-}
-
-.tm-chip.on {
-  background: var(--bg-tint);
-  border-color: var(--text);
-}
-
-/* At the eight-series cap the unselected rows stay readable but visibly unavailable. */
-.tm-chip.capped {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.tm-chip input {
-  margin: 0;
-  /* --text, not --accent-deep. accent-color paints the box and the browser draws a white
-     tick on top; white on #EAB308 is roughly 2.2:1, so the tick was nearly invisible. */
-  accent-color: var(--text);
-  flex: 0 0 auto;
-}
-
-.tm-swatch {
-  width: 12px;
-  height: 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--line-strong);
-  flex: 0 0 12px;
-}
-
-/* Reserves the icon's width whether or not a brand resolved, so model names stay aligned
-   down the grid when the library covers one vendor and not its neighbour. */
-.tm-brand-slot {
-  width: 16px;
-  height: 16px;
-  flex: 0 0 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.tm-brand {
-  width: 16px;
-  height: 16px;
-  display: block;
-  object-fit: contain;
-}
-
-.tm-chip-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.tm-chip-value {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--muted);
-  flex: 0 0 auto;
-}
-
-.tm-coverage {
-  font-size: var(--text-sm);
-  line-height: var(--leading-relaxed);
-  color: var(--muted);
-  background: var(--bg-tint);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--accent-deep);
-  border-radius: 0 var(--radius-md) var(--radius-md) 0;
-  padding: var(--space-4) var(--space-5);
-  margin: var(--space-7) 0 0;
-  /* NO max-width, unlike .tm-note above it, and the omission is deliberate.
-
-     This carried --measure-wide, which capped it at 723px inside a 1072px column. The measure
-     scale exists to stop a line of prose running past the length an eye can track back from,
-     and for a lede that is right. It is the wrong trade for these: they are two- and
-     three-line notes under a chart, where the cost of a long line is the return sweep and
-     there are only two or three sweeps to make. Capping them bought little and spent real
-     vertical space on a page that is already eight chart panels tall.
-
-     Dropping it also lands them exactly on the panel width, so a note and the chart it
-     annotates now share both edges instead of the note stopping two thirds of the way across.
-
-     The pairing with .tm-note is the point: prose stays at prose measure, notes about data run
-     the full column. If a coverage note ever grows past about four lines at full width, the
-     note is too long rather than too wide. */
-}
-
-.tm-coverage:empty {
-  display: none;
-}
 
 /* ---------- Table view ---------- */
 
@@ -1818,7 +1420,6 @@ code, pre, .mono {
   background: var(--panel);
   margin-top: var(--space-3);
 }
-
 
 
 .tm-data-table caption {
@@ -1850,7 +1451,7 @@ code, pre, .mono {
 
    Done structurally rather than with a class an author adds per table: the pairing is a
    property of the component, and a rule that has to be remembered is a rule that gets
-   forgotten on the next table. .scoreboard already behaves this way, left by default with
+   forgotten on the next table. The comparison table already behaves this way, left with
    numeric columns opting in via .num, so the two table components now agree.
 
    A table whose first column is genuinely numeric would want this off, and there is none on
@@ -1870,28 +1471,6 @@ code, pre, .mono {
 .tm-data-table td {
   font-family: var(--font-mono);
   color: var(--text);
-}
-
-/* A brand mark beside a model name, in a table's row-header cell.
-
-   CENTRED, changed 2026-08-11. This was flex-start plus a 2px top nudge on the slot, which
-   was right when the cell held /prices' two-line name-plus-id block: top-aligning put the
-   icon against the name rather than centring it across both lines. That page and its second
-   line are gone, and against the single-line name on /market the same rule drew a 16px icon
-   noticeably above the text it labels. `.tm-row-id`, which styled that second line, was
-   removed with it rather than left behind as a rule with no use site. */
-.tm-row-head {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-}
-
-.tm-empty {
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--muted);
-  padding: var(--space-5) var(--space-4);
-  margin: 0;
 }
 
 @media (max-width: 560px) {

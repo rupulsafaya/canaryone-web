@@ -29,6 +29,8 @@ The documented exceptions, all deliberate:
 | `font-size: 0.88em` on inline code | Relative to its parent on purpose, so a code chip scales with whatever text surrounds it. |
 | `INK` in `prices.astro` | Chart.js takes colour strings and cannot read CSS variables. Each value carries a comment naming the token it mirrors, and they must be kept in step by hand. |
 | The flywheel's SVG geometry in `index.astro` — two `stroke-width`s, `stroke-dasharray: 22 1075` and `stroke-dashoffset: -1097` | These are measured off the `#fw-circuit` path with `path.getTotalLength()` and mean nothing away from it, so a token holding one of them could never be reused. The dash array and the offset have to move together when the path changes. |
+| `1px` hairlines and SVG `stroke-width`s | The scale has no token for the thickness of a mark, and a one-pixel rule is not layout rhythm. Every chart mark, panel border and table rule is 1px. |
+| `3px` on a decorative rule | The one width canary is allowed to be on cream — the callout rule and the top rule on a numbered step. It is a fixed idiom rather than a value with a range, so a token would only be used by rules that must all match anyway. |
 | Transform nudges of 1px and 2px on hover lifts | A one-pixel optical nudge is not layout rhythm, and `global.css` already does this at three sites. If it ever wants a token it should become one `--lift` used by both files, not a spacing token pressed into service. |
 
 ## Scales
@@ -98,6 +100,64 @@ ended up with six display sizes.
 heads are `--weight-semibold`, and `--weight-bold` is reserved for the hub-and-spoke centre,
 which reads as a mark rather than as text.
 
+## The section shell
+
+**Every section below a page's hero is the same five parts in the same order,** and they are one
+set of classes in `global.css` rather than something each page invents:
+
+| Part | Class | What it is |
+|---|---|---|
+| Eyebrow | `.kicker` | Two or three words naming the section. Muted on cream, canary on the dark band. |
+| Statement | `h2` | A complete sentence ending in a full stop. |
+| Paragraph | `.lede`, inside `.sec-copy` | One or two sentences at `--measure-lede`. |
+| Claim | `.claim` | Optional. The one bold sentence a visitor understands before inspecting the thing below it. |
+| Note | `.sec-note` | Optional. What a chart is showing or how to read a row, at prose measure. |
+| Object | `.panel` | **Exactly one per section.** A chart panel, a comparison table, a diagram, a grid of cells. |
+| Footer | `.evidence` | Provenance, caveats and disclosures, quietly. |
+
+The footer has five parts of its own: `.evidence-src` for a run identifier, a date, a count or a
+path, in mono; `.evidence-note` for a caveat in sans; `.evidence-caveat` for the one caveat that
+stays visible when the rest goes behind a disclosure; `.evidence-cite` for a second measurement
+cited in support, with a rule down its left edge; and `.disclose` for implementation detail.
+
+**This exists because each page had invented its own grammar.** `/evals` had logo pills, an
+architecture diagram and a fake browser window, with three footer treatments between them;
+`/market` had `.tm-note` for prose and fifteen `.tm-coverage` callouts — tinted, with a yellow
+left rule — which competed with the charts they annotated. Both classes are gone. `/market` reads
+as one page because its charts are exhibits in one museum, and the shell is what makes the rest
+of the site read the same way.
+
+**What has to stay identical, because this is the whole point:** the copy measure, the gap from
+copy to object, the object's border weight and radius, and the footer treatment. Anything that
+wants to look different from this is a decision to argue for rather than a class to add.
+
+**Nothing a figure depends on goes into a `.disclose`.** A number's date and the link to the run
+it came from stay on the page — that is COPY.md's number gate, not a layout preference.
+
+### The micro-label
+
+`.micro` is the uppercase mono label above a block, on an axis, or naming a run. It replaced
+**nine** classes across two pages that were the same five declarations with a different margin,
+which is the token rule playing out one class at a time instead of one value at a time. The
+margin it carries is the common case; a use site wanting another overrides only that. On the dark
+band it takes `--muted-on-dark` the same way `.kicker` opts into yellow there.
+
+### The selector, which is how a control works without JavaScript
+
+`.sel` is a fieldset of hidden radios, `.sel-rail` is the row of labels styled as chips, and
+`.sel-cards` holds one card per option with all but one hidden. Every variant renders at build
+time and CSS shows one, so changing model or view costs no request and no script.
+
+The rules pairing radio N with chip N and card N are generated, because the count is data — see
+[`src/lib/selector.ts`](./src/lib/selector.ts), which records the two things about it that look
+like style and are not: the pairing must win on **specificity** rather than source order, because
+Astro emits scoped and global styles in an order that differed between dev and build; and the
+fieldset needs `min-inline-size: 0`, because a fieldset will not shrink below its widest child and
+that child is a chart carrying `--chart-min`.
+
+**Put the rail above the object.** A control discovered after the thing it controls has been read
+is a control nobody used.
+
 ## Where yellow is allowed
 
 Canary yellow only works on dark. `--accent-deep` on `--bg` measures **1.87:1**, which is the
@@ -106,10 +166,18 @@ same number that disqualifies it as a focus ring.
 **On a dark surface** yellow may be a foreground: the kicker, the terminal prompt, a
 breadcrumb hover, the focus ring, the fading band hairlines.
 
-**On cream** yellow may only be a fill sitting behind dark text — the primary button, a
-pressed toggle segment, the highlight band behind a headline, the winner row tint, the report
-frame's open chip — or a 3px decorative callout rule, where the label beside it carries the
-meaning and the rule is only drawing the eye.
+**On cream** yellow may only be a fill sitting behind dark text — the primary button, the
+selected chip on a `.sel-rail`, the highlight band behind a headline, the winner row tint, the
+`OUTBOUND ONLY` pill where the arrow leaves the machine on `/evals` — or a 3px decorative rule,
+where the label beside it carries the meaning and the rule is only drawing the eye, as on the
+numbered steps.
+
+**The crossing pill is the case worth understanding,** because the obvious version of it is
+banned. The `/evals` machine diagram wanted a yellow arrow crossing the boundary, which is a
+coloured line on cream and therefore out: at 1.87:1 nobody can reliably see it, and it would be
+carrying the whole meaning of the diagram. A yellow chip carrying dark text, sitting on the
+boundary the connector crosses, puts the accent exactly where the crossing happens and stays
+legible. **A pill is not a licence for a line.**
 
 **On cream yellow may not be text, a link underline, or a card's hover border.** Those read as
 a wash that never resolves into emphasis, which is how a colour meant to be decisive ends up
@@ -172,8 +240,8 @@ back.
 
 ## Tables
 
-Data density is the point of this product, so the two tables — the route scoreboard on
-`/evals` and the Time Machine data table on `/prices` — share one contract.
+Data density is the point of this product, so both tables — the route comparison on `/evals`
+and the model table on `/market` — share one contract, `.tm-data-table`.
 
 Header rows are tinted, uppercase mono at `--text-2xs`, separated from the body by
 `--line-strong` rather than `--line` so a head reads as a head. Body cells are `--text-sm`
@@ -182,9 +250,8 @@ mono with horizontal rules only, never vertical grid lines. Numeric columns righ
 **Every cell carries `font-variant-numeric: tabular-nums`.** Proportional digits make a column
 of prices visibly ragged, which is the one thing a cost table must not be.
 
-There were three until the run reports were removed, and the contract survives the drop to two
-on purpose: it is the thing a third table should be built against rather than a shared rule
-worth inlining back into two places. The one known gap went with the run reports — their
+The contract survives the drop from three tables to two on purpose: it is the thing a third
+table should be built against rather than a shared rule worth inlining back into two places. The one known gap went with the run reports — their
 imported-markdown tables wrapped inside numeric columns, and the fix would have meant teaching
 a rehype plugin to detect them. That plugin no longer exists; no markdown is rendered on this
 site.
@@ -192,14 +259,41 @@ site.
 ## Third-party logos
 
 Other companies' logos appear in four places: two partner rows in the home page's TUNE section,
-two deploy-target rows in its DEPLOY section, the eleven provider cards in the `/evals` hub, and
-the six open-weight model marks in the hero. They are the one part of the page whose artwork we
-do not control, which is why they get a pipeline rather than a rule.
+two deploy-target rows in its DEPLOY section, the six open-weight model marks in the home hero,
+and the seventeen provider cells in the `/evals` coverage grid. They are the one part of the page
+whose artwork we do not control, which is why they get a pipeline rather than a rule.
 
-**Two tokens, and they mean ink rather than box.** `--logo-h` at 26px is the bare strips on the
-home page, `--logo-h-lg` at 30px is the `/evals` hub where each logo sits inside its own card and
-can afford to be larger, and `--logo-icon` at 32px is the square hero marks, which are glyphs
-rather than wordmarks and do not belong to the wordmark scale.
+**The tokens mean ink rather than box.** `--logo-h` at 26px is the bare wordmark strips on the
+home page, `--logo-icon` at 32px is the square hero marks, and `--logo-icon-sm` at 26px is a
+square mark beside one line of type. `--logo-h-lg` at 30px is unused since the `/evals` provider
+hub was removed.
+
+**`--logo-icon-sm` exists because the coverage grid was borrowing `--logo-h`,** a token
+documented as a wordmark ink height, for a square glyph. At `--logo-icon`'s 32px the mark became
+the tallest thing in its cell and set the cell's height; nothing named the size a labelled mark
+actually wants. A square mark and a wordmark of the same nominal height are not the same optical
+size, which is the whole reason the two scales are separate.
+
+### The coverage grid is a labelled-mark row, and it is the documented exception
+
+The rule below says to prefer a horizontal lockup to a bare mark in any row that names companies.
+**The `/evals` coverage grid deliberately does the opposite:** seventeen square monochrome marks,
+each with the company's name in our own mono beside it, in a five-column grid of identical cells.
+
+Three reasons, in the order they mattered:
+
+1. **Seventeen wordmarks is eleven typefaces.** Read as a block it was the busiest thing on the
+   page, and the section's job is to say the coverage is broad rather than to be looked at.
+2. **The library has no lockup for six of them.** Rendered as names beside eleven wordmarks they
+   came out as a visibly second tier of support, which is a claim we did not intend to make.
+3. **One of the colour marks is illegible on cream.** OpenRouter's is `#C8FF00`, about 1.3:1.
+
+The prohibition it sets aside is that a bare-mark row cannot be read as names. A **labelled** mark
+can, which is why the name is not optional here. `scripts/extract-adapters.mjs` copies only the
+monochrome variant of each mark and reports any adapter that has none rather than copying a
+coloured one, because a single coloured glyph in that row reads as a mistake nobody can account
+for. Sizing the cell to its own content is also out: every cell is `--cell-min` tall and one
+column of a `repeat(5, …)` grid wide, whatever its name is.
 
 Those heights mean ink because [`scripts/build-logos.mjs`](./scripts/build-logos.mjs) crops every
 logo's viewBox to its own artwork. Before that, `height: 24px` on a lobehub lockup drew between
@@ -284,8 +378,8 @@ condition, so these are documentation rather than something the queries referenc
 | Width | What changes |
 |---|---|
 | 380px | The nav stacks: lockup on its own row, links beneath. |
-| 640px | Type and hub sizing step down; the band gives back a third of its depth. |
-| 900px | The hub and the boundary diagram go vertical. |
+| 640px | Type steps down, the band gives back a third of its depth, and a dense grid halves its columns — the coverage grid goes to one column here, because two leaves about 90px for a company name and truncates four of them. |
+| 900px | Multi-column sections stack and horizontal chains go vertical: the hero's three stages, the three numbered steps, the machine diagram's three nodes. |
 | 1024px | Reserved. |
 
 ## Generated assets
