@@ -47,7 +47,7 @@ import market from '../data/market.json';
 import { brandIconFor } from '../lib/model-brand';
 import { selectorCss } from '../lib/selector';
 import {
-  spell, cap, times, mult, day, stamp, usd, usdCol, usd4, priceWords, int,
+  spell, cap, times, moreBy, moreThan, mult, day, stamp, usd, usdCol, usd4, priceWords, int,
 } from '../lib/prose';
 
 /* Every formatter comes from one module. This page used to declare its own spell(), cap(),
@@ -584,8 +584,9 @@ const reference = market.models
                 for a table cell, a chart label or a heading. This read "a 27× difference" and
                 opened on a verbless fragment. */}
             <p class="mk-why">
-              <strong>Why the gap?</strong> One route spent {times(expThink)} as many reasoning
-              tokens per task as the other on the same job — {int(pair.dear.reasoning_per_task)}
+              <strong>Why the gap?</strong> On the same job, one route spent
+              {' '}{moreThan(expThink, 'many')} the other in reasoning tokens per task —
+              {' '}{int(pair.dear.reasoning_per_task)}
               {' '}against {int(pair.cheap.reasoning_per_task)}.
             </p>
           </div>

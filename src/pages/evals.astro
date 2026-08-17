@@ -72,7 +72,7 @@ import viewSession from '../assets/report-view-session.png';
 import run from '../data/example-run.json';
 import adapters from '../data/adapters.json';
 import market from '../data/market.json';
-import { spell, cap, times, day, usd4, secs, pctMore } from '../lib/prose';
+import { spell, cap, times, day, usd4, secs, pctMore, moreBy, moreThan } from '../lib/prose';
 import { selectorCss } from '../lib/selector';
 
 const TITLE = 'CanaryOne Evals — find the route that wins on your workload';
@@ -396,8 +396,8 @@ const runBar = [
           <summary>How to read this result</summary>
           <div class="disclose-body">
             <p>
-              Across the three routes, cost per completed task runs {times(costRatio)} from one
-              end to the other on identical work.
+              Across the three routes, the dearest cost per completed task is
+              {' '}{moreThan(costRatio)} the cheapest, on identical work.
             </p>
             <p>
               <strong>The judge score.</strong> A second model reads each session transcript and
@@ -431,7 +431,7 @@ const runBar = [
             Also measured · {day(`${m.night}T00:00:00Z`)}
           </span>
           On the nightly sweep, the route with the cheaper advertised token price cost
-          {' '}{times(sweepRatio)} as much per completed task, and both routes completed every
+          {' '}{moreBy(sweepRatio)} per completed task, and both routes completed every
           task. {cap(spell(m.routes.length))} routes of {m.model_name}.
           {' '}<a href="/market">See the market page →</a>
         </p>

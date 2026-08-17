@@ -101,5 +101,39 @@ export const int = (n: number): string => Math.round(n).toLocaleString('en-GB');
 /** A percentage gap, for "cost 46 per cent more" where `times()` would read "46 per cent above". */
 export const pctMore = (r: number): string => `${Math.round((r - 1) * 100)} per cent more`;
 
+/**
+ * The comparative form: the whole phrase, not a fragment the sentence has to complete.
+ *
+ * times() deliberately returns two grammatically different shapes — "two and a half times" at
+ * or above 1.95, and "40 per cent above" below it — and only the first can be followed by "as
+ * much". On 2026-08-17 a sweep ratio fell to 1.4 and /evals rendered "cost 40 per cent above
+ * as much per completed task", with /market rendering "spent 49 per cent above as many
+ * reasoning tokens". The bug was latent for as long as every ratio happened to sit above 1.95.
+ *
+ * So this owns the head AND the tail: a use site supplies neither "as much" nor "as many" and
+ * therefore cannot pick one that disagrees with the branch times() took. It delegates the
+ * sub-1.95 case to pctMore() rather than repeating the rounding, for the reason this module
+ * exists at all. Pass 'many' for a count noun.
+ *
+ *   `cost {moreBy(r)} per completed task`         -> "40 per cent more" | "twice as much"
+ *   `spent {moreBy(r, 'many')} reasoning tokens`  -> "40 per cent more" | "twice as many"
+ *
+ * Where a sentence names what it compares against, keep times(): "charges X the cheapest"
+ * reads correctly on both branches.
+ */
+export const moreBy = (r: number, noun: 'much' | 'many' = 'much'): string =>
+  r < 1.95 ? pctMore(r) : `${times(r)} as ${noun}`;
+
+/**
+ * The same comparative, for a sentence that names what it compares against. The linking word
+ * has to switch with the branch — "40 per cent more THAN the cheapest" but "twice as much AS
+ * the cheapest" — so it belongs in here rather than typed at the use site, which is how
+ * "nearly four times as much than the cheapest" got written on 2026-08-17.
+ *
+ *   `costs {moreThan(r)} the cheapest`  -> "40 per cent more than" | "twice as much as"
+ */
+export const moreThan = (r: number, noun: 'much' | 'many' = 'much'): string =>
+  r < 1.95 ? `${pctMore(r)} than` : `${times(r)} as ${noun} as`;
+
 /** Seconds, for a latency figure that is far past the point where milliseconds mean anything. */
 export const secs = (ms: number): string => `${(ms / 1000).toFixed(ms < 10000 ? 1 : 0)}s`;

@@ -1,29 +1,29 @@
 {
- "captured_at": "2026-08-13T05:38:39.582314+00:00",
- "captures_on_record": 32,
+ "captured_at": "2026-08-17T12:55:57.083129+00:00",
+ "captures_on_record": 40,
  "changes": {
   "by_field": {
-   "caps": 2,
-   "completion": 148,
-   "context_length": 7,
-   "discount": 126,
-   "input_cache_read": 146,
-   "max_completion_tokens": 6,
-   "presence": 70,
-   "prompt": 157,
+   "caps": 6,
+   "completion": 203,
+   "context_length": 8,
+   "discount": 160,
+   "input_cache_read": 201,
+   "max_completion_tokens": 7,
+   "presence": 96,
+   "prompt": 213,
    "quantization": 2
   },
-  "days": 10,
-  "total": 664
+  "days": 12,
+  "total": 896
  },
- "compared_against": "2026-08-12T08:39:02.993658+00:00",
+ "compared_against": "2026-08-14T08:38:44.896865+00:00",
  "first_token": {
   "hosts": 18,
   "model": "z-ai/glm-5.1",
-  "ratio": 28.473880597014926
+  "ratio": 37.773092369477915
  },
- "generated_at": "2026-08-13T05:39:02.019554+00:00",
- "hf_captured_at": "2026-08-13T05:38:42.958851+00:00",
+ "generated_at": "2026-08-17T12:56:21.359112+00:00",
+ "hf_captured_at": "2026-08-14T08:38:46.656367+00:00",
  "hook": {
   "hosts": [
    {
@@ -32,6 +32,14 @@
     "last": 2.31,
     "moved": false,
     "points": [
+     2.31,
+     2.31,
+     2.31,
+     2.31,
+     2.31,
+     2.31,
+     2.31,
+     2.31,
      2.31,
      2.31,
      2.31,
@@ -107,6 +115,14 @@
      2.0999999999999996,
      2.0999999999999996,
      2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
      2.0999999999999996
     ],
     "provider": "Wafer",
@@ -120,6 +136,14 @@
     "last": 2.0999999999999996,
     "moved": false,
     "points": [
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
      2.0999999999999996,
      2.0999999999999996,
      2.0999999999999996,
@@ -195,6 +219,14 @@
      2.0999999999999996,
      2.0999999999999996,
      2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
      2.0999999999999996
     ],
     "provider": "Cloudflare",
@@ -208,6 +240,14 @@
     "last": 2.0999999999999996,
     "moved": false,
     "points": [
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
+     2.0999999999999996,
      2.0999999999999996,
      2.0999999999999996,
      2.0999999999999996,
@@ -283,6 +323,14 @@
      0.49,
      0.49,
      1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.1760000000000002,
+     0.392,
+     0.392,
+     1.4,
+     1.4,
      1.4
     ],
     "provider": "Baidu",
@@ -296,6 +344,14 @@
     "last": 1.4,
     "moved": false,
     "points": [
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
      1.4,
      1.4,
      1.4,
@@ -371,6 +427,14 @@
      1.4,
      1.4,
      1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
      1.4
     ],
     "provider": "Fireworks",
@@ -384,6 +448,14 @@
     "last": 1.4,
     "moved": false,
     "points": [
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
      1.4,
      1.4,
      1.4,
@@ -459,6 +531,14 @@
      1.4,
      1.4,
      1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
      1.4
     ],
     "provider": "Friendli",
@@ -472,6 +552,14 @@
     "last": 1.4,
     "moved": false,
     "points": [
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
      1.4,
      1.4,
      1.4,
@@ -547,6 +635,14 @@
      1.4,
      1.4,
      1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
      1.4
     ],
     "provider": "Venice",
@@ -560,6 +656,14 @@
     "last": 1.4,
     "moved": false,
     "points": [
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
      1.4,
      1.4,
      1.4,
@@ -635,6 +739,14 @@
      1.4,
      1.4,
      1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
      1.4
     ],
     "provider": "Crusoe",
@@ -648,6 +760,14 @@
     "last": 1.4,
     "moved": false,
     "points": [
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
+     1.4,
      1.4,
      1.4,
      1.4,
@@ -723,6 +843,14 @@
      1.26,
      1.26,
      1.26,
+     1.26,
+     1.26,
+     1.26,
+     1.26,
+     1.26,
+     1.26,
+     1.26,
+     1.26,
      1.26
     ],
     "provider": "Wafer",
@@ -736,6 +864,14 @@
     "last": 1.26,
     "moved": false,
     "points": [
+     1.26,
+     1.26,
+     1.26,
+     1.26,
+     1.26,
+     1.26,
+     1.26,
+     1.26,
      1.26,
      1.26,
      1.26,
@@ -811,6 +947,14 @@
      1.19,
      1.19,
      1.19,
+     1.19,
+     1.19,
+     1.19,
+     1.19,
+     1.19,
+     1.19,
+     1.19,
+     1.19,
      1.19
     ],
     "provider": "SiliconFlow",
@@ -819,7 +963,7 @@
     "variant": "fp8"
    },
    {
-    "context": 1048576,
+    "context": null,
     "first": 1.26,
     "last": 1.1340000000000001,
     "moved": true,
@@ -855,10 +999,18 @@
      1.1340000000000001,
      1.1340000000000001,
      1.1340000000000001,
-     1.1340000000000001
+     1.1340000000000001,
+     1.1340000000000001,
+     1.1340000000000001,
+     1.1340000000000001,
+     1.1340000000000001,
+     null,
+     null,
+     null,
+     null
     ],
     "provider": "Phala",
-    "quant": "unknown",
+    "quant": null,
     "tag": "phala",
     "variant": null
    },
@@ -899,6 +1051,14 @@
      null,
      null,
      null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
+     null,
      null
     ],
     "provider": "Morph",
@@ -912,6 +1072,14 @@
     "last": 1.0499999999999998,
     "moved": false,
     "points": [
+     1.0499999999999998,
+     1.0499999999999998,
+     1.0499999999999998,
+     1.0499999999999998,
+     1.0499999999999998,
+     1.0499999999999998,
+     1.0499999999999998,
+     1.0499999999999998,
      1.0499999999999998,
      1.0499999999999998,
      1.0499999999999998,
@@ -987,6 +1155,14 @@
      0.966,
      0.966,
      0.966,
+     0.966,
+     0.966,
+     0.966,
+     0.966,
+     0.966,
+     0.966,
+     0.966,
+     0.966,
      0.966
     ],
     "provider": "Alibaba",
@@ -1000,6 +1176,14 @@
     "last": 0.77,
     "moved": false,
     "points": [
+     0.77,
+     0.77,
+     0.77,
+     0.77,
+     0.77,
+     0.77,
+     0.77,
+     0.77,
      0.77,
      0.77,
      0.77,
@@ -1075,6 +1259,14 @@
      0.76,
      0.76,
      0.76,
+     0.76,
+     0.76,
+     0.76,
+     0.76,
+     0.76,
+     0.76,
+     0.76,
+     0.76,
      0.76
     ],
     "provider": "CoreWeave",
@@ -1083,55 +1275,19 @@
     "variant": "fp4"
    },
    {
-    "context": 1024000,
-    "first": 0.693,
-    "last": 0.75306,
-    "moved": true,
-    "points": [
-     0.693,
-     0.693,
-     0.406,
-     0.6986,
-     0.6846,
-     0.7,
-     0.6832,
-     0.2772,
-     0.23659999999999998,
-     0.2212,
-     0.08259999999999999,
-     1.12,
-     1.12,
-     0.9099999999999999,
-     0.9099999999999999,
-     0.9099999999999999,
-     0.9099999999999999,
-     0.9099999999999999,
-     0.75306,
-     0.75306,
-     0.75306,
-     0.75306,
-     0.56,
-     0.56,
-     0.75306,
-     0.75306,
-     0.75306,
-     0.56,
-     0.56,
-     0.56,
-     0.75306,
-     0.75306
-    ],
-    "provider": "StreamLake",
-    "quant": "fp8",
-    "tag": "streamlake/fp8",
-    "variant": "fp8"
-   },
-   {
     "context": 1048576,
     "first": 0.75,
     "last": 0.75,
     "moved": false,
     "points": [
+     0.75,
+     0.75,
+     0.75,
+     0.75,
+     0.75,
+     0.75,
+     0.75,
+     0.75,
      0.75,
      0.75,
      0.75,
@@ -1207,6 +1363,14 @@
      0.75,
      0.75,
      0.75,
+     0.75,
+     0.75,
+     0.75,
+     0.75,
+     0.75,
+     0.75,
+     0.75,
+     0.75,
      0.75
     ],
     "provider": "Inceptron",
@@ -1251,55 +1415,19 @@
      0.742,
      0.742,
      0.742,
+     0.742,
+     0.742,
+     0.742,
+     0.742,
+     0.742,
+     0.742,
+     0.742,
+     0.742,
      0.742
     ],
     "provider": "GMICloud",
     "quant": "fp8",
     "tag": "gmicloud/fp8",
-    "variant": "fp8"
-   },
-   {
-    "context": 1048576,
-    "first": 0.7,
-    "last": 0.7405999999999999,
-    "moved": true,
-    "points": [
-     0.7,
-     0.7,
-     0.7,
-     0.7,
-     0.6859999999999999,
-     0.6986,
-     0.6818,
-     0.2912,
-     0.2352,
-     0.2352,
-     0.0966,
-     0.4186,
-     0.9646,
-     0.9086,
-     0.9086,
-     0.9086,
-     0.9086,
-     0.7546,
-     0.7518,
-     0.7518,
-     0.7518,
-     0.7518,
-     0.4886,
-     0.3906,
-     0.7518,
-     0.7518,
-     0.7518,
-     0.7,
-     0.7,
-     0.7,
-     0.7405999999999999,
-     0.7405999999999999
-    ],
-    "provider": "Novita",
-    "quant": "fp8",
-    "tag": "novita/fp8",
     "variant": "fp8"
    },
    {
@@ -1339,6 +1467,14 @@
      0.72,
      0.72,
      0.72,
+     0.72,
+     0.72,
+     0.72,
+     0.768,
+     0.768,
+     0.768,
+     0.768,
+     0.768,
      0.72
     ],
     "provider": "Decart",
@@ -1349,7 +1485,7 @@
    {
     "context": 262144,
     "first": 1.0499999999999998,
-    "last": 0.63,
+    "last": 0.7,
     "moved": true,
     "points": [
      1.0499999999999998,
@@ -1383,12 +1519,124 @@
      0.63,
      0.63,
      0.63,
-     0.63
+     0.63,
+     0.63,
+     0.63,
+     0.63,
+     0.63,
+     0.63,
+     0.63,
+     0.63,
+     0.7
     ],
     "provider": "DigitalOcean",
     "quant": "unknown",
     "tag": "digitalocean",
     "variant": null
+   },
+   {
+    "context": 1024000,
+    "first": 0.693,
+    "last": 0.6664,
+    "moved": true,
+    "points": [
+     0.693,
+     0.693,
+     0.406,
+     0.6986,
+     0.6846,
+     0.7,
+     0.6832,
+     0.2772,
+     0.23659999999999998,
+     0.2212,
+     0.08259999999999999,
+     1.12,
+     1.12,
+     0.9099999999999999,
+     0.9099999999999999,
+     0.9099999999999999,
+     0.9099999999999999,
+     0.9099999999999999,
+     0.75306,
+     0.75306,
+     0.75306,
+     0.75306,
+     0.56,
+     0.56,
+     0.75306,
+     0.75306,
+     0.75306,
+     0.56,
+     0.56,
+     0.56,
+     0.75306,
+     0.75306,
+     0.75306,
+     0.75306,
+     0.7532000000000001,
+     0.7532000000000001,
+     0.7532000000000001,
+     0.7532000000000001,
+     0.7532000000000001,
+     0.6664
+    ],
+    "provider": "StreamLake",
+    "quant": "fp8",
+    "tag": "streamlake/fp8",
+    "variant": "fp8"
+   },
+   {
+    "context": 1048576,
+    "first": 0.7,
+    "last": 0.665,
+    "moved": true,
+    "points": [
+     0.7,
+     0.7,
+     0.7,
+     0.7,
+     0.6859999999999999,
+     0.6986,
+     0.6818,
+     0.2912,
+     0.2352,
+     0.2352,
+     0.0966,
+     0.4186,
+     0.9646,
+     0.9086,
+     0.9086,
+     0.9086,
+     0.9086,
+     0.7546,
+     0.7518,
+     0.7518,
+     0.7518,
+     0.7518,
+     0.4886,
+     0.3906,
+     0.7518,
+     0.7518,
+     0.7518,
+     0.7,
+     0.7,
+     0.7,
+     0.7405999999999999,
+     0.7405999999999999,
+     0.7405999999999999,
+     0.7405999999999999,
+     0.7405999999999999,
+     0.7405999999999999,
+     0.7405999999999999,
+     0.7405999999999999,
+     0.7405999999999999,
+     0.665
+    ],
+    "provider": "Novita",
+    "quant": "fp8",
+    "tag": "novita/fp8",
+    "variant": "fp8"
    },
    {
     "context": 1048576,
@@ -1424,6 +1672,14 @@
      0.5,
      0.5,
      0.5,
+     0.5,
+     0.5,
+     0.5,
+     0.5,
+     0.5,
+     0.5,
+     0.5,
+     0.39999999999999997,
      0.5,
      0.5,
      0.5,
@@ -1470,7 +1726,15 @@
    "2026-08-12T20:05:07.828758+00:00",
    "2026-08-12T23:02:36.460878+00:00",
    "2026-08-13T03:33:38.753849+00:00",
-   "2026-08-13T05:38:39.582314+00:00"
+   "2026-08-13T05:38:39.582314+00:00",
+   "2026-08-13T08:44:58.983297+00:00",
+   "2026-08-13T12:00:34.165731+00:00",
+   "2026-08-13T16:10:11.557403+00:00",
+   "2026-08-13T19:59:53.119918+00:00",
+   "2026-08-13T23:03:48.380202+00:00",
+   "2026-08-14T03:30:44.664396+00:00",
+   "2026-08-14T08:38:44.896865+00:00",
+   "2026-08-17T12:55:57.083129+00:00"
   ]
  },
  "limits": [
@@ -1480,124 +1744,124 @@
   "This says nothing about whether a host serves the model well. Listed and healthy are not the same as accurate."
  ],
  "measured": {
-  "cost_spread": 2.6862049458949873,
+  "cost_spread": 2.0066700905277974,
   "model": "z-ai/glm-5.2",
   "model_name": "GLM 5.2",
-  "night": "2026-08-13",
-  "reasoning_max": 1225.9,
-  "reasoning_min": 5.4,
-  "reasoning_spread": 227.01851851851853,
+  "night": "2026-08-14",
+  "reasoning_max": 1045.9,
+  "reasoning_min": 61.1,
+  "reasoning_spread": 17.11783960720131,
   "routes": [
    {
     "attempted": 10,
-    "cost_per_task": 0.008918305000000001,
-    "listed_price": 1.4,
-    "passed": 10,
-    "reasoning_per_task": 45.2,
-    "tag": "z-ai/fp8"
-   },
-   {
-    "attempted": 10,
-    "cost_per_task": 0.00966513,
-    "listed_price": 0.72,
-    "passed": 10,
-    "reasoning_per_task": 119.8,
-    "tag": "decart/fp4"
-   },
-   {
-    "attempted": 10,
-    "cost_per_task": 0.01011264,
-    "listed_price": 0.966,
-    "passed": 10,
-    "reasoning_per_task": 88.9,
-    "tag": "alibaba/fp8"
-   },
-   {
-    "attempted": 10,
-    "cost_per_task": 0.010919933333333333,
+    "cost_per_task": 0.0095050584,
     "listed_price": 0.5,
-    "passed": 9,
-    "reasoning_per_task": 95.9,
+    "passed": 10,
+    "reasoning_per_task": 61.1,
     "tag": "sail-research/fp8"
    },
    {
     "attempted": 10,
-    "cost_per_task": 0.011207640000000001,
-    "listed_price": 0.742,
+    "cost_per_task": 0.0095759748,
+    "listed_price": 1.4,
     "passed": 10,
-    "reasoning_per_task": 5.4,
-    "tag": "gmicloud/fp8"
+    "reasoning_per_task": 70.5,
+    "tag": "z-ai/fp8"
    },
    {
     "attempted": 10,
-    "cost_per_task": 0.01161247,
-    "listed_price": 0.75306,
+    "cost_per_task": 0.0097873866,
+    "listed_price": 0.966,
     "passed": 10,
-    "reasoning_per_task": 656.0,
+    "reasoning_per_task": 63.1,
+    "tag": "alibaba/fp8"
+   },
+   {
+    "attempted": 10,
+    "cost_per_task": 0.009822266549999998,
+    "listed_price": 0.6664,
+    "passed": 10,
+    "reasoning_per_task": 633.2,
     "tag": "streamlake/fp8"
    },
    {
     "attempted": 10,
-    "cost_per_task": 0.012345430000000001,
-    "listed_price": 0.75,
-    "passed": 10,
-    "reasoning_per_task": 79.7,
-    "tag": "deepinfra/fp4"
+    "cost_per_task": 0.010557201,
+    "listed_price": 0.72,
+    "passed": 9,
+    "reasoning_per_task": 116.4,
+    "tag": "decart/fp4"
    },
    {
     "attempted": 10,
-    "cost_per_task": 0.013222000000000001,
-    "listed_price": 0.76,
+    "cost_per_task": 0.0107591382,
+    "listed_price": 0.665,
     "passed": 10,
-    "reasoning_per_task": 73.7,
-    "tag": "coreweave/fp4"
-   },
-   {
-    "attempted": 10,
-    "cost_per_task": 0.013224065000000002,
-    "listed_price": 0.7405999999999999,
-    "passed": 10,
-    "reasoning_per_task": 163.1,
+    "reasoning_per_task": 116.8,
     "tag": "novita/fp8"
    },
    {
     "attempted": 10,
-    "cost_per_task": 0.01579323,
-    "listed_price": 1.19,
+    "cost_per_task": 0.012635006399999999,
+    "listed_price": 0.76,
     "passed": 10,
-    "reasoning_per_task": 182.9,
-    "tag": "siliconflow/fp8"
+    "reasoning_per_task": 85.5,
+    "tag": "coreweave/fp4"
    },
    {
     "attempted": 10,
-    "cost_per_task": 0.023956395,
-    "listed_price": 0.63,
+    "cost_per_task": 0.0131627718,
+    "listed_price": 0.742,
     "passed": 10,
-    "reasoning_per_task": 1225.9,
+    "reasoning_per_task": 200.1,
+    "tag": "gmicloud/fp8"
+   },
+   {
+    "attempted": 10,
+    "cost_per_task": 0.0133596684,
+    "listed_price": 0.75,
+    "passed": 10,
+    "reasoning_per_task": 105.3,
+    "tag": "deepinfra/fp4"
+   },
+   {
+    "attempted": 10,
+    "cost_per_task": 0.017305476,
+    "listed_price": 0.7,
+    "passed": 9,
+    "reasoning_per_task": 1045.9,
     "tag": "digitalocean"
+   },
+   {
+    "attempted": 10,
+    "cost_per_task": 0.0190735164,
+    "listed_price": 1.19,
+    "passed": 10,
+    "reasoning_per_task": 199.4,
+    "tag": "siliconflow/fp8"
    }
   ],
   "same_price_pair": {
    "cheap": {
     "attempted": 10,
-    "cost_per_task": 0.008918305000000001,
+    "cost_per_task": 0.0095759748,
     "listed_price": 1.4,
     "passed": 10,
-    "reasoning_per_task": 45.2,
+    "reasoning_per_task": 70.5,
     "tag": "z-ai/fp8"
    },
    "cheap_listed": 1.4,
    "dear": {
     "attempted": 10,
-    "cost_per_task": 0.023956395,
-    "listed_price": 0.63,
+    "cost_per_task": 0.0133596684,
+    "listed_price": 0.75,
     "passed": 10,
-    "reasoning_per_task": 1225.9,
-    "tag": "digitalocean"
+    "reasoning_per_task": 105.3,
+    "tag": "deepinfra/fp4"
    },
-   "dear_listed": 0.63,
-   "price_ratio": 2.222222222222222,
-   "ratio": 2.6862049458949873
+   "dear_listed": 0.75,
+   "price_ratio": 1.8666666666666665,
+   "ratio": 1.3951235961899149
   },
   "tasks": 10
  },
@@ -1756,9 +2020,9 @@
     "ratio": 1.024
    },
    "dearest_tag": "cerebras/fp16",
-   "hf_downloads": 3980592,
+   "hf_downloads": 4322626,
    "hf_providers_live": 11,
-   "hosts_deranked": 6,
+   "hosts_deranked": 3,
    "hosts_listed": 20,
    "id": "openai/gpt-oss-120b",
    "name": "OpenAI: gpt-oss-120b",
@@ -1773,7 +2037,7 @@
    ],
    "price_in": {
     "max": 0.35,
-    "mean": 0.1162,
+    "mean": 0.11595,
     "median": 0.12,
     "min": 0.03,
     "n": 20,
@@ -1792,135 +2056,836 @@
      "price": 0.03,
      "status": 0,
      "tag": "coreweave/fp4",
-     "ttft": 534
+     "ttft": 510
     },
     {
      "price": 0.037,
      "status": 0,
      "tag": "deepinfra/bf16",
-     "ttft": 1000
+     "ttft": 350
     },
     {
      "price": 0.037,
      "status": 0,
      "tag": "akashml/bf16",
-     "ttft": 477
+     "ttft": 572
     },
     {
      "price": 0.049999999999999996,
      "status": -5,
      "tag": "novita/fp4",
-     "ttft": 692
+     "ttft": 517
     },
     {
      "price": 0.049999999999999996,
-     "status": -5,
+     "status": 0,
      "tag": "siliconflow/fp8",
-     "ttft": 1561
+     "ttft": 1553
     },
     {
      "price": 0.055,
      "status": 0,
      "tag": "digitalocean",
-     "ttft": 668
+     "ttft": 679
     },
     {
-     "price": 0.08499999999999999,
+     "price": 0.08,
      "status": 0,
      "tag": "mancer/fp8",
-     "ttft": 669
+     "ttft": 790
     },
     {
      "price": 0.09,
-     "status": -2,
+     "status": 0,
      "tag": "google-vertex/global",
-     "ttft": 400
+     "ttft": 1303.5
     },
     {
      "price": 0.09999999999999999,
      "status": 0,
      "tag": "baseten/fp4",
-     "ttft": 228
+     "ttft": 240
     },
     {
      "price": 0.09999999999999999,
-     "status": -2,
+     "status": 0,
      "tag": "parasail/fp4",
-     "ttft": 386
+     "ttft": 408
     },
     {
      "price": 0.14,
      "status": -2,
      "tag": "sambanova",
-     "ttft": 897
+     "ttft": 991
     },
     {
      "price": 0.15,
      "status": 0,
      "tag": "amazon-bedrock",
-     "ttft": 412
+     "ttft": 433
     },
     {
      "price": 0.15,
      "status": 0,
      "tag": "deepinfra/turbo",
-     "ttft": 336
+     "ttft": 380
     },
     {
      "price": 0.15,
-     "status": -2,
+     "status": 0,
      "tag": "together",
-     "ttft": 316
+     "ttft": 313
     },
     {
      "price": 0.15,
      "status": 0,
      "tag": "nebius/fp4",
-     "ttft": 184
+     "ttft": 358.5
     },
     {
      "price": 0.15,
      "status": 0,
      "tag": "phala",
-     "ttft": 853
+     "ttft": 1030
     },
     {
      "price": 0.15,
      "status": 0,
      "tag": "groq",
-     "ttft": 319
+     "ttft": 232
     },
     {
      "price": 0.15,
-     "status": 0,
+     "status": -5,
      "tag": "mara",
-     "ttft": 793
+     "ttft": 2380.5
     },
     {
      "price": 0.35,
      "status": 0,
      "tag": "cerebras/fp16",
-     "ttft": 250
+     "ttft": 310
     }
    ],
    "short": "gpt-oss-120b",
    "undisclosed_precision": 9,
-   "uptime_median": 96.96510276091345,
+   "uptime_median": 99.0395451285729,
    "weights_repo": "openai/gpt-oss-120b"
   },
   {
    "cache_read": {
+    "max": 0.07,
+    "mean": 0.030407058823529415,
+    "median": 0.028,
+    "min": 0.007,
+    "n": 17,
+    "ratio": 10.0
+   },
+   "caps_grid": [
+    {
+     "response_format": true,
+     "tag": "digitalocean",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "streamlake/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "gmicloud/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "deepinfra/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "sail-research/fp4",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "siliconflow/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "alibaba/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "venice",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "parasail/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "novita/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "atlas-cloud/fp4",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "coreweave/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "baidu/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "mancer/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "phala",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "azure/us",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "deepseek",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": false,
+     "tag": "cloudflare",
+     "tool_choice": true,
+     "tools": true
+    }
+   ],
+   "caps_missing": {
+    "response_format": 1
+   },
+   "cheapest_tag": "digitalocean",
+   "completion_cap": {
+    "max": 1048576,
+    "mean": 495360.0,
+    "median": 393216.0,
+    "min": 32768,
+    "n": 16,
+    "ratio": 32.0
+   },
+   "context": {
+    "max": 1048576,
+    "mean": 1004892.3888888889,
+    "median": 1048576.0,
+    "min": 384000,
+    "n": 18,
+    "ratio": 2.7306666666666666
+   },
+   "dearest_tag": "cloudflare",
+   "hf_downloads": 2149339,
+   "hf_providers_live": 3,
+   "hosts_deranked": 1,
+   "hosts_listed": 18,
+   "id": "deepseek/deepseek-v4-flash",
+   "name": "DeepSeek: DeepSeek V4 Flash 0423",
+   "open_weights": true,
+   "or_url": "https://openrouter.ai/deepseek/deepseek-v4-flash",
+   "precisions": [
+    "fp4",
+    "fp8",
+    "unknown"
+   ],
+   "price_in": {
+    "max": 0.44,
+    "mean": 0.15147222222222223,
+    "median": 0.14,
+    "min": 0.0679,
+    "n": 18,
+    "ratio": 6.480117820324006
+   },
+   "price_out": {
+    "max": 1.32,
+    "mean": 0.3596777777777778,
+    "median": 0.28,
+    "min": 0.16519999999999999,
+    "n": 18,
+    "ratio": 7.990314769975788
+   },
+   "scatter": [
+    {
+     "price": 0.0679,
+     "status": 0,
+     "tag": "digitalocean",
+     "ttft": 1537.5
+    },
+    {
+     "price": 0.08259999999999999,
+     "status": 0,
+     "tag": "streamlake/fp8",
+     "ttft": 1368
+    },
+    {
+     "price": 0.08399999999999999,
+     "status": 0,
+     "tag": "gmicloud/fp8",
+     "ttft": 2693.5
+    },
+    {
+     "price": 0.09,
+     "status": 0,
+     "tag": "deepinfra/fp8",
+     "ttft": 738
+    },
+    {
+     "price": 0.09,
+     "status": 0,
+     "tag": "sail-research/fp4",
+     "ttft": 796
+    },
+    {
+     "price": 0.13,
+     "status": 0,
+     "tag": "siliconflow/fp8",
+     "ttft": 1173
+    },
+    {
+     "price": 0.134,
+     "status": 0,
+     "tag": "alibaba/fp8",
+     "ttft": 853
+    },
+    {
+     "price": 0.13799999999999998,
+     "status": 0,
+     "tag": "venice",
+     "ttft": 1358
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "parasail/fp8",
+     "ttft": 648.5
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "novita/fp8",
+     "ttft": 954
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "atlas-cloud/fp4",
+     "ttft": 1048
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "coreweave/fp8",
+     "ttft": 471
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "baidu/fp8",
+     "ttft": 685
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "mancer/fp8",
+     "ttft": 997
+    },
+    {
+     "price": 0.19999999999999998,
+     "status": 0,
+     "tag": "phala",
+     "ttft": 3388.5
+    },
+    {
+     "price": 0.21,
+     "status": -2,
+     "tag": "azure/us",
+     "ttft": 2050
+    },
+    {
+     "price": 0.22,
+     "status": 0,
+     "tag": "deepseek",
+     "ttft": 935
+    },
+    {
+     "price": 0.44,
+     "status": 0,
+     "tag": "cloudflare",
+     "ttft": 754
+    }
+   ],
+   "short": "DeepSeek V4 Flash 0423",
+   "undisclosed_precision": 6,
+   "uptime_median": 99.2765313116206,
+   "weights_repo": "deepseek-ai/DeepSeek-V4-Flash"
+  },
+  {
+   "cache_read": {
+    "max": 0.077,
+    "mean": 0.03398367407407407,
+    "median": 0.028,
+    "min": 0.007,
+    "n": 27,
+    "ratio": 11.0
+   },
+   "caps_grid": [
+    {
+     "response_format": true,
+     "tag": "streamlake/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "decart/fp4",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "digitalocean",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "deepinfra/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "open-inference/fp4",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "gmicloud/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "sail-research/fp4",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "relace/fp4",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": false,
+     "tag": "baseten/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": false,
+     "tag": "coreweave/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "inceptron/fp4",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "morph/bf16",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "fireworks",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "akashml/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "novita/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "together",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "parasail/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "atlas-cloud/fp4",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "siliconflow/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "ambient/fp4",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "baidu/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "mancer/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": false,
+     "tag": "io-net/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "venice",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "phala",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "deepseek/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "wafer/fast",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "cloudflare",
+     "tool_choice": true,
+     "tools": true
+    }
+   ],
+   "caps_missing": {
+    "response_format": 3
+   },
+   "cheapest_tag": "streamlake/fp8",
+   "completion_cap": {
+    "max": 1310720,
+    "mean": 576384.0,
+    "median": 393216.0,
+    "min": 32768,
+    "n": 24,
+    "ratio": 40.0
+   },
+   "context": {
+    "max": 1310720,
+    "mean": 882121.8214285715,
+    "median": 1048576.0,
+    "min": 131072,
+    "n": 28,
+    "ratio": 10.0
+   },
+   "dearest_tag": "cloudflare",
+   "hf_downloads": 1431587,
+   "hf_providers_live": 5,
+   "hosts_deranked": 4,
+   "hosts_listed": 28,
+   "id": "deepseek/deepseek-v4-flash-0731",
+   "name": "DeepSeek: DeepSeek V4 Flash 0731",
+   "open_weights": true,
+   "or_url": "https://openrouter.ai/deepseek/deepseek-v4-flash-0731",
+   "precisions": [
+    "bf16",
+    "fp4",
+    "fp8",
+    "unknown"
+   ],
+   "price_in": {
+    "max": 0.44,
+    "mean": 0.1453497142857143,
+    "median": 0.14,
+    "min": 0.078596,
+    "n": 28,
+    "ratio": 5.598249274772253
+   },
+   "price_out": {
+    "max": 1.32,
+    "mean": 0.3272711428571428,
+    "median": 0.28,
+    "min": 0.157192,
+    "n": 28,
+    "ratio": 8.39737391215838
+   },
+   "scatter": [
+    {
+     "price": 0.078596,
+     "status": -2,
+     "tag": "streamlake/fp8",
+     "ttft": 2409
+    },
+    {
+     "price": 0.07919999999999999,
+     "status": -5,
+     "tag": "decart/fp4",
+     "ttft": 1092
+    },
+    {
+     "price": 0.079996,
+     "status": 0,
+     "tag": "digitalocean",
+     "ttft": 664
+    },
+    {
+     "price": 0.08,
+     "status": 0,
+     "tag": "deepinfra/fp8",
+     "ttft": 971.5
+    },
+    {
+     "price": 0.08,
+     "status": 0,
+     "tag": "open-inference/fp4",
+     "ttft": 2214
+    },
+    {
+     "price": 0.08399999999999999,
+     "status": 0,
+     "tag": "gmicloud/fp8",
+     "ttft": 3324
+    },
+    {
+     "price": 0.09,
+     "status": 0,
+     "tag": "sail-research/fp4",
+     "ttft": 2917
+    },
+    {
+     "price": 0.105,
+     "status": -2,
+     "tag": "relace/fp4",
+     "ttft": 878
+    },
+    {
+     "price": 0.13,
+     "status": 0,
+     "tag": "baseten/fp8",
+     "ttft": 435
+    },
+    {
+     "price": 0.13,
+     "status": 0,
+     "tag": "coreweave/fp8",
+     "ttft": 513
+    },
+    {
+     "price": 0.13,
+     "status": 0,
+     "tag": "inceptron/fp4",
+     "ttft": 1128
+    },
+    {
+     "price": 0.13899999999999998,
+     "status": 0,
+     "tag": "morph/bf16",
+     "ttft": 1377.5
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "fireworks",
+     "ttft": 957
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "akashml/fp8",
+     "ttft": 1239
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "novita/fp8",
+     "ttft": 1454
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "together",
+     "ttft": 874
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "parasail/fp8",
+     "ttft": 778
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "atlas-cloud/fp4",
+     "ttft": 1287
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "siliconflow/fp8",
+     "ttft": 1829.5
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "ambient/fp4",
+     "ttft": 701
+    },
+    {
+     "price": 0.14,
+     "status": 0,
+     "tag": "baidu/fp8",
+     "ttft": 858
+    },
+    {
+     "price": 0.14,
+     "status": -2,
+     "tag": "mancer/fp8",
+     "ttft": 1235.5
+    },
+    {
+     "price": 0.149,
+     "status": 0,
+     "tag": "io-net/fp8",
+     "ttft": 1606
+    },
+    {
+     "price": 0.175,
+     "status": 0,
+     "tag": "venice",
+     "ttft": 1404.5
+    },
+    {
+     "price": 0.19999999999999998,
+     "status": 0,
+     "tag": "phala",
+     "ttft": 1587.5
+    },
+    {
+     "price": 0.22,
+     "status": 0,
+     "tag": "deepseek/fp8",
+     "ttft": 912.5
+    },
+    {
+     "price": 0.28,
+     "status": 0,
+     "tag": "wafer/fast",
+     "ttft": 1328.5
+    },
+    {
+     "price": 0.44,
+     "status": 0,
+     "tag": "cloudflare",
+     "ttft": 680
+    }
+   ],
+   "short": "DeepSeek V4 Flash 0731",
+   "undisclosed_precision": 7,
+   "uptime_median": 98.45995256330644,
+   "weights_repo": "deepseek-ai/DeepSeek-V4-Flash-0731"
+  },
+  {
+   "cache_read": {
     "max": 0.46199999999999997,
-    "mean": 0.2030466875,
+    "mean": 0.20523818181818182,
     "median": 0.21,
-    "min": 0.0945,
-    "n": 32,
-    "ratio": 4.888888888888888
+    "min": 0.105,
+    "n": 33,
+    "ratio": 4.3999999999999995
    },
    "caps_grid": [
     {
      "response_format": true,
      "tag": "sail-research/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "novita/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "streamlake/fp8",
      "tool_choice": true,
      "tools": true
     },
@@ -1933,12 +2898,6 @@
     {
      "response_format": true,
      "tag": "decart/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "novita/fp8",
      "tool_choice": true,
      "tools": true
     },
@@ -1962,12 +2921,6 @@
     },
     {
      "response_format": true,
-     "tag": "streamlake/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
      "tag": "coreweave/fp4",
      "tool_choice": true,
      "tools": true
@@ -1998,7 +2951,7 @@
     },
     {
      "response_format": true,
-     "tag": "phala",
+     "tag": "phala/fp8",
      "tool_choice": true,
      "tools": true
     },
@@ -2101,6 +3054,12 @@
     {
      "response_format": true,
      "tag": "baseten/fast",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "modelrun/fp4",
      "tool_choice": true,
      "tools": true
     },
@@ -2118,25 +3077,25 @@
    "cheapest_tag": "sail-research/fp8",
    "completion_cap": {
     "max": 1048576,
-    "mean": 345388.07692307694,
-    "median": 183296.0,
+    "mean": 304682.44444444444,
+    "median": 163840,
     "min": 96890,
-    "n": 26,
+    "n": 27,
     "ratio": 10.822334606254515
    },
    "context": {
     "max": 1048576,
-    "mean": 850469.8125,
-    "median": 1048576.0,
+    "mean": 829662.8484848485,
+    "median": 1048576,
     "min": 96890,
-    "n": 32,
+    "n": 33,
     "ratio": 10.822334606254515
    },
    "dearest_tag": "alibaba/fast",
-   "hf_downloads": 2517575,
+   "hf_downloads": 2662328,
    "hf_providers_live": 8,
    "hosts_deranked": 2,
-   "hosts_listed": 32,
+   "hosts_listed": 33,
    "id": "z-ai/glm-5.2",
    "name": "Z.ai: GLM 5.2",
    "open_weights": true,
@@ -2148,502 +3107,224 @@
    ],
    "price_in": {
     "max": 2.31,
-    "mean": 1.243301875,
+    "mean": 1.2694969696969698,
     "median": 1.26,
     "min": 0.5,
-    "n": 32,
+    "n": 33,
     "ratio": 4.62
    },
    "price_out": {
     "max": 7.26,
-    "mean": 4.01726125,
-    "median": 4.25,
-    "min": 1.9800000000000002,
-    "n": 32,
-    "ratio": 3.666666666666666
+    "mean": 4.0927999999999995,
+    "median": 4.4,
+    "min": 2.09,
+    "n": 33,
+    "ratio": 3.473684210526316
    },
    "scatter": [
     {
      "price": 0.5,
      "status": 0,
      "tag": "sail-research/fp8",
-     "ttft": 1233
+     "ttft": 1302
     },
     {
-     "price": 0.63,
+     "price": 0.665,
+     "status": 0,
+     "tag": "novita/fp8",
+     "ttft": 2793.5
+    },
+    {
+     "price": 0.6664,
+     "status": 0,
+     "tag": "streamlake/fp8",
+     "ttft": 2042.5
+    },
+    {
+     "price": 0.7,
      "status": 0,
      "tag": "digitalocean",
-     "ttft": 789.5
+     "ttft": 1295
     },
     {
      "price": 0.72,
      "status": 0,
      "tag": "decart/fp4",
-     "ttft": 998
-    },
-    {
-     "price": 0.7405999999999999,
-     "status": 0,
-     "tag": "novita/fp8",
-     "ttft": 2023
+     "ttft": 1212
     },
     {
      "price": 0.742,
      "status": 0,
      "tag": "gmicloud/fp8",
-     "ttft": 1759
+     "ttft": 1694
     },
     {
      "price": 0.75,
      "status": 0,
      "tag": "deepinfra/fp4",
-     "ttft": 993
+     "ttft": 1151
     },
     {
      "price": 0.75,
      "status": 0,
      "tag": "inceptron/fp4",
-     "ttft": 774.5
-    },
-    {
-     "price": 0.75306,
-     "status": 0,
-     "tag": "streamlake/fp8",
-     "ttft": 1737
+     "ttft": 725
     },
     {
      "price": 0.76,
      "status": 0,
      "tag": "coreweave/fp4",
-     "ttft": 722
+     "ttft": 739
     },
     {
      "price": 0.77,
      "status": 0,
      "tag": "akashml/fp8",
-     "ttft": 781.5
+     "ttft": 982
     },
     {
      "price": 0.966,
      "status": 0,
      "tag": "alibaba/fp8",
-     "ttft": 947.5
+     "ttft": 1378
     },
     {
      "price": 1.0499999999999998,
      "status": 0,
      "tag": "ambient/fp8",
-     "ttft": 2783
+     "ttft": 2144.5
     },
     {
      "price": 1.1,
-     "status": -2,
+     "status": 0,
      "tag": "morph/fp4",
-     "ttft": 2228
+     "ttft": 1600
     },
     {
      "price": 1.1340000000000001,
      "status": 0,
-     "tag": "phala",
-     "ttft": 1733
+     "tag": "phala/fp8",
+     "ttft": 2945
     },
     {
      "price": 1.19,
      "status": 0,
      "tag": "siliconflow/fp8",
-     "ttft": 2459
+     "ttft": 2045
     },
     {
      "price": 1.26,
-     "status": 0,
+     "status": -2,
      "tag": "wafer",
-     "ttft": 5105
+     "ttft": 4152
     },
     {
      "price": 1.26,
      "status": 0,
      "tag": "atlas-cloud/fp8",
-     "ttft": 2285.5
+     "ttft": 3049
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "z-ai/fp8",
-     "ttft": 2788
+     "ttft": 3116
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "fireworks",
-     "ttft": 912
+     "ttft": 1561
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "baidu/fp8",
-     "ttft": 775
+     "ttft": 836
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "cloudflare",
-     "ttft": 2873
+     "ttft": 2829
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "friendli",
-     "ttft": 676
+     "ttft": 599
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "parasail/fp4",
-     "ttft": 1141
+     "ttft": 639
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "venice/fp8",
-     "ttft": 1098
+     "ttft": 2151
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "together",
-     "ttft": 888
+     "ttft": 895.5
     },
     {
      "price": 1.4,
-     "status": -2,
+     "status": 0,
      "tag": "crusoe/fp8",
-     "ttft": 707
+     "ttft": 493
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "baseten/fp8",
-     "ttft": 1566
+     "ttft": 1911.5
     },
     {
      "price": 2.0999999999999996,
      "status": 0,
      "tag": "wafer/fast",
-     "ttft": 5851
+     "ttft": 2695.5
     },
     {
      "price": 2.0999999999999996,
      "status": 0,
      "tag": "fireworks/fast",
-     "ttft": 1034
+     "ttft": 965
     },
     {
      "price": 2.0999999999999996,
      "status": 0,
      "tag": "cloudflare/fast",
-     "ttft": 1406
+     "ttft": 1527.5
     },
     {
      "price": 2.0999999999999996,
      "status": 0,
      "tag": "baseten/fast",
-     "ttft": 1333
+     "ttft": 1773
+    },
+    {
+     "price": 2.2,
+     "status": -5,
+     "tag": "modelrun/fp4",
+     "ttft": 5957
     },
     {
      "price": 2.31,
      "status": 0,
      "tag": "alibaba/fast",
-     "ttft": 1151
+     "ttft": 1491
     }
    ],
    "short": "GLM 5.2",
-   "undisclosed_precision": 8,
-   "uptime_median": 99.55713452368934,
+   "undisclosed_precision": 7,
+   "uptime_median": 99.17253827418232,
    "weights_repo": "zai-org/GLM-5.2"
-  },
-  {
-   "cache_read": {
-    "max": 0.33,
-    "mean": 0.13397944444444446,
-    "median": 0.1325,
-    "min": 0.003625,
-    "n": 18,
-    "ratio": 91.03448275862068
-   },
-   "caps_grid": [
-    {
-     "response_format": true,
-     "tag": "deepseek",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "streamlake/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "gmicloud/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "digitalocean",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "ionstream/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "cloudflare",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "coreweave/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "novita/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "deepinfra/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "alibaba/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "siliconflow/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "venice",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "atlas-cloud/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "baidu/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": false,
-     "tag": "baseten/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "parasail/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "together",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "fireworks",
-     "tool_choice": true,
-     "tools": true
-    }
-   ],
-   "caps_missing": {
-    "response_format": 1
-   },
-   "cheapest_tag": "deepseek",
-   "completion_cap": {
-    "max": 1048576,
-    "mean": 470308.5714285714,
-    "median": 393216.0,
-    "min": 16384,
-    "n": 14,
-    "ratio": 64.0
-   },
-   "context": {
-    "max": 1048576,
-    "mean": 968312.8888888889,
-    "median": 1048576.0,
-    "min": 262144,
-    "n": 18,
-    "ratio": 4.0
-   },
-   "dearest_tag": "baseten/fp4",
-   "hf_downloads": 1411583,
-   "hf_providers_live": 5,
-   "hosts_deranked": 3,
-   "hosts_listed": 18,
-   "id": "deepseek/deepseek-v4-pro",
-   "name": "DeepSeek: DeepSeek V4 Pro",
-   "open_weights": true,
-   "or_url": "https://openrouter.ai/deepseek/deepseek-v4-pro",
-   "precisions": [
-    "fp4",
-    "fp8",
-    "unknown"
-   ],
-   "price_in": {
-    "max": 1.74,
-    "mean": 1.2935044444444446,
-    "median": 1.358,
-    "min": 0.435,
-    "n": 18,
-    "ratio": 4.0
-   },
-   "price_out": {
-    "max": 3.48,
-    "mean": 2.6232733333333336,
-    "median": 2.716,
-    "min": 0.87,
-    "n": 18,
-    "ratio": 4.0
-   },
-   "scatter": [
-    {
-     "price": 0.435,
-     "status": 0,
-     "tag": "deepseek",
-     "ttft": 1215
-    },
-    {
-     "price": 0.58986,
-     "status": 0,
-     "tag": "streamlake/fp8",
-     "ttft": 2862.5
-    },
-    {
-     "price": 0.5916,
-     "status": 0,
-     "tag": "gmicloud/fp8",
-     "ttft": 2749
-    },
-    {
-     "price": 0.87,
-     "status": 0,
-     "tag": "digitalocean",
-     "ttft": 1655
-    },
-    {
-     "price": 1.131,
-     "status": 0,
-     "tag": "ionstream/fp4",
-     "ttft": 2561
-    },
-    {
-     "price": 1.15,
-     "status": -2,
-     "tag": "cloudflare",
-     "ttft": 1267
-    },
-    {
-     "price": 1.15,
-     "status": -5,
-     "tag": "coreweave/fp8",
-     "ttft": 574.5
-    },
-    {
-     "price": 1.1680000000000001,
-     "status": 0,
-     "tag": "novita/fp8",
-     "ttft": 1427
-    },
-    {
-     "price": 1.3,
-     "status": 0,
-     "tag": "deepinfra/fp4",
-     "ttft": 1150
-    },
-    {
-     "price": 1.4160000000000001,
-     "status": 0,
-     "tag": "alibaba/fp8",
-     "ttft": 1250
-    },
-    {
-     "price": 1.5016200000000002,
-     "status": 0,
-     "tag": "siliconflow/fp8",
-     "ttft": 1692.5
-    },
-    {
-     "price": 1.6500000000000001,
-     "status": 0,
-     "tag": "venice",
-     "ttft": 1510.5
-    },
-    {
-     "price": 1.68,
-     "status": 0,
-     "tag": "atlas-cloud/fp4",
-     "ttft": 1317.5
-    },
-    {
-     "price": 1.69,
-     "status": 0,
-     "tag": "baidu/fp8",
-     "ttft": 998
-    },
-    {
-     "price": 1.74,
-     "status": 0,
-     "tag": "baseten/fp4",
-     "ttft": 586
-    },
-    {
-     "price": 1.74,
-     "status": 0,
-     "tag": "parasail/fp8",
-     "ttft": 508
-    },
-    {
-     "price": 1.74,
-     "status": -2,
-     "tag": "together",
-     "ttft": 833
-    },
-    {
-     "price": 1.74,
-     "status": 0,
-     "tag": "fireworks",
-     "ttft": 1211
-    }
-   ],
-   "short": "DeepSeek V4 Pro",
-   "undisclosed_precision": 6,
-   "uptime_median": 96.92374854848343,
-   "weights_repo": "deepseek-ai/DeepSeek-V4-Pro"
   },
   {
    "cache_read": null,
@@ -2682,9 +3363,9 @@
     "ratio": 125.0
    },
    "dearest_tag": "nebius/fp4",
-   "hf_downloads": 181314,
+   "hf_downloads": 188584,
    "hf_providers_live": 0,
-   "hosts_deranked": 0,
+   "hosts_deranked": 1,
    "hosts_listed": 3,
    "id": "nvidia/nemotron-3-super-120b-a12b",
    "name": "NVIDIA: Nemotron 3 Super",
@@ -2714,126 +3395,78 @@
    "scatter": [
     {
      "price": 0.08499999999999999,
-     "status": 0,
+     "status": -2,
      "tag": "deepinfra/bf16",
-     "ttft": 8255
+     "ttft": 4987
     },
     {
      "price": 0.165,
      "status": 0,
      "tag": "digitalocean",
-     "ttft": 1119
+     "ttft": 3157.5
     },
     {
      "price": 0.3,
      "status": 0,
      "tag": "nebius/fp4",
-     "ttft": 890.5
+     "ttft": 969
     }
    ],
    "short": "Nemotron 3 Super",
    "undisclosed_precision": 1,
-   "uptime_median": 98.84540410856201,
+   "uptime_median": 98.72519716230329,
    "weights_repo": "nvidia/NVIDIA-Nemotron-3-Super-120B-A12B-FP8"
   },
   {
    "cache_read": {
-    "max": 0.077,
-    "mean": 0.03513076923076923,
-    "median": 0.028,
-    "min": 0.0028,
-    "n": 26,
-    "ratio": 27.5
+    "max": 0.15,
+    "mean": 0.06581818181818182,
+    "median": 0.06,
+    "min": 0.048,
+    "n": 11,
+    "ratio": 3.125
    },
    "caps_grid": [
     {
      "response_format": true,
-     "tag": "digitalocean",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "deepinfra/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "open-inference/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "decart/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "sail-research/fp4",
-     "tool_choice": true,
-     "tools": true
+     "tag": "coreweave/fp4",
+     "tool_choice": false,
+     "tools": false
     },
     {
      "response_format": true,
      "tag": "gmicloud/fp8",
-     "tool_choice": true,
-     "tools": true
+     "tool_choice": false,
+     "tools": false
     },
     {
      "response_format": true,
-     "tag": "streamlake/fp8",
+     "tag": "deepinfra/fp8",
      "tool_choice": true,
      "tools": true
     },
     {
      "response_format": false,
-     "tag": "baseten/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": false,
-     "tag": "coreweave/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "inceptron/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "morph/bf16",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "fireworks",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "akashml/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
      "tag": "novita/fp8",
      "tool_choice": true,
      "tools": true
     },
     {
-     "response_format": true,
-     "tag": "cloudflare",
+     "response_format": false,
+     "tag": "venice/fp8",
      "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "minimax/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": false,
+     "tag": "atlas-cloud/fp8",
+     "tool_choice": false,
      "tools": true
     },
     {
@@ -2844,9 +3477,9 @@
     },
     {
      "response_format": true,
-     "tag": "deepseek/fp8",
-     "tool_choice": true,
-     "tools": true
+     "tag": "streamlake/fp8",
+     "tool_choice": false,
+     "tools": false
     },
     {
      "response_format": true,
@@ -2856,294 +3489,161 @@
     },
     {
      "response_format": true,
-     "tag": "atlas-cloud/fp4",
+     "tag": "morph/fp4",
      "tool_choice": true,
      "tools": true
     },
     {
      "response_format": true,
-     "tag": "siliconflow/fp8",
+     "tag": "modelrun/fp4",
      "tool_choice": true,
      "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "ambient/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "baidu/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": false,
-     "tag": "io-net/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "venice",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "mancer/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "phala",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "wafer/fast",
-     "tool_choice": false,
-     "tools": false
     }
    ],
    "caps_missing": {
     "response_format": 3,
-    "tool_choice": 1,
-    "tools": 1
+    "tool_choice": 4,
+    "tools": 3
    },
-   "cheapest_tag": "digitalocean",
+   "cheapest_tag": "coreweave/fp4",
    "completion_cap": {
     "max": 1048576,
-    "mean": 515561.73913043475,
-    "median": 384000,
+    "mean": 385638.4,
+    "median": 387072.0,
     "min": 32768,
-    "n": 23,
+    "n": 10,
     "ratio": 32.0
    },
    "context": {
     "max": 1048576,
-    "mean": 841633.8888888889,
-    "median": 1048576,
-    "min": 131072,
-    "n": 27,
-    "ratio": 8.0
+    "mean": 690443.6666666666,
+    "median": 524294.0,
+    "min": 256000,
+    "n": 12,
+    "ratio": 4.096
    },
-   "dearest_tag": "wafer/fast",
-   "hf_downloads": 1048685,
-   "hf_providers_live": 4,
-   "hosts_deranked": 2,
-   "hosts_listed": 27,
-   "id": "deepseek/deepseek-v4-flash-0731",
-   "name": "DeepSeek: DeepSeek V4 Flash 0731",
+   "dearest_tag": "modelrun/fp4",
+   "hf_downloads": 169325,
+   "hf_providers_live": 5,
+   "hosts_deranked": 0,
+   "hosts_listed": 12,
+   "id": "minimax/minimax-m3",
+   "name": "MiniMax: MiniMax M3",
    "open_weights": true,
-   "or_url": "https://openrouter.ai/deepseek/deepseek-v4-flash-0731",
+   "or_url": "https://openrouter.ai/minimax/minimax-m3",
    "precisions": [
-    "bf16",
     "fp4",
     "fp8",
     "unknown"
    ],
    "price_in": {
-    "max": 0.28,
-    "mean": 0.13537022222222223,
-    "median": 0.14,
-    "min": 0.079996,
-    "n": 27,
-    "ratio": 3.5001750087504377
+    "max": 0.75,
+    "mean": 0.325,
+    "median": 0.3,
+    "min": 0.22999999999999998,
+    "n": 12,
+    "ratio": 3.2608695652173916
    },
    "price_out": {
-    "max": 0.56,
-    "mean": 0.2834814814814815,
-    "median": 0.28,
-    "min": 0.162,
-    "n": 27,
-    "ratio": 3.4567901234567904
+    "max": 3.0,
+    "mean": 1.3016666666666665,
+    "median": 1.2,
+    "min": 0.96,
+    "n": 12,
+    "ratio": 3.125
    },
    "scatter": [
     {
-     "price": 0.079996,
+     "price": 0.22999999999999998,
      "status": 0,
-     "tag": "digitalocean",
-     "ttft": 1961
+     "tag": "coreweave/fp4",
+     "ttft": 618
     },
     {
-     "price": 0.08,
-     "status": 0,
-     "tag": "deepinfra/fp4",
-     "ttft": 818
-    },
-    {
-     "price": 0.08,
-     "status": 0,
-     "tag": "open-inference/fp4",
-     "ttft": 3528
-    },
-    {
-     "price": 0.081,
-     "status": 0,
-     "tag": "decart/fp4",
-     "ttft": 710
-    },
-    {
-     "price": 0.09,
-     "status": 0,
-     "tag": "sail-research/fp4",
-     "ttft": 907
-    },
-    {
-     "price": 0.091,
+     "price": 0.24,
      "status": 0,
      "tag": "gmicloud/fp8",
-     "ttft": 2424
-    },
-    {
-     "price": 0.105,
-     "status": 0,
-     "tag": "streamlake/fp8",
-     "ttft": 872
-    },
-    {
-     "price": 0.13,
-     "status": 0,
-     "tag": "baseten/fp8",
-     "ttft": 332
-    },
-    {
-     "price": 0.13,
-     "status": 0,
-     "tag": "coreweave/fp8",
-     "ttft": 468
-    },
-    {
-     "price": 0.13,
-     "status": 0,
-     "tag": "inceptron/fp4",
-     "ttft": 628
-    },
-    {
-     "price": 0.13899999999999998,
-     "status": 0,
-     "tag": "morph/bf16",
-     "ttft": 832
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "fireworks",
-     "ttft": 761
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "akashml/fp8",
-     "ttft": 1205
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "novita/fp8",
-     "ttft": 1392
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "cloudflare",
-     "ttft": 2453.5
-    },
-    {
-     "price": 0.14,
-     "status": -2,
-     "tag": "together",
-     "ttft": 1056
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "deepseek/fp8",
-     "ttft": 931
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "parasail/fp8",
-     "ttft": 648
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "atlas-cloud/fp4",
-     "ttft": 1040
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "siliconflow/fp8",
-     "ttft": 1456
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "ambient/fp4",
-     "ttft": 669
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "baidu/fp8",
-     "ttft": 621
-    },
-    {
-     "price": 0.149,
-     "status": 0,
-     "tag": "io-net/fp8",
-     "ttft": 1423
-    },
-    {
-     "price": 0.175,
-     "status": 0,
-     "tag": "venice",
-     "ttft": 1040
-    },
-    {
-     "price": 0.175,
-     "status": -2,
-     "tag": "mancer/fp8",
-     "ttft": 919
-    },
-    {
-     "price": 0.19999999999999998,
-     "status": 0,
-     "tag": "phala",
-     "ttft": 823.5
+     "ttft": 2955
     },
     {
      "price": 0.28,
      "status": 0,
-     "tag": "wafer/fast",
-     "ttft": 837
+     "tag": "deepinfra/fp8",
+     "ttft": 2247
+    },
+    {
+     "price": 0.3,
+     "status": 0,
+     "tag": "novita/fp8",
+     "ttft": 1836
+    },
+    {
+     "price": 0.3,
+     "status": 0,
+     "tag": "venice/fp8",
+     "ttft": 1843
+    },
+    {
+     "price": 0.3,
+     "status": 0,
+     "tag": "minimax/fp8",
+     "ttft": 1079
+    },
+    {
+     "price": 0.3,
+     "status": 0,
+     "tag": "atlas-cloud/fp8",
+     "ttft": 1466.5
+    },
+    {
+     "price": 0.3,
+     "status": 0,
+     "tag": "together",
+     "ttft": 981
+    },
+    {
+     "price": 0.3,
+     "status": 0,
+     "tag": "streamlake/fp8",
+     "ttft": 1249
+    },
+    {
+     "price": 0.3,
+     "status": 0,
+     "tag": "parasail/fp8",
+     "ttft": 742
+    },
+    {
+     "price": 0.3,
+     "status": 0,
+     "tag": "morph/fp4",
+     "ttft": 1450
+    },
+    {
+     "price": 0.75,
+     "status": 0,
+     "tag": "modelrun/fp4",
+     "ttft": 1872
     }
    ],
-   "short": "DeepSeek V4 Flash 0731",
-   "undisclosed_precision": 7,
-   "uptime_median": 98.67757381930954,
-   "weights_repo": "deepseek-ai/DeepSeek-V4-Flash-0731"
+   "short": "MiniMax M3",
+   "undisclosed_precision": 1,
+   "uptime_median": 99.2215191988999,
+   "weights_repo": "MiniMaxAI/Minimax-M3"
   },
   {
    "cache_read": {
-    "max": 0.07,
-    "mean": 0.030727333333333336,
-    "median": 0.028,
-    "min": 0.0028,
+    "max": 0.33,
+    "mean": 0.13501972222222222,
+    "median": 0.1325,
+    "min": 0.022,
     "n": 18,
-    "ratio": 25.000000000000004
+    "ratio": 15.000000000000002
    },
    "caps_grid": [
     {
      "response_format": true,
-     "tag": "digitalocean",
+     "tag": "deepseek",
      "tool_choice": true,
      "tools": true
     },
@@ -3161,19 +3661,25 @@
     },
     {
      "response_format": true,
-     "tag": "deepinfra/fp4",
+     "tag": "digitalocean",
      "tool_choice": true,
      "tools": true
     },
     {
      "response_format": true,
-     "tag": "sail-research/fp4",
+     "tag": "ionstream/fp4",
      "tool_choice": true,
      "tools": true
     },
     {
      "response_format": true,
-     "tag": "siliconflow/fp8",
+     "tag": "coreweave/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "deepinfra/fp8",
      "tool_choice": true,
      "tools": true
     },
@@ -3185,37 +3691,19 @@
     },
     {
      "response_format": true,
-     "tag": "venice",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "parasail/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "fireworks",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
      "tag": "novita/fp8",
      "tool_choice": true,
      "tools": true
     },
     {
      "response_format": true,
-     "tag": "ambient/fp4",
+     "tag": "siliconflow/fp8",
      "tool_choice": true,
      "tools": true
     },
     {
-     "response_format": false,
-     "tag": "cloudflare",
+     "response_format": true,
+     "tag": "venice",
      "tool_choice": true,
      "tools": true
     },
@@ -3227,31 +3715,37 @@
     },
     {
      "response_format": true,
-     "tag": "coreweave/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "deepseek",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
      "tag": "baidu/fp8",
      "tool_choice": true,
      "tools": true
     },
     {
-     "response_format": true,
-     "tag": "mancer/fp4",
+     "response_format": false,
+     "tag": "baseten/fp4",
      "tool_choice": true,
      "tools": true
     },
     {
      "response_format": true,
-     "tag": "phala",
+     "tag": "parasail/fp8",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "together",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "fireworks",
+     "tool_choice": true,
+     "tools": true
+    },
+    {
+     "response_format": true,
+     "tag": "azure/us",
      "tool_choice": true,
      "tools": true
     }
@@ -3259,167 +3753,167 @@
    "caps_missing": {
     "response_format": 1
    },
-   "cheapest_tag": "digitalocean",
+   "cheapest_tag": "deepseek",
    "completion_cap": {
     "max": 1048576,
-    "mean": 536896.0,
+    "mean": 422838.85714285716,
     "median": 393216.0,
-    "min": 32768,
-    "n": 16,
-    "ratio": 32.0
+    "min": 16384,
+    "n": 14,
+    "ratio": 64.0
    },
    "context": {
     "max": 1048576,
-    "mean": 1007191.5263157894,
-    "median": 1048576,
-    "min": 384000,
-    "n": 19,
-    "ratio": 2.7306666666666666
+    "mean": 968312.8888888889,
+    "median": 1048576.0,
+    "min": 262144,
+    "n": 18,
+    "ratio": 4.0
    },
-   "dearest_tag": "phala",
-   "hf_downloads": 2283943,
-   "hf_providers_live": 3,
+   "dearest_tag": "azure/us",
+   "hf_downloads": 1345154,
+   "hf_providers_live": 5,
    "hosts_deranked": 1,
-   "hosts_listed": 19,
-   "id": "deepseek/deepseek-v4-flash",
-   "name": "DeepSeek: DeepSeek V4 Flash 0423",
+   "hosts_listed": 18,
+   "id": "deepseek/deepseek-v4-pro",
+   "name": "DeepSeek: DeepSeek V4 Pro 0423",
    "open_weights": true,
-   "or_url": "https://openrouter.ai/deepseek/deepseek-v4-flash",
+   "or_url": "https://openrouter.ai/deepseek/deepseek-v4-pro",
    "precisions": [
     "fp4",
     "fp8",
     "unknown"
    ],
    "price_in": {
-    "max": 0.19999999999999998,
-    "mean": 0.1293873684210526,
-    "median": 0.14,
-    "min": 0.0679,
-    "n": 19,
-    "ratio": 2.945508100147275
+    "max": 1.91,
+    "mean": 1.3749377777777778,
+    "median": 1.4708100000000002,
+    "min": 0.66,
+    "n": 18,
+    "ratio": 2.8939393939393936
    },
    "price_out": {
-    "max": 0.5,
-    "mean": 0.26936421052631576,
-    "median": 0.28,
-    "min": 0.16799999999999998,
-    "n": 19,
-    "ratio": 2.9761904761904767
+    "max": 3.8299999999999996,
+    "mean": 2.8094733333333335,
+    "median": 3.0075000000000003,
+    "min": 1.38852,
+    "n": 18,
+    "ratio": 2.7583326131420502
    },
    "scatter": [
     {
-     "price": 0.0679,
-     "status": 0,
-     "tag": "digitalocean",
-     "ttft": 975.5
-    },
-    {
-     "price": 0.08666,
-     "status": 0,
-     "tag": "streamlake/fp8",
-     "ttft": 1834.5
-    },
-    {
-     "price": 0.0868,
-     "status": 0,
-     "tag": "gmicloud/fp8",
-     "ttft": 2348
-    },
-    {
-     "price": 0.09,
-     "status": 0,
-     "tag": "deepinfra/fp4",
-     "ttft": 527
-    },
-    {
-     "price": 0.09,
-     "status": 0,
-     "tag": "sail-research/fp4",
-     "ttft": 604
-    },
-    {
-     "price": 0.13,
-     "status": 0,
-     "tag": "siliconflow/fp8",
-     "ttft": 1283
-    },
-    {
-     "price": 0.134,
-     "status": 0,
-     "tag": "alibaba/fp8",
-     "ttft": 846
-    },
-    {
-     "price": 0.13799999999999998,
-     "status": 0,
-     "tag": "venice",
-     "ttft": 2086
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "parasail/fp8",
-     "ttft": 806
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "fireworks",
-     "ttft": 982
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "novita/fp8",
-     "ttft": 1249.5
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "cloudflare",
-     "ttft": 952
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "atlas-cloud/fp4",
-     "ttft": 1216
-    },
-    {
-     "price": 0.14,
-     "status": 0,
-     "tag": "coreweave/fp8",
-     "ttft": 521
-    },
-    {
-     "price": 0.14,
+     "price": 0.66,
      "status": 0,
      "tag": "deepseek",
-     "ttft": 943.5
+     "ttft": 1183
     },
     {
-     "price": 0.14,
+     "price": 0.69426,
+     "status": 0,
+     "tag": "streamlake/fp8",
+     "ttft": 2534.5
+    },
+    {
+     "price": 0.696,
+     "status": 0,
+     "tag": "gmicloud/fp8",
+     "ttft": 3170
+    },
+    {
+     "price": 0.87,
+     "status": 0,
+     "tag": "digitalocean",
+     "ttft": 1927
+    },
+    {
+     "price": 1.131,
+     "status": 0,
+     "tag": "ionstream/fp4",
+     "ttft": 1762
+    },
+    {
+     "price": 1.15,
+     "status": 0,
+     "tag": "coreweave/fp8",
+     "ttft": 566
+    },
+    {
+     "price": 1.3,
+     "status": 0,
+     "tag": "deepinfra/fp8",
+     "ttft": 898
+    },
+    {
+     "price": 1.4160000000000001,
+     "status": 0,
+     "tag": "alibaba/fp8",
+     "ttft": 1594
+    },
+    {
+     "price": 1.44,
+     "status": 0,
+     "tag": "novita/fp8",
+     "ttft": 1537
+    },
+    {
+     "price": 1.5016200000000002,
+     "status": 0,
+     "tag": "siliconflow/fp8",
+     "ttft": 1680.5
+    },
+    {
+     "price": 1.6500000000000001,
+     "status": 0,
+     "tag": "venice",
+     "ttft": 1701
+    },
+    {
+     "price": 1.68,
+     "status": 0,
+     "tag": "atlas-cloud/fp4",
+     "ttft": 1517
+    },
+    {
+     "price": 1.69,
      "status": 0,
      "tag": "baidu/fp8",
-     "ttft": 955
+     "ttft": 772
     },
     {
-     "price": 0.175,
+     "price": 1.74,
      "status": 0,
-     "tag": "mancer/fp4",
-     "ttft": 900
+     "tag": "baseten/fp4",
+     "ttft": 428
     },
     {
-     "price": 0.19999999999999998,
+     "price": 1.74,
+     "status": 0,
+     "tag": "parasail/fp8",
+     "ttft": 796
+    },
+    {
+     "price": 1.74,
+     "status": 0,
+     "tag": "together",
+     "ttft": 662
+    },
+    {
+     "price": 1.74,
+     "status": 0,
+     "tag": "fireworks",
+     "ttft": 1568
+    },
+    {
+     "price": 1.91,
      "status": -2,
-     "tag": "phala",
-     "ttft": 2376.5
+     "tag": "azure/us",
+     "ttft": 1542.5
     }
    ],
-   "short": "DeepSeek V4 Flash 0423",
+   "short": "DeepSeek V4 Pro 0423",
    "undisclosed_precision": 6,
-   "uptime_median": 99.19526267840875,
-   "weights_repo": "deepseek-ai/DeepSeek-V4-Flash"
+   "uptime_median": 96.56256609360365,
+   "weights_repo": "deepseek-ai/DeepSeek-V4-Pro"
   },
   {
    "cache_read": {
@@ -3465,9 +3959,9 @@
     "ratio": 2.0
    },
    "dearest_tag": "deepinfra/bf16",
-   "hf_downloads": 6148,
+   "hf_downloads": 10052,
    "hf_providers_live": 0,
-   "hosts_deranked": 1,
+   "hosts_deranked": 0,
    "hosts_listed": 2,
    "id": "inclusionai/ling-3.0-flash",
    "name": "Ling-3.0-flash",
@@ -3498,25 +3992,25 @@
      "price": 0.020999999999999998,
      "status": 0,
      "tag": "novita",
-     "ttft": 759
+     "ttft": 703
     },
     {
      "price": 0.06,
-     "status": -2,
+     "status": 0,
      "tag": "deepinfra/bf16",
-     "ttft": 2999
+     "ttft": 2695
     }
    ],
    "short": "Ling-3.0-flash",
    "undisclosed_precision": 1,
-   "uptime_median": 99.31390936714902,
+   "uptime_median": 99.6434367240465,
    "weights_repo": "inclusionAI/Ling-3.0-flash"
   },
   {
    "cache_read": {
     "max": 0.38,
-    "mean": 0.181222,
-    "median": 0.16,
+    "mean": 0.18255533333333332,
+    "median": 0.16999999999999998,
     "min": 0.136,
     "n": 15,
     "ratio": 2.7941176470588234
@@ -3634,7 +4128,7 @@
     "ratio": 1.024
    },
    "dearest_tag": "moonshotai/highspeed",
-   "hf_downloads": 644787,
+   "hf_downloads": 651078,
    "hf_providers_live": 6,
    "hosts_deranked": 0,
    "hosts_listed": 15,
@@ -3669,293 +4163,97 @@
      "price": 0.67,
      "status": 0,
      "tag": "inceptron/int4",
-     "ttft": 637
+     "ttft": 391
     },
     {
      "price": 0.6799999999999999,
      "status": 0,
      "tag": "deepinfra/fp4",
-     "ttft": 626
+     "ttft": 756
     },
     {
      "price": 0.69,
      "status": 0,
      "tag": "ambient",
-     "ttft": 758.5
+     "ttft": 792
     },
     {
      "price": 0.71,
      "status": 0,
      "tag": "coreweave/int4",
-     "ttft": 315
+     "ttft": 3014.5
     },
     {
      "price": 0.75,
      "status": 0,
      "tag": "venice/int4",
-     "ttft": 1090
+     "ttft": 1161
     },
     {
      "price": 0.76,
      "status": 0,
      "tag": "parasail/int4",
-     "ttft": 1489.5
+     "ttft": 587
     },
     {
      "price": 0.85,
      "status": 0,
      "tag": "modelrun/fp4",
-     "ttft": 386
+     "ttft": 472
     },
     {
      "price": 0.85916,
      "status": 0,
      "tag": "siliconflow/fp8",
-     "ttft": 1220.5
+     "ttft": 1598
     },
     {
      "price": 0.912,
      "status": 0,
      "tag": "novita/int4",
-     "ttft": 2566
+     "ttft": 1408
     },
     {
      "price": 0.95,
      "status": 0,
      "tag": "moonshotai/int4",
-     "ttft": 2021.5
+     "ttft": 1750
     },
     {
      "price": 0.95,
      "status": 0,
      "tag": "cloudflare",
-     "ttft": 827
+     "ttft": 1004
     },
     {
      "price": 0.95,
      "status": 0,
      "tag": "atlas-cloud/int4",
-     "ttft": 902
+     "ttft": 788
     },
     {
      "price": 0.95,
      "status": 0,
      "tag": "together",
-     "ttft": 1266
+     "ttft": 573.5
     },
     {
      "price": 0.95,
      "status": 0,
      "tag": "alibaba/fp8",
-     "ttft": 1994
+     "ttft": 2490
     },
     {
      "price": 1.9,
      "status": 0,
      "tag": "moonshotai/highspeed",
-     "ttft": 2223
+     "ttft": 1810
     }
    ],
    "short": "Kimi K2.7 Code",
    "undisclosed_precision": 3,
-   "uptime_median": 99.90769798781614,
+   "uptime_median": 99.87108655616943,
    "weights_repo": "moonshotai/Kimi-K2.7-Code"
-  },
-  {
-   "cache_read": {
-    "max": 0.12,
-    "mean": 0.0634,
-    "median": 0.06,
-    "min": 0.048,
-    "n": 10,
-    "ratio": 2.5
-   },
-   "caps_grid": [
-    {
-     "response_format": true,
-     "tag": "coreweave/fp4",
-     "tool_choice": false,
-     "tools": false
-    },
-    {
-     "response_format": true,
-     "tag": "gmicloud/fp8",
-     "tool_choice": false,
-     "tools": false
-    },
-    {
-     "response_format": true,
-     "tag": "deepinfra/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": false,
-     "tag": "novita/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": false,
-     "tag": "venice/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "minimax/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": false,
-     "tag": "atlas-cloud/fp8",
-     "tool_choice": false,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "together",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "parasail/fp8",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "morph/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
-     "tag": "streamlake",
-     "tool_choice": false,
-     "tools": false
-    }
-   ],
-   "caps_missing": {
-    "response_format": 3,
-    "tool_choice": 4,
-    "tools": 3
-   },
-   "cheapest_tag": "coreweave/fp4",
-   "completion_cap": {
-    "max": 524288,
-    "mean": 311978.6666666667,
-    "median": 262144,
-    "min": 32768,
-    "n": 9,
-    "ratio": 16.0
-   },
-   "context": {
-    "max": 1048576,
-    "mean": 657886.1818181818,
-    "median": 524288,
-    "min": 256000,
-    "n": 11,
-    "ratio": 4.096
-   },
-   "dearest_tag": "streamlake",
-   "hf_downloads": 156125,
-   "hf_providers_live": 5,
-   "hosts_deranked": 1,
-   "hosts_listed": 11,
-   "id": "minimax/minimax-m3",
-   "name": "MiniMax: MiniMax M3",
-   "open_weights": true,
-   "or_url": "https://openrouter.ai/minimax/minimax-m3",
-   "precisions": [
-    "fp4",
-    "fp8",
-    "unknown"
-   ],
-   "price_in": {
-    "max": 0.6,
-    "mean": 0.3136363636363636,
-    "median": 0.3,
-    "min": 0.22999999999999998,
-    "n": 11,
-    "ratio": 2.608695652173913
-   },
-   "price_out": {
-    "max": 2.4,
-    "mean": 1.2563636363636363,
-    "median": 1.2,
-    "min": 0.96,
-    "n": 11,
-    "ratio": 2.5
-   },
-   "scatter": [
-    {
-     "price": 0.22999999999999998,
-     "status": -5,
-     "tag": "coreweave/fp4",
-     "ttft": 622
-    },
-    {
-     "price": 0.24,
-     "status": 0,
-     "tag": "gmicloud/fp8",
-     "ttft": 2909
-    },
-    {
-     "price": 0.28,
-     "status": 0,
-     "tag": "deepinfra/fp8",
-     "ttft": 1747.5
-    },
-    {
-     "price": 0.3,
-     "status": 0,
-     "tag": "novita/fp8",
-     "ttft": 2158
-    },
-    {
-     "price": 0.3,
-     "status": 0,
-     "tag": "venice/fp8",
-     "ttft": 1073
-    },
-    {
-     "price": 0.3,
-     "status": 0,
-     "tag": "minimax/fp8",
-     "ttft": 1344
-    },
-    {
-     "price": 0.3,
-     "status": 0,
-     "tag": "atlas-cloud/fp8",
-     "ttft": 1149.5
-    },
-    {
-     "price": 0.3,
-     "status": 0,
-     "tag": "together",
-     "ttft": 706.5
-    },
-    {
-     "price": 0.3,
-     "status": 0,
-     "tag": "parasail/fp8",
-     "ttft": 769.5
-    },
-    {
-     "price": 0.6,
-     "status": 0,
-     "tag": "streamlake",
-     "ttft": 1777
-    }
-   ],
-   "short": "MiniMax M3",
-   "undisclosed_precision": 2,
-   "uptime_median": 98.55189058728881,
-   "weights_repo": "MiniMaxAI/Minimax-M3"
   },
   {
    "cache_read": {
@@ -4011,7 +4309,7 @@
     "ratio": 1.024
    },
    "dearest_tag": "alibaba",
-   "hf_downloads": 514709,
+   "hf_downloads": 522408,
    "hf_providers_live": 2,
    "hosts_deranked": 0,
    "hosts_listed": 4,
@@ -4045,42 +4343,48 @@
      "price": 0.12,
      "status": 0,
      "tag": "parasail/bf16",
-     "ttft": 659
+     "ttft": 1024
     },
     {
      "price": 0.18,
      "status": 0,
      "tag": "streamlake",
-     "ttft": 646
+     "ttft": 1893
     },
     {
      "price": 0.19999999999999998,
      "status": 0,
      "tag": "novita/fp8",
-     "ttft": 1843
+     "ttft": 1946
     },
     {
      "price": 0.3,
      "status": 0,
      "tag": "alibaba",
-     "ttft": 995.5
+     "ttft": 3051
     }
    ],
    "short": "Qwen3 Coder Next",
    "undisclosed_precision": 2,
-   "uptime_median": 99.49108061845664,
+   "uptime_median": 99.4562434639289,
    "weights_repo": "Qwen/Qwen3-Coder-Next"
   },
   {
    "cache_read": {
     "max": 1.5,
-    "mean": 0.415,
+    "mean": 0.4115384615384615,
     "median": 0.3,
     "min": 0.28500000000000003,
-    "n": 14,
+    "n": 13,
     "ratio": 5.263157894736842
    },
    "caps_grid": [
+    {
+     "response_format": true,
+     "tag": "sail-research/fp4",
+     "tool_choice": true,
+     "tools": true
+    },
     {
      "response_format": true,
      "tag": "morph/fp4",
@@ -4131,12 +4435,6 @@
     },
     {
      "response_format": true,
-     "tag": "sail-research/fp4",
-     "tool_choice": true,
-     "tools": true
-    },
-    {
-     "response_format": true,
      "tag": "modal/mxfp4",
      "tool_choice": false,
      "tools": true
@@ -4155,12 +4453,6 @@
     },
     {
      "response_format": true,
-     "tag": "fireworks/fast",
-     "tool_choice": false,
-     "tools": false
-    },
-    {
-     "response_format": true,
      "tag": "morph/fast",
      "tool_choice": true,
      "tools": true
@@ -4168,10 +4460,10 @@
    ],
    "caps_missing": {
     "response_format": 1,
-    "tool_choice": 5,
-    "tools": 4
+    "tool_choice": 4,
+    "tools": 3
    },
-   "cheapest_tag": "morph/fp4",
+   "cheapest_tag": "sail-research/fp4",
    "completion_cap": {
     "max": 1048576,
     "mean": 619860.4444444445,
@@ -4182,17 +4474,17 @@
    },
    "context": {
     "max": 1048576,
-    "mean": 1039839.5714285715,
-    "median": 1048576.0,
+    "mean": 1039167.5384615385,
+    "median": 1048576,
     "min": 974842,
-    "n": 14,
+    "n": 13,
     "ratio": 1.0756368724367642
    },
    "dearest_tag": "morph/fast",
-   "hf_downloads": 1565484,
+   "hf_downloads": 1871575,
    "hf_providers_live": 5,
    "hosts_deranked": 0,
-   "hosts_listed": 14,
+   "hosts_listed": 13,
    "id": "moonshotai/kimi-k3",
    "name": "MoonshotAI: Kimi K3",
    "open_weights": true,
@@ -4206,115 +4498,109 @@
    ],
    "price_in": {
     "max": 6.0,
-    "mean": 3.2857142857142856,
+    "mean": 3.161538461538462,
     "median": 3.0,
-    "min": 2.8,
-    "n": 14,
-    "ratio": 2.142857142857143
+    "min": 2.6,
+    "n": 13,
+    "ratio": 2.3076923076923075
    },
    "price_out": {
     "max": 22.5,
-    "mean": 15.892857142857142,
+    "mean": 15.23076923076923,
     "median": 15.0,
-    "min": 14.0,
-    "n": 14,
-    "ratio": 1.6071428571428572
+    "min": 13.0,
+    "n": 13,
+    "ratio": 1.7307692307692308
    },
    "scatter": [
+    {
+     "price": 2.6,
+     "status": 0,
+     "tag": "sail-research/fp4",
+     "ttft": 3745
+    },
     {
      "price": 2.8,
      "status": 0,
      "tag": "morph/fp4",
-     "ttft": 2657
+     "ttft": 2282.5
     },
     {
      "price": 2.8499999999999996,
      "status": 0,
      "tag": "digitalocean",
-     "ttft": 1283
+     "ttft": 3534
     },
     {
      "price": 2.8499999999999996,
      "status": 0,
      "tag": "deepinfra/bf16",
-     "ttft": 894
+     "ttft": 757.5
     },
     {
      "price": 3.0,
      "status": 0,
      "tag": "fireworks",
-     "ttft": 1433
+     "ttft": 2012
     },
     {
      "price": 3.0,
      "status": 0,
      "tag": "chutes/mxfp4",
-     "ttft": 1866
+     "ttft": 1739
     },
     {
      "price": 3.0,
      "status": 0,
      "tag": "together",
-     "ttft": 2250.5
+     "ttft": 1623
     },
     {
      "price": 3.0,
      "status": 0,
      "tag": "moonshotai/mxfp4",
-     "ttft": 3984.5
+     "ttft": 4964.5
     },
     {
      "price": 3.0,
      "status": 0,
      "tag": "wafer",
-     "ttft": 2448
-    },
-    {
-     "price": 3.0,
-     "status": 0,
-     "tag": "sail-research/fp4",
-     "ttft": 6116
+     "ttft": 1996
     },
     {
      "price": 3.0,
      "status": 0,
      "tag": "modal/mxfp4",
-     "ttft": 2135
+     "ttft": 2851
     },
     {
      "price": 3.0,
      "status": 0,
      "tag": "baseten/fp8",
-     "ttft": 1035
+     "ttft": 1839
     },
     {
      "price": 3.0,
      "status": 0,
      "tag": "phala",
-     "ttft": 1645.5
-    },
-    {
-     "price": 4.5,
-     "status": 0,
-     "tag": "fireworks/fast",
-     "ttft": 1101
+     "ttft": 3488
     },
     {
      "price": 6.0,
      "status": 0,
      "tag": "morph/fast",
-     "ttft": 1439
+     "ttft": 1396.5
     }
    ],
    "short": "Kimi K3",
-   "undisclosed_precision": 6,
-   "uptime_median": 98.62908717774701,
+   "undisclosed_precision": 5,
+   "uptime_median": 98.363569657406,
    "weights_repo": "moonshotai/Kimi-K3"
   },
   {
    "cache_read": {
     "max": 0.37,
-    "mean": 0.17584761904761906,
+    "mean": 0.17339523809523807,
     "median": 0.16,
     "min": 0.058,
     "n": 21,
@@ -4322,14 +4608,14 @@
    },
    "caps_grid": [
     {
-     "response_format": false,
-     "tag": "chutes/int4",
+     "response_format": true,
+     "tag": "decart/fp4",
      "tool_choice": true,
      "tools": true
     },
     {
-     "response_format": true,
-     "tag": "decart/fp4",
+     "response_format": false,
+     "tag": "chutes/int4",
      "tool_choice": true,
      "tools": true
     },
@@ -4430,7 +4716,7 @@
      "tools": true
     },
     {
-     "response_format": false,
+     "response_format": true,
      "tag": "sail-research/int4",
      "tool_choice": false,
      "tools": false
@@ -4449,11 +4735,11 @@
     }
    ],
    "caps_missing": {
-    "response_format": 2,
+    "response_format": 1,
     "tool_choice": 1,
     "tools": 1
    },
-   "cheapest_tag": "chutes/int4",
+   "cheapest_tag": "decart/fp4",
    "completion_cap": {
     "max": 262144,
     "mean": 221814.9375,
@@ -4471,9 +4757,9 @@
     "ratio": 1.024
    },
    "dearest_tag": "together",
-   "hf_downloads": 785559,
+   "hf_downloads": 819794,
    "hf_providers_live": 6,
-   "hosts_deranked": 3,
+   "hosts_deranked": 4,
    "hosts_listed": 21,
    "id": "moonshotai/kimi-k2.6",
    "name": "MoonshotAI: Kimi K2.6",
@@ -4488,15 +4774,15 @@
    ],
    "price_in": {
     "max": 1.2,
-    "mean": 0.8232619047619048,
+    "mean": 0.8222333333333334,
     "median": 0.77,
-    "min": 0.58,
+    "min": 0.5684,
     "n": 21,
-    "ratio": 2.0689655172413794
+    "ratio": 2.1111893033075297
    },
    "price_out": {
     "max": 4.6,
-    "mean": 3.6780952380952376,
+    "mean": 3.674857142857143,
     "median": 3.5,
     "min": 2.52,
     "n": 21,
@@ -4504,147 +4790,147 @@
    },
    "scatter": [
     {
+     "price": 0.5684,
+     "status": 0,
+     "tag": "decart/fp4",
+     "ttft": 1447
+    },
+    {
      "price": 0.58,
      "status": 0,
      "tag": "chutes/int4",
-     "ttft": 2322
-    },
-    {
-     "price": 0.59,
-     "status": 0,
-     "tag": "decart/fp4",
-     "ttft": 762.5
+     "ttft": 2429
     },
     {
      "price": 0.5984999999999999,
-     "status": 0,
+     "status": -2,
      "tag": "streamlake/fp8",
-     "ttft": 1613
+     "ttft": 1736
     },
     {
      "price": 0.6,
-     "status": -2,
+     "status": 0,
      "tag": "inceptron/int4",
-     "ttft": 490.5
+     "ttft": 483.5
     },
     {
      "price": 0.65,
-     "status": -5,
+     "status": 0,
      "tag": "coreweave/fp4",
-     "ttft": 458
+     "ttft": 463
     },
     {
      "price": 0.7,
      "status": 0,
      "tag": "crusoe/bf16",
-     "ttft": 584
+     "ttft": 421
     },
     {
      "price": 0.75,
      "status": 0,
      "tag": "parasail/int4",
-     "ttft": 1104
+     "ttft": 954
     },
     {
      "price": 0.75,
-     "status": 0,
+     "status": -2,
      "tag": "venice/int4",
-     "ttft": 1600.5
+     "ttft": 1462
     },
     {
      "price": 0.75,
      "status": 0,
      "tag": "deepinfra/fp4",
-     "ttft": 1309.5
+     "ttft": 1229
     },
     {
      "price": 0.76,
-     "status": 0,
+     "status": -2,
      "tag": "digitalocean",
-     "ttft": 872.5
+     "ttft": 892
     },
     {
      "price": 0.77,
      "status": 0,
      "tag": "siliconflow/fp8",
-     "ttft": 1280
+     "ttft": 1424
     },
     {
      "price": 0.7999999999999999,
      "status": 0,
      "tag": "novita",
-     "ttft": 1574
+     "ttft": 1601
     },
     {
      "price": 0.95,
      "status": 0,
      "tag": "atlas-cloud/int4",
-     "ttft": 1355.5
+     "ttft": 1402.5
     },
     {
      "price": 0.95,
      "status": 0,
      "tag": "moonshotai/int4",
-     "ttft": 2123
+     "ttft": 2033
     },
     {
      "price": 0.95,
      "status": 0,
      "tag": "baidu/fp4",
-     "ttft": 758
+     "ttft": 718
     },
     {
      "price": 0.95,
      "status": 0,
      "tag": "cloudflare",
-     "ttft": 774
+     "ttft": 1015.5
     },
     {
      "price": 1.0,
-     "status": 0,
+     "status": -2,
      "tag": "sail-research/int4",
-     "ttft": 805
+     "ttft": 956
     },
     {
      "price": 1.0899999999999999,
      "status": 0,
      "tag": "phala",
-     "ttft": 1539.5
+     "ttft": 1495.5
     },
     {
      "price": 1.2,
-     "status": -2,
-     "tag": "together",
-     "ttft": 632
-    },
-    {
-     "price": 0.95,
      "status": 0,
-     "tag": "baseten/fp4",
-     "ttft": 3389.5
+     "tag": "together",
+     "ttft": 800
     },
     {
      "price": 0.95,
      "status": 0,
      "tag": "fireworks",
-     "ttft": 417
+     "ttft": 475
     }
    ],
    "short": "Kimi K2.6",
    "undisclosed_precision": 6,
-   "uptime_median": 98.48654196549992,
+   "uptime_median": 99.45357390523161,
    "weights_repo": "moonshotai/Kimi-K2.6"
   },
   {
    "cache_read": {
     "max": 0.6,
-    "mean": 0.26714117647058827,
+    "mean": 0.26637647058823527,
     "median": 0.26,
     "min": 0.098,
     "n": 17,
     "ratio": 6.122448979591836
    },
    "caps_grid": [
+    {
+     "response_format": false,
+     "tag": "gmicloud/fp8",
+     "tool_choice": false,
+     "tools": false
+    },
     {
      "response_format": true,
      "tag": "streamlake/fp8",
@@ -4662,12 +4948,6 @@
      "tag": "chutes/fp8",
      "tool_choice": true,
      "tools": true
-    },
-    {
-     "response_format": false,
-     "tag": "gmicloud/fp8",
-     "tool_choice": false,
-     "tools": false
     },
     {
      "response_format": true,
@@ -4759,7 +5039,7 @@
     "tool_choice": 1,
     "tools": 1
    },
-   "cheapest_tag": "streamlake/fp8",
+   "cheapest_tag": "gmicloud/fp8",
    "completion_cap": {
     "max": 202752,
     "mean": 123181.64285714286,
@@ -4777,7 +5057,7 @@
     "ratio": 1.25
    },
    "dearest_tag": "venice/fp8",
-   "hf_downloads": 68363,
+   "hf_downloads": 74300,
    "hf_providers_live": 2,
    "hosts_deranked": 3,
    "hosts_listed": 18,
@@ -4792,145 +5072,151 @@
    ],
    "price_in": {
     "max": 1.54,
-    "mean": 1.2256111111111112,
+    "mean": 1.2217222222222222,
     "median": 1.2349999999999999,
-    "min": 0.966,
+    "min": 0.9099999999999999,
     "n": 18,
-    "ratio": 1.5942028985507248
+    "ratio": 1.6923076923076925
    },
    "price_out": {
     "max": 4.84,
-    "mean": 3.995333333333333,
+    "mean": 3.983111111111111,
     "median": 4.25,
-    "min": 3.036,
+    "min": 2.8600000000000003,
     "n": 18,
-    "ratio": 1.5942028985507246
+    "ratio": 1.692307692307692
    },
    "scatter": [
+    {
+     "price": 0.9099999999999999,
+     "status": 0,
+     "tag": "gmicloud/fp8",
+     "ttft": 2028
+    },
     {
      "price": 0.966,
      "status": 0,
      "tag": "streamlake/fp8",
-     "ttft": 2190
+     "ttft": 3266
     },
     {
      "price": 0.975,
-     "status": 0,
+     "status": -2,
      "tag": "digitalocean",
-     "ttft": 1272.5
+     "ttft": 1222
     },
     {
      "price": 0.98,
      "status": -2,
      "tag": "chutes/fp8",
-     "ttft": 2552
-    },
-    {
-     "price": 0.98,
-     "status": 0,
-     "tag": "gmicloud/fp8",
-     "ttft": 2328
+     "ttft": 2085
     },
     {
      "price": 1.0,
      "status": 0,
      "tag": "wafer/fp4",
-     "ttft": 992.5
+     "ttft": 906
     },
     {
      "price": 1.0499999999999998,
      "status": 0,
      "tag": "deepinfra/fp4",
-     "ttft": 1301.5
+     "ttft": 949
     },
     {
      "price": 1.19,
      "status": 0,
      "tag": "siliconflow/fp8",
-     "ttft": 1879
+     "ttft": 1946
     },
     {
      "price": 1.2,
      "status": 0,
      "tag": "crusoe/fp8",
-     "ttft": 663
+     "ttft": 644.5
     },
     {
      "price": 1.21,
      "status": -2,
      "tag": "phala",
-     "ttft": 2143
+     "ttft": 2030
     },
     {
      "price": 1.26,
      "status": 0,
      "tag": "atlas-cloud/fp8",
-     "ttft": 1518
+     "ttft": 1544
     },
     {
      "price": 1.33,
      "status": 0,
      "tag": "alibaba/fp8",
-     "ttft": 1844
+     "ttft": 2034
     },
     {
      "price": 1.38,
      "status": 0,
      "tag": "novita/fp8",
-     "ttft": 3493.5
+     "ttft": 2532
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "nebius/fp8",
-     "ttft": 504
+     "ttft": 720
     },
     {
      "price": 1.4,
-     "status": -2,
+     "status": 0,
      "tag": "parasail/fp8",
-     "ttft": 734
+     "ttft": 798
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "friendli",
-     "ttft": 268
+     "ttft": 249
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "z-ai/fp8",
-     "ttft": 7631
+     "ttft": 9405.5
     },
     {
      "price": 1.4,
      "status": 0,
      "tag": "baidu/fp8",
-     "ttft": 1089.5
+     "ttft": 816.5
     },
     {
      "price": 1.54,
      "status": 0,
      "tag": "venice/fp8",
-     "ttft": 1327.5
+     "ttft": 1458
     }
    ],
    "short": "GLM 5.1",
    "undisclosed_precision": 3,
-   "uptime_median": 98.88823075910568,
+   "uptime_median": 98.98217741507062,
    "weights_repo": "zai-org/GLM-5.1"
   },
   {
    "cache_read": {
     "max": 0.55,
-    "mean": 0.5166666666666667,
+    "mean": 0.515,
     "median": 0.5,
     "min": 0.5,
-    "n": 9,
+    "n": 10,
     "ratio": 1.1
    },
    "caps_grid": [
+    {
+     "response_format": true,
+     "tag": "amazon-bedrock",
+     "tool_choice": true,
+     "tools": true
+    },
     {
      "response_format": true,
      "tag": "amazon-bedrock/claude-on-aws",
@@ -4945,13 +5231,13 @@
     },
     {
      "response_format": true,
-     "tag": "anthropic",
+     "tag": "azure/us",
      "tool_choice": true,
      "tools": true
     },
     {
      "response_format": true,
-     "tag": "amazon-bedrock",
+     "tag": "anthropic",
      "tool_choice": true,
      "tools": true
     },
@@ -4987,28 +5273,28 @@
     }
    ],
    "caps_missing": {},
-   "cheapest_tag": "amazon-bedrock/claude-on-aws",
+   "cheapest_tag": "amazon-bedrock",
    "completion_cap": {
     "max": 128000,
     "mean": 128000.0,
-    "median": 128000,
+    "median": 128000.0,
     "min": 128000,
-    "n": 9,
+    "n": 10,
     "ratio": 1.0
    },
    "context": {
     "max": 1000000,
     "mean": 1000000.0,
-    "median": 1000000,
+    "median": 1000000.0,
     "min": 1000000,
-    "n": 9,
+    "n": 10,
     "ratio": 1.0
    },
    "dearest_tag": "amazon-bedrock/us-east-1",
    "hf_downloads": null,
    "hf_providers_live": null,
    "hosts_deranked": 0,
-   "hosts_listed": 9,
+   "hosts_listed": 10,
    "id": "anthropic/claude-opus-5",
    "name": "Claude Opus 5",
    "open_weights": false,
@@ -5018,55 +5304,79 @@
    ],
    "price_in": {
     "max": 5.5,
-    "mean": 5.166666666666667,
+    "mean": 5.15,
     "median": 5.0,
     "min": 5.0,
-    "n": 9,
+    "n": 10,
     "ratio": 1.1
    },
    "price_out": {
     "max": 27.5,
-    "mean": 25.833333333333332,
+    "mean": 25.75,
     "median": 25.0,
     "min": 25.0,
-    "n": 9,
+    "n": 10,
     "ratio": 1.1
    },
    "scatter": [
     {
      "price": 5.0,
      "status": 0,
+     "tag": "amazon-bedrock",
+     "ttft": 3444.5
+    },
+    {
+     "price": 5.0,
+     "status": 0,
      "tag": "amazon-bedrock/claude-on-aws",
-     "ttft": 3228
+     "ttft": 4364.5
+    },
+    {
+     "price": 5.0,
+     "status": 0,
+     "tag": "claude-on-aws",
+     "ttft": 4807
+    },
+    {
+     "price": 5.0,
+     "status": 0,
+     "tag": "azure/us",
+     "ttft": 3606
     },
     {
      "price": 5.0,
      "status": 0,
      "tag": "anthropic",
-     "ttft": 3437
-    },
-    {
-     "price": 5.0,
-     "status": 0,
-     "tag": "amazon-bedrock",
-     "ttft": 3084.5
+     "ttft": 4040
     },
     {
      "price": 5.0,
      "status": 0,
      "tag": "google-vertex/global",
-     "ttft": 2922
+     "ttft": 3668
     },
     {
      "price": 5.0,
      "status": 0,
      "tag": "azure/global",
-     "ttft": 3377
+     "ttft": 4167.5
+    },
+    {
+     "price": 5.5,
+     "status": 0,
+     "tag": "amazon-bedrock/us-east-1",
+     "ttft": 1741
+    },
+    {
+     "price": 5.5,
+     "status": 0,
+     "tag": "google-vertex/europe",
+     "ttft": 1939.5
     }
    ],
    "short": "Claude Opus 5",
-   "undisclosed_precision": 9,
-   "uptime_median": 99.80716483577685,
+   "undisclosed_precision": 10,
+   "uptime_median": 99.97557820321373,
    "weights_repo": null
   }
  ],
@@ -5078,63 +5388,119 @@
    },
    {
     "label": "8-bit",
-    "n": 72
+    "n": 78
    },
    {
     "label": "4-bit",
-    "n": 62
+    "n": 60
    },
    {
     "label": "Not stated",
-    "n": 74
+    "n": 72
    }
   ],
   "by_name": {
    "bf16": 9,
    "fp16": 1,
-   "fp4": 44,
-   "fp8": 72,
+   "fp4": 42,
+   "fp8": 78,
    "int4": 15,
    "mxfp4": 3,
-   "unknown": 74
+   "unknown": 72
   },
-  "total": 218
+  "total": 220
  },
  "price_moves": [
   {
-   "after": 1.1680000000000001,
-   "before": 0.63168,
-   "model": "deepseek/deepseek-v4-pro",
-   "pct": 84.90374873353599,
-   "tag": "novita/fp8"
+   "after": 0.44,
+   "before": 0.14,
+   "model": "deepseek/deepseek-v4-flash-0731",
+   "pct": 214.28571428571428,
+   "tag": "cloudflare"
   },
   {
-   "after": 0.091,
-   "before": 0.112,
+   "after": 0.44,
+   "before": 0.14,
+   "model": "deepseek/deepseek-v4-flash",
+   "pct": 214.28571428571428,
+   "tag": "cloudflare"
+  },
+  {
+   "after": 0.22,
+   "before": 0.14,
    "model": "deepseek/deepseek-v4-flash-0731",
-   "pct": -18.750000000000004,
+   "pct": 57.14285714285713,
+   "tag": "deepseek/fp8"
+  },
+  {
+   "after": 0.22,
+   "before": 0.14,
+   "model": "deepseek/deepseek-v4-flash",
+   "pct": 57.14285714285713,
+   "tag": "deepseek"
+  },
+  {
+   "after": 0.66,
+   "before": 0.435,
+   "model": "deepseek/deepseek-v4-pro",
+   "pct": 51.724137931034484,
+   "tag": "deepseek"
+  },
+  {
+   "after": 0.696,
+   "before": 0.522,
+   "model": "deepseek/deepseek-v4-pro",
+   "pct": 33.33333333333332,
    "tag": "gmicloud/fp8"
   },
   {
-   "after": 0.67,
-   "before": 0.7,
-   "model": "moonshotai/kimi-k2.7-code",
-   "pct": -4.285714285714274,
-   "tag": "inceptron/int4"
+   "after": 0.69426,
+   "before": 0.522,
+   "model": "deepseek/deepseek-v4-pro",
+   "pct": 32.99999999999999,
+   "tag": "streamlake/fp8"
   },
   {
-   "after": 0.58986,
-   "before": 0.609,
-   "model": "deepseek/deepseek-v4-pro",
-   "pct": -3.142857142857132,
+   "after": 0.078596,
+   "before": 0.105,
+   "model": "deepseek/deepseek-v4-flash-0731",
+   "pct": -25.14666666666667,
    "tag": "streamlake/fp8"
+  },
+  {
+   "after": 0.105,
+   "before": 0.14,
+   "model": "deepseek/deepseek-v4-flash-0731",
+   "pct": -25.00000000000001,
+   "tag": "relace/fp4"
+  },
+  {
+   "after": 1.44,
+   "before": 1.1680000000000001,
+   "model": "deepseek/deepseek-v4-pro",
+   "pct": 23.28767123287669,
+   "tag": "novita/fp8"
+  },
+  {
+   "after": 0.14,
+   "before": 0.175,
+   "model": "deepseek/deepseek-v4-flash-0731",
+   "pct": -19.999999999999986,
+   "tag": "mancer/fp8"
+  },
+  {
+   "after": 2.6,
+   "before": 3.0,
+   "model": "moonshotai/kimi-k3",
+   "pct": -13.33333333333333,
+   "tag": "sail-research/fp4"
   }
  ],
  "series_began": "2026-08-04",
  "totals": {
-  "catalogue_models": 410,
-  "catalogue_open_weight": 164,
-  "host_endpoints": 218,
+  "catalogue_models": 414,
+  "catalogue_open_weight": 166,
+  "host_endpoints": 220,
   "models_published": 14
  }
 }
