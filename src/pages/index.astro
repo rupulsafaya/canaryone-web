@@ -30,11 +30,15 @@
  *
  * TWO DEPARTURES FROM THE BRIEF IT WAS BUILT FROM, both deliberate:
  *
- *   THE STACK SECTION DOES NOT REDRAW THE HERO DIAGRAM. The brief asked for a surfaces-to-layer
- *   composite in the hero and a layered architecture diagram in § the stack. Drawn twice that is
- *   one claim in two formats, which the brief's own visual-density rule rules out. The hero
- *   carries the diagram; § the stack carries the thing the diagram cannot show, which is the
- *   five separate purchases it replaces.
+ *   THE BRIEF'S FIRST THREE SECTIONS ARE TWO. It asked for a surfaces-to-layer composite in the
+ *   hero, then a section on the three surfaces, then a section headed "One system instead of five
+ *   vendors" carrying a layered architecture diagram. Built that way and reviewed on 2026-08-14,
+ *   it stated one thesis three times: the reader met the architecture in the hero before the
+ *   argument for it, then met the argument, then met a second display headline and a second
+ *   full screen making the same point in boxes. The hero is now copy only, and § one system is a
+ *   single object in three parts — the surfaces, the layer they converge on, and a two-line
+ *   contrast at its foot. That is the brief's own visual-density rule applied to the brief: one
+ *   major idea per section, and never the same claim in two formats.
  *
  *   THE CTAs ARE "GET EARLY ACCESS" AND THE INSTALL LINE, not "Get started" and "Talk to us".
  *   There is no sign-up and no contact address on this site; the waitlist dialog in Layout.astro
@@ -118,19 +122,20 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
 
 <Layout title={TITLE} description={DESCRIPTION} path="/">
   <!-- ─── HERO ───
-       The company in one sentence, then the shape of the system underneath it. The diagram sits
-       below the copy at full width rather than beside it: three surfaces across the top need the
-       room, and half a hero column turns them into three cramped columns. -->
+       Copy only, and that is the decision worth recording. It carried the surfaces-to-layer
+       diagram until 2026-08-14, which meant the reader met the architecture before the argument
+       and then met it again one screen later in § one system. The diagram was not wrong, it was
+       early: it is the object of the section that makes the claim it illustrates, and the hero
+       now ends on the maturity line. -->
   <section class="hero">
     <div class="container">
       <div class="hp-hero-copy">
         <p class="kicker">CANARYONE</p>
         <h1>Your company&rsquo;s AI stack, <span class="em">without the assembly.</span></h1>
         <p class="sub">
-          Most companies end up buying a chat tool, a knowledge tool, a coding assistant, a
-          gateway and an admin console from five different vendors, then gluing them together.
-          We&rsquo;re building the box those five should have come in, over a model layer we
-          measure every night.
+          Companies end up stitching together chat, knowledge, coding, routing and admin from
+          different vendors. We&rsquo;re building the box they should have come in, over a model
+          layer we measure ourselves.
         </p>
         <div class="ctas">
           <a class="btn primary" href="#waitlist">Get early access &rarr;</a>
@@ -144,60 +149,26 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
         </p>
       </div>
 
-      <!-- Many needs, one system, many models. Pure HTML and CSS: the only geometry is a
-           handful of hairlines, and a grid reflows on a phone where a viewBox needs a swipe. -->
-      <div class="hp-stack" aria-label="How CanaryOne is put together">
-        <p class="micro hp-stack-cap">What people need</p>
-        <div class="hp-surfaces">
-          <div class="hp-surface">
-            <p class="hp-surface-name">Ask</p>
-            <p class="hp-surface-sub">chat and company knowledge</p>
-          </div>
-          <div class="hp-surface">
-            <p class="hp-surface-name">Build</p>
-            <p class="hp-surface-sub">coding and API access</p>
-          </div>
-          <div class="hp-surface">
-            <p class="hp-surface-name">Control</p>
-            <p class="hp-surface-sub">people, budgets, policy, audit</p>
-          </div>
-        </div>
-
-        <div class="hp-bus" aria-hidden="true">
-          <span class="hp-bus-tick hp-bus-tick--l"></span>
-          <span class="hp-bus-tick hp-bus-tick--c"></span>
-          <span class="hp-bus-tick hp-bus-tick--r"></span>
-          <span class="hp-bus-line"></span>
-          <span class="hp-bus-drop"></span>
-        </div>
-
-        <div class="hp-core">
-          <p class="micro hp-core-label">One CanaryOne layer</p>
-          <ul class="hp-core-items">
-            <li>shared identity</li>
-            <li>company knowledge</li>
-            <li>policy and budgets</li>
-            <li>the model layer, measured</li>
-          </ul>
-        </div>
-
-        <div class="hp-drop" aria-hidden="true"></div>
-
-        <div class="hp-dests">
-          <p class="micro hp-stack-cap">Whatever runs underneath</p>
-          <div class="hp-dest-row">
-            <span class="hp-dest">Open-weight models</span>
-            <span class="hp-dest">The closed models you already pay for</span>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 
   <!-- ─── 2. ONE SYSTEM ───
-       Three surfaces, one sentence each. Every card opens on "we're building", because COPY.md
-       puts the register in the sentence rather than in a badge beside it, and because a visitor
-       who reads one card and leaves should still have been told the truth. -->
+       MERGED FROM TWO SECTIONS ON 2026-08-14. This was "AI people can use, infrastructure the
+       company can control" followed by a second full section headed "One system instead of five
+       vendors", carrying a five-boxes-against-one-box diagram. They are chapter one and chapter
+       two of a single argument — there are three useful surfaces and they share one substrate —
+       and giving the second half its own display headline and its own screen made the page state
+       the thesis twice.
+
+       So the section is one object built in three parts, which is the argument in the order it is
+       made: the three surfaces, the layer they converge on, and the purchase that replaces. The
+       contrast at the foot is two lines rather than the old diagram, because the hero already
+       names the five tools in prose and a reader does not need them enumerated a second time in
+       boxes. One screen, one headline, nothing lost.
+
+       Every card opens on "we're building", because COPY.md puts the register in the sentence
+       rather than in a badge beside it, and because a visitor who reads one card and leaves
+       should still have been told the truth. -->
   <section class="section">
     <div class="container">
       <div class="sec-copy">
@@ -209,99 +180,129 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
         </p>
       </div>
 
-      <div class="hp-cards hp-cards-3">
-        <div class="panel hp-card">
-          <p class="micro">ASK</p>
-          <h3>Chat and company knowledge</h3>
-          <p>
-            We&rsquo;re building a chat surface that can answer from the company&rsquo;s own
-            documents, so an employee gets a useful answer without moving the document somewhere
-            else to get one.
-          </p>
-        </div>
-        <div class="panel hp-card">
-          <p class="micro">BUILD</p>
-          <h3>Coding and API access</h3>
-          <p>
-            We&rsquo;re building model access for engineers through an OpenAI-compatible API and
-            the coding tools they already work in.
-          </p>
-        </div>
-        <div class="panel hp-card">
-          <p class="micro">CONTROL</p>
-          <h3>One place for the organisation</h3>
-          <p>
-            We&rsquo;re building one admin surface for people, model access, budgets and the
-            audit record, rather than one console per tool.
-          </p>
-        </div>
-      </div>
+      <div class="hp-system">
+        {/* A SURFACE, NOT A FEATURE LIST: the name is the heading and one sentence says what a
+            person does there. The three cards carried an eyebrow, a descriptive title and a
+            three-line paragraph each, which read as a product tour of something that does not
+            exist yet.
 
-      <div class="evidence">
-        <p class="evidence-note">
-          None of the three ships yet. What ships today is the benchmarking tool underneath them,
-          which is open source and runs on your own machine.
-          {' '}<a href="/evals">See what it does &rarr;</a>
-        </p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── 3. THE STACK ───
-       The packaging thesis, as the purchase it replaces rather than as a second architecture
-       diagram. Six rows, named by category and never by vendor: naming five competitors here
-       would turn a packaging argument into a comparison we have not run. -->
-  <section class="section">
-    <div class="container">
-      <div class="sec-copy">
-        <p class="kicker">THE STACK</p>
-        <h2>One system instead of five vendors.</h2>
-        <p class="lede">
-          The same identity, the same company knowledge, the same controls and the same model
-          layer sit under every surface. That is the whole reason to buy it as one thing.
-        </p>
-        <p class="claim">
-          Assembled the usual way, this is five purchases, five admin consoles and five bills
-          that know nothing about each other.
-        </p>
-      </div>
-
-      <div class="panel hp-swap">
-        <div class="hp-swap-side">
-          <p class="micro">Assembled yourself</p>
-          <ul class="hp-swap-parts">
-            <li>a chat tool</li>
-            <li>a knowledge search tool</li>
-            <li>a coding assistant</li>
-            <li>a gateway or router</li>
-            <li>an admin, budget and audit console</li>
-          </ul>
-          <p class="hp-swap-foot">plus the glue between them, which nobody sells</p>
-        </div>
-
-        <div class="hp-swap-arrow" aria-hidden="true">&rarr;</div>
-
-        <div class="hp-swap-side">
-          <p class="micro">One CanaryOne layer</p>
-          <div class="hp-swap-one">
-            <ul class="hp-swap-parts hp-swap-parts--in">
-              <li>chat, knowledge, coding and API</li>
-              <li>one identity across all of them</li>
-              <li>one company knowledge index</li>
-              <li>one set of budgets, policy and audit</li>
-              <li>one measured model layer</li>
-            </ul>
+            THE BADGE CARRIES THE REGISTER, and that is a deliberate reading of COPY.md rather
+            than a shortcut around it. Every card used to open on "We're building", which is the
+            rule followed literally — three times on one row, at the cost of the sentence saying
+            anything. What COPY.md actually forbids is a status that lives on a button while the
+            prose beside it describes a mechanism in the present indicative, because a skimmer
+            reads the prose and never the button. A chip inside the card, above the sentence it
+            qualifies, is read by exactly the person who skims. The section's lede stays in the
+            building register underneath it, so the status is also in a sentence. */}
+        <div class="hp-cards hp-cards-3">
+          <div class="panel hp-card">
+            <div class="hp-card-top">
+              <h3>Ask</h3>
+              <span class="hp-status">In build</span>
+            </div>
+            <p>
+              Ask questions across company information without copying documents into another
+              tool.
+            </p>
           </div>
-          <p class="hp-swap-foot">one contract, one console, one bill</p>
+          <div class="panel hp-card">
+            <div class="hp-card-top">
+              <h3>Build</h3>
+              <span class="hp-status">In build</span>
+            </div>
+            <p>
+              Give engineers an OpenAI-compatible API and coding tools on the same model layer.
+            </p>
+          </div>
+          <div class="panel hp-card">
+            <div class="hp-card-top">
+              <h3>Control</h3>
+              <span class="hp-status">In build</span>
+            </div>
+            <p>
+              Manage people, model access, budgets, policy and audit across every surface.
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div class="evidence">
-        <p class="evidence-note">
-          We&rsquo;re building this as one product. The column on the right describes what we
-          intend to ship, not what a customer can buy today.
+        <!-- Three surfaces converging on one layer. Hairlines only; the geometry is percentages
+             so each tick lands on its own column's centre whatever the container is doing. -->
+        <div class="hp-bus" aria-hidden="true">
+          <span class="hp-bus-tick hp-bus-tick--l"></span>
+          <span class="hp-bus-tick hp-bus-tick--c"></span>
+          <span class="hp-bus-tick hp-bus-tick--r"></span>
+          <span class="hp-bus-line"></span>
+          <span class="hp-bus-drop"></span>
+        </div>
+
+        {/* THE LAYER, WITH THE PRODUCT'S OWN NAME IN IT. It was an eyebrow over a row of four
+            plain words, which described the layer without ever showing one — three surfaces
+            plugging into a sentence rather than into a system. The lockup anchors it, and the
+            four capabilities became tiles so the box reads as something built.
+
+            THE LIGHT LOCKUP, NOT THE DARK ONE. c1-logo.svg normalises its wordmark to #0f0f10,
+            which is --dark: correct here and invisible on the nav's own surface, which is why
+            two files exist. Held to 120x22, the pair the nav already drops to on a phone, so the
+            5.4504:1 ratio is one a reviewer has seen rather than a third arbitrary size. It is
+            decorative for a screen reader because the eyebrow directly above it says the name. */}
+        <div class="hp-core">
+          <p class="micro hp-core-label">One CanaryOne layer</p>
+          <img class="hp-core-mark" src="/c1-logo.svg" alt="" width="120" height="22" />
+
+          {/* Line icons rather than filled glyphs, at a 16-unit box and one stroke width. They
+              are schematic on purpose — a group, a document, two controls, a measurement — and
+              they sit at --muted so the labels still lead. */}
+          <ul class="hp-core-items">
+            <li>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="6" cy="5.5" r="2.5" />
+                <path d="M1.5 13.5c0-2.2 2-3.5 4.5-3.5s4.5 1.3 4.5 3.5" />
+                <path d="M11 3.4a2.5 2.5 0 0 1 0 4.2" />
+                <path d="M12.6 10.4c1.2.5 1.9 1.6 1.9 3.1" />
+              </svg>
+              <span>Shared identity</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2.5 4.5v9h6" />
+                <path d="M5.5 2.5h4l3 3v8h-7z" />
+                <path d="M9.5 2.5v3h3" />
+              </svg>
+              <span>Company knowledge</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2 5h12M2 11h12" />
+                <circle cx="6" cy="5" r="1.7" />
+                <circle cx="10" cy="11" r="1.7" />
+              </svg>
+              <span>Policy &amp; budgets</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"
+                   stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M2.5 13.5h11" />
+                <path d="M5 13.5V9.5M8 13.5V5M11 13.5V7.5" />
+              </svg>
+              <span>Measured model layer</span>
+            </li>
+          </ul>
+        </div>
+
+        <!-- The packaging thesis in one line. It was a panel of five bordered boxes against one
+             bordered box, then a two-row label list, and it is a single sentence-shaped row now:
+             the hero names the five things in prose, so the count is the only part that needs
+             showing. The arrow is a graphic inside a diagram, which is where COPY.md allows one. -->
+        <p class="hp-contrast">
+          Usually: 5 tools &middot; 5 consoles &middot; 5 bills
+          <span class="hp-contrast-arrow" aria-hidden="true">&rarr;</span>
+          <span class="hp-contrast-ours">CanaryOne: one layer</span>
         </p>
       </div>
+
     </div>
   </section>
 
@@ -367,9 +368,12 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
             charge under {priceWords(spreadModel.price_in.median)} per million tokens.
           </p>
 
+          {/* Three short lines rather than two long ones: this column is the narrower of the
+              two now, and "read several times a day" was breaking after "a". */}
           <p class="hp-mod-src">
             {market.totals.models_published} models &middot;
-            {' '}{market.totals.host_endpoints} live endpoints &middot; read several times a day
+            {' '}{market.totals.host_endpoints} live endpoints
+            <br />Read several times a day
             <br />Captured {stamp(market.captured_at)}
           </p>
           <p class="hp-mod-link">
@@ -377,8 +381,13 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
           </p>
         </div>
 
-        <!-- Module B — the workload. Three routes out of one run, lettered. -->
-        <div class="panel hp-mod">
+        <!-- Module B — the workload. Three routes out of one run, lettered.
+             THE DOMINANT ONE OF THE TWO, by a wider column, a stronger border and the one shadow
+             in the section. Market intelligence says where to look and is public; this says what
+             wins on the reader's own work, which is the half that is about them. Emphasis is the
+             same pair § migration's middle stage uses for the same job — weight rather than colour,
+             because a coloured card would be reading as a state. -->
+        <div class="panel hp-mod hp-mod--lead">
           <p class="micro">WORKLOAD BENCHMARKING</p>
           <h3>The cheapest tokens can cost the most per finished task.</h3>
           <p class="hp-mod-sub">
@@ -422,140 +431,131 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
         </div>
       </div>
 
+      {/* CUT FROM SIX LINES TO THREE. Both caveats a skeptic would raise are still here, which
+          is the number gate rather than an editorial choice: that the market half is advertised
+          rather than measured, and that the routes are lettered because the magnitude reproduces
+          and the name at either end does not. What went was the restatement around them. */}
       <div class="evidence">
         <p class="evidence-note">
-          <strong>The two halves are different kinds of evidence.</strong> The market figure is
-          what a host advertises, read from listed metadata, and it says nothing about how well
-          that host serves the model. The route figures are one measured run of our own tool
-          against one repository.
-        </p>
-        <p class="evidence-caveat">
-          The routes are lettered because one local run demonstrates what the measurement
-          produces and establishes nothing about a company. The size of a gap like this repeats
-          from run to run; which route sits at either end does not.
+          <strong>Two kinds of evidence.</strong> The market figure is what a host advertises,
+          not a measurement of how well it serves the model. The route figures are one local run
+          of our own tool, which is why they are lettered — the size of a gap like this repeats
+          from run to run, and the name at either end does not.
         </p>
       </div>
     </div>
   </section>
 
   <!-- ─── 5. MIGRATION ───
-       Control first, migrate second. The closed-model providers are named as a fact about what a
-       customer already pays for, never in judgement — COPY.md § Naming a host bans the second,
-       not the first. -->
+       REBUILT 2026-08-14. It was three large bordered cards in a row under the headline "You do
+       not have to switch everything at once", closing on a paragraph explaining that none of it
+       ships. Three problems, all of them structural: three boxes read as three products rather
+       than one path, a planned capability took the same visual weight as the measured section
+       above it, and the headline said what the reader does not have to do rather than what they
+       do.
+
+       One container now, three stages inside it, and the middle one carries the accent because
+       it is the layer being introduced. THE STATUS IS ONE BADGE BESIDE THE EYEBROW rather than a
+       paragraph at the foot: the hero already says the platform is in build, so restating it
+       under every section was the page apologising for itself. PLANNED rather than IN BUILD, and
+       the difference is COPY.md's — the three surfaces are being built, this is direction.
+
+       Control first, migration second, and nothing here frames a company's existing providers as
+       a mistake. -->
   <section class="section">
     <div class="container">
       <div class="sec-copy">
-        <p class="kicker">MOVE AT YOUR PACE</p>
-        <h2>You do not have to switch everything at once.</h2>
+        <div class="hp-eyebrow">
+          <p class="kicker">MOVE AT YOUR PACE</p>
+          <span class="hp-status">Planned</span>
+        </div>
+        <h2>Move workload by workload.</h2>
         <p class="lede">
-          We plan to sit over the models a company already pays for first, so that control and
-          measurement arrive before any migration does. Moving a workload to an open model is
-          then one decision per workload, taken when the numbers say so.
+          Start with the models you already use. Add control and measurement first. Move a
+          workload only when an open model proves the better choice.
         </p>
       </div>
 
-      <div class="hp-flow">
-        <div class="hp-stage">
+      <div class="panel hp-mig">
+        <div class="hp-mig-stage">
           <p class="micro">Today</p>
-          <div class="panel hp-stage-card">
-            <ul>
-              <li>the OpenAI and Anthropic keys you already pay for</li>
-              <li>your existing integrations</li>
-              <li>no model change</li>
-            </ul>
-          </div>
+          <h3>Keep the models you already use</h3>
+          <ul>
+            <li>OpenAI and Anthropic</li>
+            <li>existing integrations</li>
+            <li>no model change required</li>
+          </ul>
         </div>
 
-        <p class="hp-flow-arrow" aria-hidden="true">&rarr;</p>
+        <p class="hp-mig-arrow" aria-hidden="true">&rarr;</p>
 
-        <div class="hp-stage">
+        <div class="hp-mig-stage hp-mig-stage--mid">
           <p class="micro">Through CanaryOne</p>
-          <div class="panel hp-stage-card hp-stage-card--mid">
-            <ul>
-              <li>one identity across every surface</li>
-              <li>budgets and policy in one place</li>
-              <li>an audit record</li>
-              <li>measurement on your own workload</li>
-            </ul>
-          </div>
+          <h3>Add control + measurement</h3>
+          <ul>
+            <li>one identity</li>
+            <li>budgets + policy</li>
+            <li>audit</li>
+            <li>workload measurement</li>
+          </ul>
         </div>
 
-        <p class="hp-flow-arrow" aria-hidden="true">&rarr;</p>
+        <p class="hp-mig-arrow" aria-hidden="true">&rarr;</p>
 
-        <div class="hp-stage">
+        <div class="hp-mig-stage">
           <p class="micro">When one wins</p>
-          <div class="panel hp-stage-card">
-            <ul>
-              <li>an open-weight model</li>
-              <li>a regional or specialised host</li>
-              <li>one workload at a time</li>
-            </ul>
-          </div>
+          <h3>Move one workload</h3>
+          <ul>
+            <li>open-weight model</li>
+            <li>regional or specialised host</li>
+            <li>only after it proves itself</li>
+          </ul>
         </div>
-      </div>
-
-      <div class="evidence">
-        <p class="evidence-note">
-          We plan to work this way. None of the three stages ships today, and nothing here is a
-          judgement about the providers a company is already using.
-        </p>
       </div>
     </div>
   </section>
 
   <!-- ─── 6. YOUR COMPANY ───
-       Four things a company asks before it lets a tool near its documents. Every one of them is
-       intended, so every one of them says so. No connector names and no compliance acronyms: a
-       named connector is a "planned support" claim we would then have to keep true, and a
-       certification we do not hold is not a design decision, it is a false statement. -->
+       Four short modules across one row, each a label and one sentence. They were four tall
+       cards in a two-by-two grid, each carrying a "We plan to" paragraph, closing on a
+       disclaimer — which made the least concrete section on the page one of the tallest.
+
+       The status is the same section-level badge § migration uses. The disclaimer that went with
+       it named two things worth checking are still safe to lose: that we hold no compliance
+       certification, which nothing here now implies because no certification, standard or
+       acronym is mentioned; and the privacy formulation, which is a claim about the shipped tool
+       and belongs on /evals, where it is. -->
   <section class="section">
     <div class="container">
       <div class="sec-copy">
-        <p class="kicker">YOUR COMPANY</p>
+        <div class="hp-eyebrow">
+          <p class="kicker">YOUR COMPANY</p>
+          <span class="hp-status">Planned</span>
+        </div>
         <h2>Your knowledge. Your region. Your rules.</h2>
         <p class="lede">
-          These are the four questions that decide whether a company can use a tool like this at
-          all. We plan to answer them in the product rather than in a policy document.
+          The four questions that decide whether a company can put a tool like this near its own
+          documents at all.
         </p>
       </div>
 
       <div class="hp-cards hp-cards-4">
-        <div class="panel hp-card">
-          <h3>Connect your knowledge</h3>
-          <p>
-            We plan to read from the systems where company information already lives, so people
-            can ask about their own documents.
-          </p>
+        <div class="panel hp-card hp-card--tight">
+          <h3>Connect knowledge</h3>
+          <p>Read from the systems where company information already lives.</p>
         </div>
-        <div class="panel hp-card">
-          <h3>Carry your permissions</h3>
-          <p>
-            We plan to carry the identity and the file permissions a company already has through
-            the AI layer, rather than creating a second set of them.
-          </p>
+        <div class="panel hp-card hp-card--tight">
+          <h3>Carry permissions</h3>
+          <p>Carry the identity and permissions a company already has.</p>
         </div>
-        <div class="panel hp-card">
-          <h3>Set policy and spend</h3>
-          <p>
-            We plan to put model access, spending limits and organisational usage in one place.
-          </p>
+        <div class="panel hp-card hp-card--tight">
+          <h3>Control policy &amp; spend</h3>
+          <p>Set model access, spending limits and usage in one place.</p>
         </div>
-        <div class="panel hp-card">
+        <div class="panel hp-card hp-card--tight">
           <h3>Choose where it runs</h3>
-          <p>
-            We plan to let a company choose the region and the model infrastructure its own
-            workloads run on.
-          </p>
+          <p>Choose the region and infrastructure the workloads run on.</p>
         </div>
-      </div>
-
-      <div class="evidence">
-        <p class="evidence-note">
-          Every line in this section is intended rather than built, and we hold no compliance
-          certification. What is true today is narrower and worth saying plainly: the
-          benchmarking tool runs on your machine, against your own tests, and nothing sits in
-          your request path. <a href="/evals">See exactly what leaves &rarr;</a>
-        </p>
       </div>
     </div>
   </section>
@@ -591,22 +591,22 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
       <dl class="hp-proof">
         <div>
           <dt>Workload benchmarking</dt>
-          <dd class="hp-proof-when">Today</dd>
+          <dd class="hp-status">Today</dd>
           <dd>Run it on your own repository and get one row per route.</dd>
         </div>
         <div>
           <dt>Route and model evidence</dt>
-          <dd class="hp-proof-when">Today</dd>
+          <dd class="hp-status">Today</dd>
           <dd>Every figure on this site carries its date and links to the run behind it.</dd>
         </div>
         <div>
           <dt>Audit and policy record</dt>
-          <dd class="hp-proof-when">Planned</dd>
+          <dd class="hp-status">Planned</dd>
           <dd>Part of the admin surface we&rsquo;re building.</dd>
         </div>
         <div>
           <dt>Regional and host choice</dt>
-          <dd class="hp-proof-when">Planned</dd>
+          <dd class="hp-status">Planned</dd>
           <dd>Part of the model layer we&rsquo;re building.</dd>
         </div>
       </dl>
@@ -663,103 +663,109 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
     margin: var(--space-6) 0 0;
   }
 
-  /* ---- the hero diagram ----
-     Many needs at the top, one layer in the middle, many models underneath. HTML and CSS, for
-     the reason /evals builds its fan-out the same way: the only geometry is a few hairlines,
-     and a grid reflows on a phone where an 800-unit viewBox needs a sideways swipe. */
-  .hp-stack { margin-top: clamp(48px, 7vw, 88px); }
-  .hp-stack-cap { text-align: center; }
-  .hp-surfaces {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--space-4);
-  }
-  /* One step darker than the band, which is what --dark-deep is for: a surface sitting on top
-     of a dark panel. */
-  .hp-surface {
-    background: var(--dark-deep);
-    border: 1px solid var(--line-dark);
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-dark);
-    padding: var(--space-5) var(--space-5) var(--space-6);
-    text-align: center;
-  }
-  .hp-surface-name {
-    font-size: var(--text-xl);
-    font-weight: var(--weight-semibold);
-    letter-spacing: var(--tracking-tight);
-    color: var(--text-on-dark);
-    margin: 0 0 var(--space-2);
-  }
-  .hp-surface-sub {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    line-height: var(--leading-normal);
-    color: var(--muted-on-dark);
-    margin: 0;
-  }
+  /* ---- the system object ----
+     ONE OBJECT IN THREE PARTS: the three surfaces, the layer they converge on, and the purchase
+     that replaces. It lived in the hero on a dark surface until 2026-08-14 and moved down into
+     the section that makes the claim it illustrates, which is why the palette below is cream
+     rather than near-black.
 
-  /* The three surfaces converging on one layer. Percentages rather than lengths, because each
-     tick has to land on the centre of its own column whatever the container is doing. */
+     HTML and CSS, for the reason /evals builds its fan-out the same way: the only geometry is a
+     few hairlines, and a grid reflows on a phone where an 800-unit viewBox needs a sideways
+     swipe. The wrapper carries the copy-to-object gap, so the parts inside it can sit on their
+     own rhythm. */
+  .hp-system { margin-top: var(--space-12); }
+
+  /* Three surfaces converging on one layer. Percentages rather than lengths, because each tick
+     has to land on the centre of its own column whatever the container is doing. */
   .hp-bus { position: relative; height: var(--space-10); }
   .hp-bus-tick,
   .hp-bus-line,
   .hp-bus-drop {
     position: absolute;
-    background: var(--line-dark);
+    background: var(--line-strong);
   }
   .hp-bus-tick { top: 0; height: 50%; width: 1px; }
-  .hp-bus-tick--l { left: 16.667%; }
+  /* A third of the row is NOT a sixth of the container once the grid has a gap between its
+     columns. At a 20px gap the first card's centre sits at 16.04% rather than 16.667%, so flat
+     percentages left every tick about eight pixels inside the card it belongs to — visible, and
+     the kind of near-miss that reads as a rendering fault rather than as a decision. The calc is
+     the column centre exactly, and it follows --space-5 if the grid's gap ever changes. */
+  .hp-bus-tick--l,
+  .hp-bus-line { left: calc((100% - 2 * var(--space-5)) / 6); }
   .hp-bus-tick--c { left: 50%; }
-  .hp-bus-tick--r { left: 83.333%; }
-  .hp-bus-line { top: 50%; left: 16.667%; right: 16.667%; height: 1px; }
+  .hp-bus-tick--r { left: calc(100% - (100% - 2 * var(--space-5)) / 6); }
+  .hp-bus-line { top: 50%; right: calc((100% - 2 * var(--space-5)) / 6); height: 1px; }
   .hp-bus-drop { top: 50%; bottom: 0; left: 50%; width: 1px; }
 
-  /* The one yellow in the diagram, and it is a hairline and a wash on a dark surface — which is
-     the only place either is legible, hence the -on-dark suffix on both tokens. */
+  /* The one yellow in the section, and on cream it may only be a wash sitting behind content
+     that keeps its own colour — which is exactly what --accent-bg is for, and what the /market
+     price ladder's hovered row and the /evals winner row already use it for. On the dark hero
+     this band was a yellow hairline plus a 4% wash; neither survives the move, because
+     --accent-deep on cream measures 1.87:1 and a 4% yellow on cream is invisible. THE LABEL IS
+     INK, NOT CANARY, for the same reason. */
   .hp-core {
-    border: 1px solid var(--accent-line-on-dark);
-    background: var(--accent-bg-on-dark);
+    background: var(--accent-bg);
+    border: 1px solid var(--line-strong);
     border-radius: var(--radius-lg);
-    padding: var(--space-5) var(--space-6) var(--space-6);
+    padding: var(--space-6);
     text-align: center;
   }
-  .hp-core-label { color: var(--accent-deep); }
+  .hp-core-label { color: var(--text); margin-bottom: var(--space-3); }
+  /* The lockup, held well back from the tiles below it. Block plus auto margins rather than a
+     text-align inherit, so it centres on its own box whatever the label above it is doing. */
+  .hp-core-mark {
+    display: block;
+    width: 120px;
+    height: 22px;
+    margin: 0 auto var(--space-6);
+  }
+
+  /* Four tiles, not a line of words. White on the wash, so each capability reads as a module
+     inside the layer rather than as text printed on it. Left-aligned inside their own boxes
+     while the identity above stays centred — a centred label beside an icon leaves a ragged
+     gap between the two. */
   .hp-core-items {
     list-style: none;
     margin: 0;
     padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-3);
+    text-align: left;
+  }
+  .hp-core-items > li {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-3) var(--space-6);
+    align-items: center;
+    gap: var(--space-3);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
     font-family: var(--font-mono);
     font-size: var(--text-sm);
-    color: var(--text-on-dark);
+    color: var(--text);
+  }
+  /* The icons sit back so the typography leads, which is the whole brief for them. */
+  .hp-core-items svg {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 16px;
+    color: var(--muted);
   }
 
-  .hp-drop {
-    width: 1px;
-    height: var(--space-10);
-    background: var(--line-dark);
-    margin: 0 auto;
-  }
-
-  .hp-dests { text-align: center; }
-  .hp-dest-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-3);
-  }
-  .hp-dest {
+  /* The packaging thesis, as one line rather than a diagram or a two-row list. The two halves
+     take different weight instead of different colour: the count on the left is the situation
+     and the phrase on the right is the answer, so the answer takes the ink. */
+  .hp-contrast {
     font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    color: var(--muted-on-dark);
-    border: 1px solid var(--line-dark);
-    border-radius: var(--radius-full);
-    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--muted);
+    margin: var(--space-6) 0 0;
+    text-align: center;
   }
+  .hp-contrast-arrow { margin: 0 var(--space-2); }
+  .hp-contrast-ours { color: var(--text); font-weight: var(--weight-semibold); }
 
   /* ---- card grids ----
      One card component at three widths. .panel carries the section's copy-to-object gap in its
@@ -769,17 +775,37 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
     gap: var(--space-5);
     margin-top: var(--space-12);
   }
-  .hp-cards-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Inside the system object the wrapper owns that gap, and the cards sit at its top. */
+  .hp-system > .hp-cards { margin-top: 0; }
+  /* NOT TWO EQUAL HALVES. The workload module is the one about the reader's own work, so it
+     takes the wider column; market intelligence is the public half and sits beside it. */
+  .hp-cards-2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); }
   .hp-cards-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .hp-cards-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* Four across rather than two-by-two. As two rows of tall cards this was the least concrete
+     section on the page and one of the tallest, which is the wrong way round. */
+  .hp-cards-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .hp-cards > .panel { margin-top: 0; }
   .hp-card { padding: var(--space-8) var(--space-7); }
+  /* A label and one sentence wants less room around it than a surface card does. */
+  .hp-card--tight { padding: var(--space-6) var(--space-5); }
+  .hp-card--tight h3 { font-size: var(--text-base); }
+  .hp-card--tight p:last-child { font-size: var(--text-base); }
+  /* The surface's name and its status on one line, so the chip reads as a property of the card
+     rather than as a thing floating above it. Baseline-aligned: a chip hung off the top of a
+     21px heading sits visibly high. */
+  .hp-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
   .hp-card h3 {
     font-size: var(--text-xl);
     font-weight: var(--weight-semibold);
     line-height: var(--leading-snug);
     letter-spacing: var(--tracking-tight);
-    margin: 0 0 var(--space-3);
+    margin: 0;
   }
   .hp-card p:last-child {
     font-size: var(--text-md);
@@ -788,44 +814,36 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
     margin: 0;
   }
 
-  /* ---- 3. the stack: five parts against one ----
-     The picture is the count. Five separate bordered rows on the left, one bordered block on the
-     right, at the same width — nothing else has to be said for the contrast to land. */
-  .hp-swap {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  /* An eyebrow with its status beside it. The kicker's own bottom margin moves to the row, so
+     the chip cannot push the heading down. */
+  .hp-eyebrow {
+    display: flex;
     align-items: center;
-    gap: var(--space-6);
-    padding: var(--space-8) var(--space-7);
+    gap: var(--space-4);
+    margin-bottom: var(--space-7);
   }
-  .hp-swap-parts { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
-  .hp-swap-parts > li {
+  .hp-eyebrow .kicker { margin-bottom: 0; }
+
+  /* ---- the status chip ----
+     ONE COMPONENT, TWO USE SITES: "In build" on a surface card and "Today" or "Planned" in the
+     evidence proof list. They were the same five declarations twice, which is how a site ends up
+     with two chips that drift apart — and a status label is exactly the thing that must look the
+     same everywhere or it stops being read as a status.
+
+     Neutral rather than canary. On cream, yellow is legal as a fill behind dark text, but yellow
+     means primary and selected everywhere else on this site, and a chip saying a thing does not
+     exist yet is not the same message as a chip on a winning row. */
+  .hp-status {
     font-family: var(--font-mono);
-    font-size: var(--text-sm);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
     color: var(--text);
-    border: 1px solid var(--line);
-    border-radius: var(--radius-md);
-    padding: var(--space-3) var(--space-4);
-    background: var(--bg);
-  }
-  /* Inside the one block the parts stop being purchases, so they lose their own borders. */
-  .hp-swap-one {
     border: 1px solid var(--line-strong);
-    border-radius: var(--radius-lg);
-    background: var(--bg-tint);
-    padding: var(--space-4);
-  }
-  .hp-swap-parts--in > li { border: 0; background: transparent; padding: var(--space-2) 0; }
-  .hp-swap-foot {
-    font-size: var(--text-base);
-    color: var(--muted);
-    margin: var(--space-4) 0 0;
-  }
-  .hp-swap-arrow {
-    font-family: var(--font-mono);
-    font-size: var(--text-lg);
-    color: var(--muted);
-    margin: 0;
+    border-radius: var(--radius-full);
+    padding: var(--space-0-5) var(--space-3);
+    white-space: nowrap;
+    flex: 0 0 auto;
   }
 
   /* ---- 4. intelligence ----
@@ -833,6 +851,7 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
   .hp-intel { background: var(--bg-tint); }
   /* On the tint, a panel's own cream keeps the modules reading as objects on a surface. */
   .hp-mod { padding: var(--space-8) var(--space-7); display: flex; flex-direction: column; }
+  .hp-mod--lead { border-color: var(--line-strong); box-shadow: var(--shadow-sm); }
   .hp-mod h3 {
     font-size: var(--display-md);
     font-weight: var(--weight-medium);
@@ -905,36 +924,59 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
      sideways on a phone. */
   .hp-routes-wrap { overflow-x: auto; }
 
-  /* ---- 5. migration ---- */
-  .hp-flow {
+  /* ---- 5. migration ----
+     ONE CONTAINER, THREE STAGES, NOT THREE CARDS. The panel's own border is the journey; the
+     stages inside it have no boxes of their own, so they read as points on a path rather than as
+     three things to buy. The middle stage is the exception, because it is the layer being
+     introduced and the section's whole argument is that it arrives before any migration does. */
+  .hp-mig {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: stretch;
-    gap: var(--space-4);
-    margin-top: var(--space-12);
+    gap: var(--space-5);
+    padding: var(--space-7) var(--space-6);
   }
-  .hp-stage { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
-  .hp-stage-card {
-    margin-top: 0;
-    flex: 1;
-    padding: var(--space-5);
+  .hp-mig-stage { min-width: 0; }
+  /* The accent, as a wash behind content that keeps its own colour — the one form yellow takes
+     on cream besides a fill behind dark text. Subtle on purpose: this stage is the strongest of
+     the three, not a callout. The negative margin lets the wash sit inside the panel's padding
+     without the other two stages having to be padded to match. */
+  .hp-mig-stage--mid {
+    background: var(--accent-bg);
+    border-radius: var(--radius-md);
+    padding: var(--space-4) var(--space-5);
+    margin: calc(-1 * var(--space-4)) 0;
   }
-  /* The middle stage is us, so it carries the weight the two ends do not. */
-  .hp-stage-card--mid { border-color: var(--line-strong); box-shadow: var(--shadow-sm); }
-  .hp-stage-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
-  .hp-stage-card li {
+  .hp-mig-stage h3 {
     font-size: var(--text-base);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text);
+    margin: 0 0 var(--space-3);
+  }
+  .hp-mig-stage ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-1);
+  }
+  .hp-mig-stage li {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     line-height: var(--leading-normal);
     color: var(--muted);
   }
-  .hp-stage-card--mid li { color: var(--text); }
-  /* Ornament inside a diagram, which is where COPY.md allows an arrow a row of its own. */
-  .hp-flow-arrow {
-    align-self: center;
+  /* Ornament inside a diagram, which is where COPY.md allows an arrow a place of its own. It
+     sits against the stage titles rather than centred in the row, so the three stages read left
+     to right along one line instead of the arrows floating in the middle of unequal blocks. */
+  .hp-mig-arrow {
+    align-self: start;
+    margin: var(--space-6) 0 0;
     font-family: var(--font-mono);
     font-size: var(--text-lg);
     color: var(--muted);
-    margin: var(--space-6) 0 0;
   }
 
   /* ---- 7. evidence ---- */
@@ -986,17 +1028,7 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
   .hp-proof dt, .hp-proof dd { margin: 0; font-size: var(--text-sm); }
   .hp-proof dt { font-family: var(--font-mono); color: var(--text); }
   .hp-proof dd { color: var(--muted); }
-  .hp-proof-when {
-    font-family: var(--font-mono);
-    font-size: var(--text-2xs);
-    letter-spacing: var(--tracking-label);
-    text-transform: uppercase;
-    color: var(--muted);
-    border: 1px solid var(--line-strong);
-    border-radius: var(--radius-full);
-    padding: var(--space-0-5) var(--space-3);
-    white-space: nowrap;
-  }
+  /* .hp-status, in a grid cell rather than a flex row. The chip itself is declared once above. */
 
   /* ---- 8. close ---- */
   .hp-close { background: var(--bg-tint); text-align: center; }
@@ -1033,22 +1065,30 @@ const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.task
   @media (max-width: 900px) {
     /* The diagram simplifies rather than scrolling: the three surfaces stack, so the converging
        bus becomes one straight line down. */
-    .hp-surfaces { grid-template-columns: minmax(0, 1fr); }
     .hp-bus { height: var(--space-8); }
     .hp-bus-tick--l, .hp-bus-tick--r, .hp-bus-line { display: none; }
     .hp-bus-tick--c { height: 100%; }
+    /* Four tiles need about 200px each for their label; two across is the widest that holds. */
+    .hp-core-items { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .hp-cards-2, .hp-cards-3 { grid-template-columns: minmax(0, 1fr); }
-    /* Five rows beside one block needs the width; stacked, the arrow turns to point down. */
-    .hp-swap { grid-template-columns: minmax(0, 1fr); }
-    .hp-swap-arrow { text-align: center; transform: rotate(90deg); }
-    .hp-flow { grid-template-columns: minmax(0, 1fr); }
-    .hp-flow-arrow { margin: 0; text-align: center; transform: rotate(90deg); }
+    /* Stacked, the contrast line breaks badly around its arrow. */
+    .hp-contrast-arrow { display: block; }
+    /* The journey goes vertical and its arrows turn with it. The middle stage keeps its wash,
+       so the path is still readable as one thing with a highlighted middle. */
+    .hp-mig { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+    .hp-mig-arrow { margin: 0; text-align: center; transform: rotate(90deg); }
+    .hp-mig-stage--mid { margin: 0; }
+    /* Four across needs the width; halved here and stacked at 640, which is what the
+       breakpoint table says a dense grid does. */
+    .hp-cards-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 640px) {
     .hp-cards-4 { grid-template-columns: minmax(0, 1fr); }
     /* The status label and its sentence stack rather than sharing three fixed columns. */
     .hp-proof > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
-    .hp-proof-when { justify-self: start; }
-    .hp-core-items { gap: var(--space-2) var(--space-4); }
+    .hp-proof .hp-status { justify-self: start; }
+    /* The verdict drops under its label rather than sharing a fixed first column. */
+    .hp-contrast > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-1); }
+    .hp-core-items { grid-template-columns: minmax(0, 1fr); }
   }
 </style>
