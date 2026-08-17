@@ -8,7 +8,10 @@ repository is the single source every piece of copy inherits from, and if a sent
 it, that sentence is wrong. What this document covers is the part positioning cannot: how to turn a
 decided message into page copy without accidentally promising something we have not built.
 
-Current as of 2026-08-06.
+Current as of 2026-08-17. Revised that day when positioning.md was rewritten: the company is the
+packaged AI stack, with the benchmarking tool as its measurement layer rather than as the product.
+Three things changed here as a result — the worked examples, which used to illustrate an archived
+page; the number gate, which is narrower; and the privacy paragraph, which is no longer frozen.
 
 ## The one rule
 
@@ -21,16 +24,23 @@ and this guide is not an argument against it. The failure it guards against is n
 status to a call-to-action button while the prose beside it describes a mechanism in the present
 indicative. Most readers skim the prose and never read the button.
 
-The worked example, from this site in August 2026:
+The worked example, taken from the live home page:
 
-> **Wrong.** A card headed TUNE, with a button reading "Get early access →", and body text reading
-> "The proxy records every request and response from your production workload automatically."
+> **Wrong.** A card headed **Ask**, with body text reading "Ask questions across company information
+> without copying documents into another tool" — and nothing else. That is a description of a
+> working feature, and a reader reasonably concludes it works.
 >
-> **Right.** The same card and the same button, with body text reading "We plan to read the traces
-> your stack already writes, so nothing new has to sit in front of your production traffic."
+> **Right.** The same card and the same sentence, with an **In build** chip inside the card, above
+> the sentence it qualifies, and the section's lede underneath still in the building register: "We're
+> building three surfaces on one shared layer."
 
-The first sentence describes how a thing works. A reader reasonably concludes the thing exists. The
-second makes the same promise and stays true.
+**Why the chip is allowed here when the guide otherwise says the register goes in the sentence.**
+Three cards each opening on "We're building" followed the rule literally and cost each sentence the
+thing it was there to say. What the rule actually forbids is a status living on a *button* while the
+prose beside it describes a mechanism in the present indicative, because a skimmer reads the prose
+and never the button. A chip **inside** the card and **above** the sentence is read by exactly the
+person who skims, and the section lede keeps the status in a sentence as well. A chip beside the
+eyebrow of a whole section does the same job for **Planned**.
 
 ## The three registers
 
@@ -39,8 +49,8 @@ the badge next to it.
 
 | Register | What it covers | How it is written | Test |
 |---|---|---|---|
-| **Shipped** | Behaviour in the published npm package today. | Present indicative, no hedging, no qualifier. "The runner reads the tests already in your repository." | Could someone run `npx canaryone` this afternoon and see it? If not, it is not shipped. |
-| **Building** | On the build list, with work underway or committed. | "We're building X, so that…" The subject is us, and the verb makes clear the thing does not exist yet. | Is it in `Strategy/concept.md` § What we are building next? If it is not on a list anywhere, it is intended rather than building. |
+| **Shipped** | The benchmarking tool in the published npm package, the free daily market capture, and the paid nightly sweep. Nothing else. | Present indicative, no hedging, no qualifier. "The runner reads the tests already in your repository." | Could someone run `npx canaryone` this afternoon and see it, or is it a number the measurement already produced? If neither, it is not shipped. |
+| **Building** | On the build list, with work underway or committed. Today: the three surfaces, Ask, Build and Control. | "We're building X, so that…" The subject is us, and the verb makes clear the thing does not exist yet. | Is it in `Strategy/positioning.md` § The register? If it is not on a list anywhere, it is intended rather than building. |
 | **Intended** | The direction, with no commitment to a date or a shape. | "We plan to…" or a section visibly headed as direction. Never describe the mechanism. | Would we be embarrassed if a reader held us to this in six months? Then it is intended, and say so. |
 
 **The rule that does the most work: describing a mechanism implies it exists.** "We're building canary
@@ -57,12 +67,15 @@ in it. If it does not, the honest label is "we're building this."
 **Numbers are exempt from the vision allowance entirely. The site may promise a product. It may not
 promise a measurement.**
 
-Every figure on the site clears the gate in `outreach/README.md` in the `fantastic-dollop` repository,
-plus two clauses that a page needs and a post does not, because a post scrolls away and a page is read
-by strangers indefinitely:
+Every figure on the site clears the gate in `outreach/COPY-RULES.md` in the `fantastic-dollop`
+repository, plus two clauses that a page needs and a post does not, because a post scrolls away and a
+page is read by strangers indefinitely:
 
-1. The number traces to a named run in `timeseries/`, which is the live evidence base. **Nothing in
-   `outreach/results/` may carry a public claim** — that directory was archived on 2026-08-04.
+1. The number traces to a named run in `timeseries/`, which is the live evidence base. Both of its
+   layers can carry a public claim, with one distinction: the free daily capture reads disclosed
+   metadata and can establish nothing about quality, so a claim about quality comes from the paid
+   sweep. **Nothing under `archive/` may carry a public claim,** which includes the run records set
+   aside on 2026-08-04.
 2. Nothing in the copy is contradicted by that run's "what this run does not support" section.
 3. **The run date is visible in the copy next to the figure,** not only in a tooltip or a caption.
 4. **The run is one click away,** at a URL a reader can open.
@@ -95,9 +108,9 @@ single place those names are resolved, which is also the single place to neutral
 call is ever reversed.
 
 **`/evals` letters them — Route A, Route B, Route C.** Its comparison is one local tool run on one
-repository, its archive file in `outreach/results/` is set aside, and the route with the lowest
+repository, its archive file is now under `archive/outreach-results/` and set aside, and the route with the lowest
 completion count has a slowest step close to the runner's own six-minute session timeout. That
-last detail is decisive: `outreach/results/README.md` names publishing a false failure about a
+last detail is decisive: `archive/outreach-results/README.md` names publishing a false failure about a
 named host as the worst unforced error available to us, and a timeout artefact presented as a
 route's quality is exactly that. The full report is one click away and names all ten.
 
@@ -124,25 +137,36 @@ Azure, Vertex global and Vertex Europe; and the five Kimi K3 routes of run two, 
 through a gateway, Moonshot direct, Baseten, Fireworks and Nebius. Nothing else. Anyone not on that
 list is "planned support" at best.
 
-## The privacy paragraph, which is frozen
+## The privacy paragraph, which is no longer frozen and now depends on the layer
 
-This wording took two attempts to get right and one of the wrong versions is already blocked at the
-tooling level, in `BLOCKED_CLAIMS` in `tools/x_post.py`. The site carries the same fence.
+**This section changed on 2026-08-17 and it is the single most likely place on this site to publish
+something false.** It used to say that nothing sits in your request path, full stop, as a standing
+product principle. The packaged stack gives that up: a governed layer doing routing, budgets, policy
+and audit is in the request path by definition, because that is what governing traffic means.
 
-**Never write, in any variation:** that no data leaves your machine, that nothing is sent anywhere, or
-that the tool is fully offline or fully local. The code contradicts all three. The judge sends each
-session transcript to a gateway by default, and the scan summariser sends your test files there to be
-classified.
+**So the claim is attributed to the layer it belongs to. There is no site-wide version of it.**
 
-**The safe formulation is that CanaryOne runs on your machine, against your own tests, and that
-nothing sits in your request path.** Both halves are true and must stay true. Where a page describes
-something on the roadmap that would touch production traffic, say explicitly that it does not
-intercept it — as the DEPLOY section does with "CanaryOne writes the config; your own stack keeps
-serving the traffic."
+| Layer | What is true, and may be written |
+|---|---|
+| The benchmarking tool | It runs on your machine, against your own tests, and stays out of your request path. Both halves are true and must stay true. |
+| The governed layer, meaning Ask, Build and Control | It is in the request path by design. Never imply otherwise to borrow the tool's reassurance. |
 
-**"Nothing sits in your request path" is a standing product principle,** decided rather than
-inherited. If the roadmap ever gives it up, that is a change to `Strategy/concept.md` first and to
-this document second, and only then to the site.
+**Never let a sentence about the tool sit where a reader will take it as a sentence about the
+platform.** That is the specific error, it is easy to commit while writing a hero paragraph, and
+since the `BLOCKED_CLAIMS` list was removed from `tools/x_post.py` on 2026-08-17 nothing in the
+tooling will catch it. The rule lives in `outreach/COPY-RULES.md` in fantastic-dollop and in this
+paragraph, and is enforced by whoever is writing.
+
+**What did not change.** Never write, in any variation, that no data leaves your machine, that
+nothing is sent anywhere, or that the tool is fully offline or fully local. The code contradicts all
+three: the judge sends each session transcript to a gateway by default, and the scan summariser
+sends your test files there to be classified. That was true of the tool before the platform existed
+and has nothing to do with this revision.
+
+**Where a page describes something that would touch production traffic, say what it does and does
+not do rather than reaching for a blanket reassurance.** The archived DEPLOY section did this well
+with "CanaryOne writes the config; your own stack keeps serving the traffic", and that shape of
+sentence still works: name the boundary rather than denying the category.
 
 ## Prose
 
@@ -175,7 +199,7 @@ Inherited from the house writing rules, with one exemption this site earns.
 | Repositories, paths, URLs, handles | Lowercase as they actually are: `canaryone-web`, `canaryone.ai`, `../canaryone` |
 
 npm forbids uppercase in package names, so the split is permanent rather than a transitional state.
-The company and the tool currently share the name, which `Strategy/concept.md` still lists as an open
+The company and the tool currently share the name, which `Strategy/PLAN.md` still lists as an open
 decision; until it closes, both are **CanaryOne** in prose.
 
 ## The check before a page ships
@@ -187,7 +211,8 @@ Confirm each of these in one line. If any fails, fix it rather than noting it.
 - Every figure traces to a run in `timeseries/`, carries its date in the visible copy, and links to
   something a reader can open.
 - Every logo row is labelled, and every host named under "hosts we measure" appears in a run.
-- The privacy wording matches the frozen formulation, and no blocked phrasing has crept back.
+- Every request-path sentence names which layer it is about, and no sentence about the benchmarking
+  tool sits where a reader would apply it to the platform.
 - No host is named in judgement, and no third party's judgement of a host is quoted.
 - The page builds, and `pnpm build` is clean.
 

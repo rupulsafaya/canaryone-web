@@ -63,8 +63,10 @@ the bottom of `/evals`. Rather than keep a section of the site that nothing poin
 Everything is in git history, and `outreach/results/` in fantastic-dollop remains the source of
 truth, so restoring it is a revert rather than a rewrite.
 
-**What the deletion does not change: every number on this site still has to trace to
-`outreach/numbers.md` in fantastic-dollop, or to an artefact published here.** The comparison
+**What the deletion does not change: every number on this site still has to trace to a named run
+in `timeseries/` in fantastic-dollop, or to an artefact published here.** The gate is
+`outreach/COPY-RULES.md` in that repository; `outreach/numbers.md`, which this line used to name,
+has never existed. The comparison
 table on `/evals` is run `e860167a`, whose full report ships at
 [`public/demo-report/`](./public/demo-report/) so a reader can check it. That report is now the
 only published evidence on the site, which makes it more load-bearing than it was, not less.
@@ -215,7 +217,9 @@ changes to it and discloses both in a "Published copy" row inside the report its
    screenshots; a published HTML report is the same exposure with a permanent URL.
 2. **"Nothing leaves your machine." is replaced** with the outbound truth: the judge
    sends each session transcript to a gateway, and `--disable-judge` turns it off.
-   `outreach/numbers.md` blocks that claim family outright.
+   That claim family is barred by `outreach/COPY-RULES.md` in fantastic-dollop. It was also
+   enforced in code until 2026-08-17, when the `BLOCKED_CLAIMS` list was removed from
+   `x_post.py`; the claim is still false and still barred, but nothing checks it automatically.
 
 No measured value is touched, and the script fails rather than publishing if a path shape
 slips past its pattern. Run it on any report freshly copied into `public/demo-report/`;

@@ -190,8 +190,9 @@ illegible.
 
 **Low-alpha yellow gets its own tokens, and their names carry the constraint.**
 `--accent-line-on-dark` at 25% is a yellow hairline and `--accent-bg-on-dark` at 4% is a yellow
-wash; today only the CanaryOne layer in the home page's hero diagram uses them, having inherited
-them from the highlighted lane of the archived page's deploy diagram. The
+wash. **Neither has a live use site as of 2026-08-17**, since the hero diagram was reshaped and
+the last one went with it; both are kept under the archive exception in `global.css`, because
+`archive/home-flywheel.astro` still uses them and restoring that page should be a `git mv`. The
 `-on-dark` suffix is a rule rather than a description — on cream the hairline fails the
 contrast above and the wash is invisible — so a use site that reaches for one of these on cream
 is reaching for the wrong token. Alpha belongs in `:root` here for the same reason the

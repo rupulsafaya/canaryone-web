@@ -32,11 +32,14 @@
   --accent: #FDE047;
   --accent-soft: #fef08a;
   --accent-deep: #EAB308;
-  /* Canary 300 at low alpha, for a yellow hairline or a yellow wash on a dark surface — the
-     CanaryOne layer in the home page's hero diagram is the only user today, having inherited them
-     from the highlighted lane of the deploy diagram on the page it replaced. Both names
-     carry -on-dark because that is a hard constraint rather than a description: on cream a
-     yellow hairline fails the contrast rule below, and a 4% yellow wash on cream is
+  /* Canary 300 at low alpha, for a yellow hairline or a yellow wash on a dark surface.
+     NO LIVE USE SITE as of 2026-08-17: commit 45a140c reshaped the home page's hero diagram
+     and removed the last one. They are kept under the archive exception documented at
+     --dur-cycle below, because archive/home-flywheel.astro still uses both and restoring it
+     should be a `git mv` rather than a reconstruction. This comment previously said the hero
+     diagram was their only user, which stopped being true the moment that commit landed.
+     Both names carry -on-dark because that is a hard constraint rather than a description: on
+     cream a yellow hairline fails the contrast rule below, and a 4% yellow wash on cream is
      invisible. Alpha lives here rather than at the use site for the same reason the semantic
      fills below do. */
   --accent-line-on-dark: rgba(253, 224, 71, 0.25);
@@ -286,10 +289,13 @@
      the page that replaced it makes no cyclical claim, so the budget was given up rather than
      spent elsewhere. See DESIGN.md § Motion before adding one back.
 
-     This token, --figure-max, --shadow-pill-lit and --glow-accent are kept with no live use site
-     so that archive/home-flywheel.astro can be restored with a `git mv` rather than
-     reconstructed. They are the documented exception to deleting an unused token, and a fifth
-     one needs its own reason rather than this one. */
+     This token, --figure-max, --shadow-pill-lit, --glow-accent, --accent-line-on-dark and
+     --accent-bg-on-dark are kept with no live use site so that archive/home-flywheel.astro can
+     be restored with a `git mv` rather than reconstructed. They are the documented exception to
+     deleting an unused token. The last two joined the list on 2026-08-17, when commit 45a140c
+     removed their final live use from index.astro; they qualify for the same reason as the
+     other four rather than for a new one, which is that the archived page uses them. A SEVENTH
+     token needs its own reason rather than this one. */
   --dur-cycle: 4s;
 
   /* ---------- Where yellow is allowed ----------
