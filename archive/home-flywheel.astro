@@ -1,0 +1,705 @@
+---
+/**
+ * THE FLYWHEEL HOME PAGE — ARCHIVED 2026-08-14, NOT BUILT AND NOT SERVED.
+ *
+ * This held `/` from the repositioning onto the four pillars until the company-level home page
+ * replaced it. It is kept as a file rather than left to git history because it is the only place
+ * three things exist: the flywheel, which was the site's one looping animation; the four-pillar
+ * narrative of Test, Tune, Deploy and Improve; and the partner and deploy-target logo rows.
+ *
+ * IT IS OUT OF `src/pages/`, WHICH IS WHAT KEEPS IT OFF THE SITE. Astro routes that directory and
+ * nothing else, so a file here is not built, not served and not in the sitemap. Do not move an
+ * archived page back into `src/pages/` to read it — copy it out, or read it here.
+ *
+ * ITS IMPORTS ARE WRITTEN FOR `src/pages/` AND DO NOT RESOLVE FROM THIS DIRECTORY. That is
+ * deliberate rather than rot: restoring it is `git mv archive/home-flywheel.astro
+ * src/pages/index.astro`, at which point every path is correct again. Nothing here is
+ * type-checked or built while it sits in this directory, so it will drift from `global.css` as
+ * the token scale moves. Treat it as a record of a design, not as a page that still works.
+ *
+ * WHAT IT DEPENDS ON that the live site no longer uses:
+ *   --dur-cycle, --figure-max, --shadow-pill-lit and --glow-accent in global.css, which are the
+ *   flywheel's own tokens and have no other user. They are left in `:root` so this file can come
+ *   back without them having to be reconstructed.
+ *   public/logos/ — the partner lockups and the six hero model marks. `pnpm build:logos` still
+ *   generates them; only the /evals coverage grid, which reads public/logos/providers/, is live.
+ *
+ * WHY IT WAS REPLACED, in one line: it sells the four pillars of a command-line tool, and the
+ * company is now a packaged AI stack with that tool as its measurement layer.
+ */
+import Layout, { GITHUB_URL } from '../layouts/Layout.astro';
+
+const TITLE = 'CanaryOne — open-weight model platform';
+const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your own data. End-to-end — from eval to fine-tune to production.';
+---
+
+<Layout title={TITLE} description={DESCRIPTION} path="/">
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="container">
+      <div class="hero__inner">
+        <div class="hero__copy">
+          <p class="kicker">OPEN-WEIGHT MODEL PLATFORM</p>
+          <h1>
+            Transition your AI workloads<br />
+            to <span class="em">open-weight models.</span>
+          </h1>
+          <div class="hero-models" aria-label="Supported open-weight models">
+            <img src="/logos/marks/meta.svg"     alt="Llama"    title="Meta / Llama" width="32" height="32" />
+            <img src="/logos/marks/mistral.svg"  alt="Mistral"  title="Mistral"      width="32" height="32" />
+            <img src="/logos/marks/qwen.svg"     alt="Qwen"     title="Qwen"         width="32" height="32" />
+            <img src="/logos/marks/deepseek.svg" alt="DeepSeek" title="DeepSeek"     width="32" height="32" />
+            <img src="/logos/marks/gemma.svg"    alt="Gemma"    title="Gemma"        width="32" height="32" />
+            <img src="/logos/marks/chatglm.svg"  alt="ChatGLM"  title="ChatGLM"      width="32" height="32" />
+          </div>
+
+          <p class="sub">
+            Benchmark your workload on the routes you could ship on. Fine-tune the best model.
+            Deploy it alongside your current stack. Catch drift before your users do.
+          </p>
+          <div class="ctas">
+            <a class="btn primary" href={GITHUB_URL} target="_blank" rel="noopener">
+              View on GitHub →
+            </a>
+            {/* /evals#install: this page has no element with that id, so the anchor did
+                nothing. The install terminal lives on /evals. */}
+            <a class="btn ghost" href="/evals#install">
+              <span>$&nbsp;npx&nbsp;canaryone</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="hero__visual">
+          <div class="flywheel" aria-hidden="true">
+            <svg class="flywheel__svg" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <path id="fw-circuit" d="
+                  M 240  60
+                  L 360  60  Q 420  60, 420 120
+                  L 420 150
+                  L 420 180  Q 420 240, 360 240
+                  L 240 240
+                  L 120 240  Q  60 240,  60 180
+                  L  60 150
+                  L  60 120  Q  60  60, 120  60
+                  Z
+                "/>
+              </defs>
+              <use href="#fw-circuit" class="circuit-bg" />
+              <use href="#fw-circuit" class="circuit-travel" />
+            </svg>
+            <!-- TEST — top center: 50% / 20% -->
+            <div class="fw-node fw-node--top">
+              <div class="fw-pill">Test</div>
+            </div>
+            <!-- TUNE — right: 87.5% / 50% -->
+            <div class="fw-node fw-node--right">
+              <div class="fw-pill">Tune</div>
+            </div>
+            <!-- DEPLOY — bottom center: 50% / 80% -->
+            <div class="fw-node fw-node--bottom">
+              <div class="fw-pill">Deploy</div>
+            </div>
+            <!-- IMPROVE — left: 12.5% / 50% -->
+            <div class="fw-node fw-node--left">
+              <div class="fw-pill">Improve</div>
+            </div>
+            <!-- The dark-surface lockup, held well back. The wheel's own motion is the
+                 subject here, so the brand sits at its hub as a watermark rather than as a
+                 fifth thing competing with the four pills. Width is capped in CSS so it
+                 cannot grow into the IMPROVE and TUNE pills either side of it. -->
+            <img
+              class="fw-center"
+              src="/c1-logo-dark.svg"
+              alt=""
+              width="153"
+              height="28"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PILLARS ─── -->
+  <section class="section pillar-cards-section">
+    <div class="container">
+      <div class="pillar-cards">
+
+        <div class="pillar-card">
+          <p class="kicker">TEST</p>
+          <h2 class="pillar-card__h">Find the route that wins<br />on your workload.</h2>
+          <p class="pillar-card__body">Point CanaryOne at your repository. It runs the tests you already have against routers and direct providers, and reports cost per completed task rather than a leaderboard someone else built.</p>
+          <a class="btn primary" href="/evals">Benchmark your workload →</a>
+        </div>
+
+        <div class="pillar-card">
+          <p class="kicker">TUNE</p>
+          <h2 class="pillar-card__h">Turn your traces into<br />a model you own.</h2>
+          <p class="pillar-card__body">We're building a pipeline that captures your production data, prepares the training set, and runs the fine-tuning. You get a model built on your use case — no ML expertise required.</p>
+          <a class="btn primary" href="#waitlist">Get early access →</a>
+        </div>
+
+        <div class="pillar-card">
+          <p class="kicker">DEPLOY</p>
+          <h2 class="pillar-card__h">Ship the fine-tuned model<br />without rewriting your app.</h2>
+          <p class="pillar-card__body">We're building canary deploys, so you can split traffic between your current model and the fine-tuned one, measure quality and cost in production, and roll back in one command.</p>
+          <a class="btn primary" href="#waitlist">Get early access →</a>
+        </div>
+
+        <div class="pillar-card">
+          <p class="kicker">IMPROVE</p>
+          <h2 class="pillar-card__h">Models drift.<br />Catch it before your users do.</h2>
+          <p class="pillar-card__body">We're building drift detection, so that a change in quality, behaviour, data distribution or cost starts a new cycle on its own.</p>
+          <a class="btn primary" href="#waitlist">Get early access →</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 02 · TUNE ─── -->
+  <section class="section" id="tune">
+    <div class="container">
+      <p class="kicker">TUNE</p>
+      <h2>Turn your traces into<br /><span class="em">a model you own.</span></h2>
+      <p class="lede">
+        We're building a pipeline that captures your production data, prepares
+        the training set, and manages the fine-tuning end to end. You get a model
+        built on your use case — no ML expertise required.
+      </p>
+
+      <div class="tune-steps">
+        <div class="tune-step">
+          <h3 class="tune-step__title">Capture Traces</h3>
+          <p class="tune-step__desc">
+            We plan to read the traces your stack already writes, so nothing new
+            has to sit in front of your production traffic.
+          </p>
+        </div>
+        <div class="tune-step">
+          <h3 class="tune-step__title">Prepare Dataset</h3>
+          <p class="tune-step__desc">
+            We plan to filter by outcome, deduplicate and curate a clean training
+            set, so there is no data wrangling on your end.
+          </p>
+        </div>
+        <div class="tune-step">
+          <h3 class="tune-step__title">Fine-tune</h3>
+          <p class="tune-step__desc">
+            We plan to run and manage the training job, and to hand back a model
+            tuned to your workload.
+          </p>
+        </div>
+      </div>
+
+      <div class="tune-partners">
+        <div class="partner-row">
+          <span class="partner-label">Planned support · trace sources</span>
+          <div class="partner-logos">
+            <img src="/logos/langchain.svg"  alt="LangChain"  title="LangChain"  />
+            <img src="/logos/llamaindex.svg" alt="LlamaIndex" title="LlamaIndex" />
+          </div>
+        </div>
+        <div class="partner-row">
+          <span class="partner-label">Planned support · fine-tuning</span>
+          <div class="partner-logos">
+            <img src="/logos/together.svg"  alt="Together AI"  title="Together AI"  />
+            <img src="/logos/fireworks.svg" alt="Fireworks AI" title="Fireworks AI" />
+            <img src="/logos/baseten.svg"   alt="Baseten"      title="Baseten"      />
+          </div>
+        </div>
+      </div>
+
+      <div class="waitlist-row">
+        <a class="btn primary" href="#waitlist">Get early access →</a>
+        <span class="waitlist-note">we're building the fine-tuning pipeline</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 03 · DEPLOY ─── -->
+  <section class="section" id="deploy">
+    <div class="container">
+      <p class="kicker">DEPLOY</p>
+      <h2>Ship the fine-tuned model<br /><span class="em">without rewriting your app.</span></h2>
+      <p class="lede">
+        We're building canary deploys, so you can split traffic between your
+        current model and the fine-tuned one, measure quality and cost in
+        production, and roll back in one command. CanaryOne writes the config;
+        your own stack keeps serving the traffic.
+      </p>
+
+      <div class="deploy-diagram">
+        <p class="app-label"><strong>your app</strong> → traffic split</p>
+        <div class="deploy-lanes">
+          <div class="deploy-lane">
+            <div class="deploy-lane__pct">90% · current model</div>
+            <div class="deploy-lane__label">gpt-4o-mini · OpenAI</div>
+          </div>
+          <div class="deploy-lane deploy-lane--yours">
+            <div class="deploy-lane__pct">10% · your model</div>
+            <div class="deploy-lane__label">glm-5.2 · fine-tuned</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="deploy-targets">
+        <div class="partner-row">
+          <span class="partner-label">Planned support · EU</span>
+          <div class="partner-logos">
+            <img src="/logos/nebius.svg"   alt="Nebius"   title="Nebius"   />
+            <img src="/logos/nscale.svg"   alt="nscale"   title="nscale"   />
+            <img src="/logos/scaleway.svg" alt="Scaleway" title="Scaleway" />
+          </div>
+        </div>
+        <div class="partner-row">
+          <span class="partner-label">Planned support · US</span>
+          <div class="partner-logos">
+            <img src="/logos/coreweave.svg" alt="CoreWeave"   title="CoreWeave"   />
+            <img src="/logos/vultr.svg"     alt="Vultr"       title="Vultr"       />
+            <img src="/logos/lambda.svg"    alt="Lambda Labs" title="Lambda Labs" />
+          </div>
+        </div>
+      </div>
+
+      <div class="waitlist-row">
+        <a class="btn primary" href="#waitlist">Get early access →</a>
+        <span class="waitlist-note">we're building canary deploys</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 04 · IMPROVE ─── -->
+  <section class="section" id="improve">
+    <div class="container">
+      <p class="kicker">IMPROVE</p>
+      <h2>Models drift.<br /><span class="em">Catch it before your users do.</span></h2>
+      <p class="lede">
+        We're building drift detection, so that a change in quality, behaviour,
+        data distribution or cost starts a new cycle on its own.
+      </p>
+
+      <div class="drift-signals">
+        <div class="drift-signal">
+          <h3 class="drift-signal__title">Quality drift</h3>
+          <p class="drift-signal__desc">Output scores fall below your threshold.</p>
+        </div>
+        <div class="drift-signal">
+          <h3 class="drift-signal__title">Behavioral drift</h3>
+          <p class="drift-signal__desc">A provider updates the model without saying so.</p>
+        </div>
+        <div class="drift-signal">
+          <h3 class="drift-signal__title">Data drift</h3>
+          <p class="drift-signal__desc">Your traffic moves away from what the fine-tune saw.</p>
+        </div>
+        <div class="drift-signal">
+          <h3 class="drift-signal__title">Cost drift</h3>
+          <p class="drift-signal__desc">Spend per correct answer starts rising.</p>
+        </div>
+      </div>
+
+      <div class="waitlist-row">
+        <a class="btn primary" href="#waitlist">Get early access →</a>
+        <span class="waitlist-note">we're building drift detection</span>
+      </div>
+    </div>
+  </section>
+
+</Layout>
+
+<style is:global>
+
+/* ─── Hero model logo strip ─── */
+.hero-models {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  flex-wrap: wrap;
+}
+/* --logo-icon sets both dimensions because these files are square glyphs, not wordmarks, so
+   they do not belong to the --logo-h wordmark scale. The `width`/`height` attributes in the
+   markup carry the same number as the intrinsic size, which is what reserves the row's space
+   before the SVGs load; keep the two in step.
+
+   The source is /logos/marks/, not /logos/models/. Both hold the same artwork, but the marks
+   are normalised by scripts/build-logos.mjs so that each one's longer side fills the same
+   share of its box. Straight from models/ the ink filled anywhere from 67% of the box (Meta's
+   wide infinity) to 100% (Gemma), so Gemma drew half again as large as Meta in a row that
+   sets one size for all six. models/ is left alone because sync-model-icons.mjs mirrors the
+   whole library there for the 16px icons on /prices, where the padding does no harm. */
+.hero-models img {
+  width: var(--logo-icon);
+  height: var(--logo-icon);
+  object-fit: contain;
+  opacity: 0.85;
+  transition: opacity var(--dur-base);
+  filter: var(--glow-icon-on-dark);
+}
+.hero-models img:hover {
+  opacity: 1;
+}
+
+/* ─── Hero: two-column layout ─── */
+.hero__inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-16);
+  align-items: center;
+}
+.hero__copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-7);
+}
+.hero__visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─── Flywheel ───
+   The site's one looping animation, which DESIGN.md § Motion allows by name. Everything
+   below is tokenised except the SVG's own geometry — the stroke widths, the dash array and
+   the dash offset — which is a documented exception in DESIGN.md: 1075 and 1097 are measured
+   off the `#fw-circuit` path in the markup above and mean nothing anywhere else, so naming
+   them in :root would be a token that can never be reused. If the path changes, remeasure
+   with `path.getTotalLength()` and update both numbers together.
+
+   There is no local prefers-reduced-motion block. global.css already caps every animation on
+   the page at one iteration of 0.01ms, which lands the dot at dashoffset 0 and every pill in
+   its unlit state — the same frame a local `animation: none` would show. */
+.flywheel {
+  position: relative;
+  width: 100%;
+  max-width: var(--figure-max);
+  aspect-ratio: 8 / 5;
+}
+.flywheel__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.circuit-bg {
+  fill: none;
+  stroke: var(--accent);
+  stroke-opacity: 0.18;
+  stroke-width: 1.5;
+}
+.circuit-travel {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 22 1075;
+  stroke-dashoffset: 0;
+  animation: fw-travel var(--dur-cycle) linear infinite;
+  filter: var(--glow-accent);
+}
+@keyframes fw-travel {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -1097; }
+}
+
+.fw-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+.fw-node--top    { left: 50%;    top: 20%; }
+.fw-node--right  { left: 87.5%; top: 50%; }
+.fw-node--bottom { left: 50%;   top: 80%; }
+.fw-node--left   { left: 12.5%; top: 50%; }
+
+.fw-pill {
+  background: var(--accent);
+  color: var(--dark);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  padding: var(--space-2) var(--space-5);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  transition: background var(--dur-base), box-shadow var(--dur-base);
+}
+
+/* Staggered glow: each pill lights up as the dot passes it. The delays are quarters of the
+   cycle expressed as calc(), so retiming --dur-cycle keeps all four pills in step with the
+   dot instead of silently desynchronising them. */
+.fw-node--top    .fw-pill { animation: fw-glow var(--dur-cycle) 0s ease-in-out infinite; }
+.fw-node--right  .fw-pill { animation: fw-glow var(--dur-cycle) calc(var(--dur-cycle) / 4) ease-in-out infinite; }
+.fw-node--bottom .fw-pill { animation: fw-glow var(--dur-cycle) calc(var(--dur-cycle) / 2) ease-in-out infinite; }
+.fw-node--left   .fw-pill { animation: fw-glow var(--dur-cycle) calc(var(--dur-cycle) * 3 / 4) ease-in-out infinite; }
+@keyframes fw-glow {
+  0%, 14%, 100% { background: var(--accent); box-shadow: none; }
+  7% { background: var(--accent-soft); box-shadow: var(--shadow-pill-lit); }
+}
+
+/* The lockup at the hub of the wheel. 30% is the setting where the wordmark is still
+   readable as CanaryOne but does not compete with the four pills or the travelling dot; the
+   text it replaced sat at 0.14, which was too faint for artwork carrying a coloured mark.
+   Width is a percentage of the flywheel rather than a fixed size, so it scales with the
+   diagram and clears the side pills at every viewport the wheel is shown at. */
+.fw-center {
+  position: absolute;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  width: 30%;
+  height: auto;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* ─── Pillar cards grid ─── */
+.pillar-cards-section {
+  background: var(--bg-tint);
+}
+.pillar-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-6);
+}
+.pillar-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  padding: var(--space-10) var(--space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-slow), box-shadow var(--dur-slow), border-color var(--dur-slow);
+}
+.pillar-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow-md);
+}
+.pillar-card .kicker {
+  margin: 0;
+  color: var(--accent-deep);
+}
+/* The headline's own <br /> does the breaking; --measure-display is the backstop that keeps
+   it breaking somewhere sane if the copy changes and the <br /> is dropped. */
+.pillar-card__h {
+  font-size: var(--display-md);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  margin: 0;
+  max-width: var(--measure-display);
+}
+.pillar-card__body {
+  font-size: var(--text-md);
+  line-height: var(--leading-normal);
+  color: var(--muted);
+  margin: 0;
+  flex: 1;
+}
+.pillar-card .btn {
+  align-self: flex-start;
+  margin-top: auto;
+}
+@media (max-width: 900px) {
+  .pillar-cards { grid-template-columns: 1fr; }
+}
+
+/* ─── TUNE step cards ─── */
+.tune-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+}
+.tune-step {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+}
+.tune-step__num {
+  font-family: var(--font-mono);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+.tune-step__title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text);
+  margin: 0;
+}
+.tune-step__desc {
+  font-size: var(--text-base);
+  color: var(--muted);
+  line-height: var(--leading-normal);
+  margin: 0;
+}
+
+.tune-partners {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin-bottom: var(--space-12);
+}
+.partner-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+.partner-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-label);
+  color: var(--muted);
+  white-space: nowrap;
+  min-width: var(--measure-label);
+}
+.partner-logos {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+  flex-wrap: wrap;
+}
+/* One rule for every third-party logo on this page, and the only one. The partner rows and
+   the deploy rows used to carry different heights and a width clamp between them; every
+   file in public/logos/ is now cropped to its own ink, so a single height is all it takes.
+   No opacity: these were at 0.75, which reads as deliberate restraint on a solid black
+   wordmark and as a printing fault on a two-colour mark. */
+.partner-logos img {
+  height: var(--logo-h);
+  width: auto;
+}
+
+/* ─── DEPLOY diagram ─── */
+.deploy-diagram {
+  background: var(--dark);
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--line-dark);
+  box-shadow: var(--shadow-dark);
+  padding: var(--space-10) var(--space-8);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--text-on-dark);
+  max-width: var(--panel-max);
+  margin-bottom: var(--space-12);
+}
+.deploy-diagram .app-label {
+  color: var(--muted-on-dark);
+  margin-bottom: var(--space-6);
+}
+.deploy-diagram .app-label strong {
+  color: var(--text-on-dark);
+  font-weight: var(--weight-semibold);
+}
+.deploy-lanes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+.deploy-lane {
+  border: 1px solid var(--line-dark);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+}
+.deploy-lane__pct {
+  font-size: var(--text-2xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--muted-on-dark);
+  margin-bottom: var(--space-2);
+}
+.deploy-lane__label {
+  color: var(--text-on-dark);
+  font-weight: var(--weight-semibold);
+}
+/* Yellow as a hairline and a wash, which is only legible on a dark surface — hence the
+   token names, and hence this treatment staying inside .deploy-diagram. */
+.deploy-lane--yours {
+  border-color: var(--accent-line-on-dark);
+  background: var(--accent-bg-on-dark);
+}
+.deploy-lane--yours .deploy-lane__pct { color: var(--accent-deep); }
+.deploy-lane--yours .deploy-lane__label { color: var(--accent); }
+
+/* ─── IMPROVE drift signals ─── */
+.drift-signals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+}
+.drift-signal {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-sm);
+}
+.drift-signal__title {
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--text);
+  margin: 0 0 var(--space-2);
+}
+.drift-signal__desc {
+  font-size: var(--text-base);
+  color: var(--muted);
+  margin: 0;
+  line-height: var(--leading-normal);
+}
+
+/* ─── Deploy target logo strips ─── */
+.deploy-targets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin-bottom: var(--space-12);
+}
+/* The deploy rows' labels are short region names rather than category names, so they do not
+   need the reserved label column the partner rows use. `auto` rather than a smaller measure:
+   the labels are nowrap and already wider than any floor worth setting, so a literal here
+   would only have looked like it was doing something. */
+.deploy-targets .partner-label {
+  min-width: auto;
+}
+
+/* ─── Waitlist CTA row ─── */
+.waitlist-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.waitlist-note {
+  font-size: var(--text-base);
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 900px) {
+  .hero__inner { grid-template-columns: 1fr; }
+  .hero__visual { display: none; }
+  .tune-steps { grid-template-columns: 1fr; }
+  .drift-signals { grid-template-columns: 1fr; }
+  .deploy-lanes { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .partner-row { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+}
+
+</style>

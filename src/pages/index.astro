@@ -1,677 +1,1054 @@
 ---
+/**
+ * / — the home page.
+ *
+ * TOOK THE ROUTE ON 2026-08-14, replacing the flywheel page that had held it since the site was
+ * repositioned onto the four pillars. That page is not in git history alone: it is kept whole at
+ * archive/home-flywheel.astro, which is outside src/pages/ and therefore not built and not
+ * served. Restoring it is one `git mv` back — see its own header.
+ *
+ * WHY IT CHANGED. The old page sold the four pillars of a command-line tool — Test, Tune, Deploy,
+ * Improve. The company those pillars belong to is described in Strategy/AIBOX-VISION.md in
+ * fantastic-dollop, and it is a packaged AI stack rather than an eval tool. This page is the
+ * first expression of that, and it is built to be understood by a visitor who never learns the
+ * words routing, RAG, eval or open-weight. The benchmarking tool is still here; it is the
+ * measurement layer underneath the model shelf rather than the whole company.
+ *
+ * THE REGISTER IS THE HARD PART, AND IT IS WHY THIS PAGE READS THE WAY IT DOES. Almost nothing in
+ * the vision ships. What ships is the benchmarking CLI, the free daily market capture and the
+ * paid nightly sweep. COPY.md § The three registers says the status belongs in the sentence
+ * rather than in a nearby button, and that describing a mechanism implies it exists — so every
+ * unbuilt surface on this page is written as "we're building" or "we plan to", and no unbuilt
+ * mechanism is specified. The measurement sections are the only ones in the present indicative,
+ * which is also what makes them do the credibility work the page needs them to do.
+ *
+ * EVERY FIGURE IS GENERATED, none typed. The market half comes from src/data/market.json and the
+ * workload half from src/data/example-run.json, which are the same two payloads /market and
+ * /evals read. The three routes in § intelligence are selected by the same rule /evals uses —
+ * cheapest, cheapest-that-finished-most, most-finished — so the two pages cannot tell different
+ * stories about one run.
+ *
+ * TWO DEPARTURES FROM THE BRIEF IT WAS BUILT FROM, both deliberate:
+ *
+ *   THE STACK SECTION DOES NOT REDRAW THE HERO DIAGRAM. The brief asked for a surfaces-to-layer
+ *   composite in the hero and a layered architecture diagram in § the stack. Drawn twice that is
+ *   one claim in two formats, which the brief's own visual-density rule rules out. The hero
+ *   carries the diagram; § the stack carries the thing the diagram cannot show, which is the
+ *   five separate purchases it replaces.
+ *
+ *   THE CTAs ARE "GET EARLY ACCESS" AND THE INSTALL LINE, not "Get started" and "Talk to us".
+ *   There is no sign-up and no contact address on this site; the waitlist dialog in Layout.astro
+ *   is the only mechanism either button could reach, and two buttons opening one dialog is worse
+ *   than one. The ghost button sends a technical reader to the thing that does exist.
+ *
+ * NO CLIENT JAVASCRIPT AND NO ANIMATION. This page removed the site's one looping animation with
+ * the flywheel, so the site now has none — DESIGN.md § Motion was rewritten to say so rather than
+ * left describing a page that is no longer served.
+ *
+ * STILL OPEN, and deliberately not decided here: Strategy/positioning.md and Strategy/concept.md
+ * in fantastic-dollop describe the CLI-only company. COPY.md says positioning.md is the source
+ * every sentence on this site inherits from, so it is now behind the front door rather than
+ * ahead of it, and that is a gap to close rather than a state to keep.
+ */
+import { Image } from 'astro:assets';
 import Layout, { GITHUB_URL } from '../layouts/Layout.astro';
+import market from '../data/market.json';
+import run from '../data/example-run.json';
+import viewLeaderboard from '../assets/report-view-leaderboard.png';
+import { spell, mult, day, stamp, usd, usd4, priceWords } from '../lib/prose';
 
-const TITLE = 'CanaryOne — open-weight model platform';
-const DESCRIPTION = 'Test, tune, deploy, and improve open-weight models on your own data. End-to-end — from eval to fine-tune to production.';
+const TITLE = 'CanaryOne — your company’s AI stack, without the assembly';
+const DESCRIPTION =
+  'We’re building one place for a company to use AI — chat, company knowledge, coding and API access — over a model layer we measure every night. Start with the models you already use.';
+
+const DEMO_REPORT = run.reportUrl;
+
+/* ---------------------------------------------------------------------------
+   § INTELLIGENCE, module A — the market.
+
+   The widest listed price spread on the board, found rather than hand-picked, so a re-generated
+   payload cannot leave the headline pointing at a model whose spread has since closed. Only
+   open-weight models with more than one host can have a spread at all.
+   --------------------------------------------------------------------------- */
+const spreadModel = market.models
+  .filter((x: any) => x.open_weights && x.price_in && x.price_in.n > 1)
+  .sort((a: any, b: any) => b.price_in.ratio - a.price_in.ratio)[0];
+
+const spLo = spreadModel.price_in.min;
+const spHi = spreadModel.price_in.max;
+/* Logarithmic, for the reason /market's ladder is: the range is past tenfold, and on a linear
+   axis every host but the dearest piles into the leftmost tenth of the track. */
+const lg = (v: number) => Math.log10(v);
+const spX = (v: number) => ((lg(v) - lg(spLo)) / (lg(spHi) - lg(spLo))) * 100;
+/* One dot per host that reports a price. The scatter is one short of hosts_listed, so the count
+   in the copy is the scatter's own length rather than the listing count — a strip with nineteen
+   dots under the word twenty is the kind of small wrongness a technical reader stops on. */
+const spDots = [...spreadModel.scatter]
+  .map((s: any) => s.price)
+  .filter((p: number) => p != null)
+  .sort((a: number, b: number) => a - b);
+
+/* ---------------------------------------------------------------------------
+   § INTELLIGENCE, module B — the workload.
+
+   The same three routes /evals shows, selected by the same rule so the two pages cannot disagree
+   about one run: the cheapest route, the cheapest route that finished most of the work, and the
+   route that finished all of it. Lettered by cost, cheapest first — COPY.md § Naming a host: a
+   single local run cannot carry company names, and the report one click away names all ten.
+   --------------------------------------------------------------------------- */
+type Lane = (typeof run.lanes)[number];
+const byCost = (a: Lane, b: Lane) => a.costPerPass - b.costPerPass;
+const RELIABLE = 0.75;
+
+const cheapest = [...run.lanes].sort(byCost)[0];
+const reliable = [...run.lanes]
+  .filter((l) => l.passed / l.attempted >= RELIABLE && l.slug !== cheapest.slug)
+  .sort(byCost)[0];
+const complete = [...run.lanes]
+  .filter((l) => l.slug !== cheapest.slug && l.slug !== reliable.slug)
+  .sort((a, b) => b.passed - a.passed || a.costPerPass - b.costPerPass)[0];
+
+const shown = [cheapest, reliable, complete].sort(byCost);
+const LETTERS = ['Route A', 'Route B', 'Route C'];
+
+const runId = run.runId.split('-')[0];
+const runBar = [`run ${runId}`, `${run.totals.lanes} routes`, `${run.totals.tasks} tasks`,
+  `${run.totals.repeats} repeats each`].join(' · ');
 ---
 
 <Layout title={TITLE} description={DESCRIPTION} path="/">
-  <!-- ─── HERO ─── -->
+  <!-- ─── HERO ───
+       The company in one sentence, then the shape of the system underneath it. The diagram sits
+       below the copy at full width rather than beside it: three surfaces across the top need the
+       room, and half a hero column turns them into three cramped columns. -->
   <section class="hero">
     <div class="container">
-      <div class="hero__inner">
-        <div class="hero__copy">
-          <p class="kicker">OPEN-WEIGHT MODEL PLATFORM</p>
-          <h1>
-            Transition your AI workloads<br />
-            to <span class="em">open-weight models.</span>
-          </h1>
-          <div class="hero-models" aria-label="Supported open-weight models">
-            <img src="/logos/marks/meta.svg"     alt="Llama"    title="Meta / Llama" width="32" height="32" />
-            <img src="/logos/marks/mistral.svg"  alt="Mistral"  title="Mistral"      width="32" height="32" />
-            <img src="/logos/marks/qwen.svg"     alt="Qwen"     title="Qwen"         width="32" height="32" />
-            <img src="/logos/marks/deepseek.svg" alt="DeepSeek" title="DeepSeek"     width="32" height="32" />
-            <img src="/logos/marks/gemma.svg"    alt="Gemma"    title="Gemma"        width="32" height="32" />
-            <img src="/logos/marks/chatglm.svg"  alt="ChatGLM"  title="ChatGLM"      width="32" height="32" />
-          </div>
+      <div class="hp-hero-copy">
+        <p class="kicker">CANARYONE</p>
+        <h1>Your company&rsquo;s AI stack, <span class="em">without the assembly.</span></h1>
+        <p class="sub">
+          Most companies end up buying a chat tool, a knowledge tool, a coding assistant, a
+          gateway and an admin console from five different vendors, then gluing them together.
+          We&rsquo;re building the box those five should have come in, over a model layer we
+          measure every night.
+        </p>
+        <div class="ctas">
+          <a class="btn primary" href="#waitlist">Get early access &rarr;</a>
+          <a class="btn ghost" href="/evals#install">
+            <span>$&nbsp;npx&nbsp;canaryone</span>
+          </a>
+        </div>
+        <p class="hp-trust">
+          The benchmarking tool ships today &middot; the platform is in build &middot; every
+          figure on this site links to the run behind it
+        </p>
+      </div>
 
-          <p class="sub">
-            Benchmark your workload on the routes you could ship on. Fine-tune the best model.
-            Deploy it alongside your current stack. Catch drift before your users do.
-          </p>
-          <div class="ctas">
-            <a class="btn primary" href={GITHUB_URL} target="_blank" rel="noopener">
-              View on GitHub →
-            </a>
-            {/* /evals#install: this page has no element with that id, so the anchor did
-                nothing. The install terminal lives on /evals. */}
-            <a class="btn ghost" href="/evals#install">
-              <span>$&nbsp;npx&nbsp;canaryone</span>
-            </a>
+      <!-- Many needs, one system, many models. Pure HTML and CSS: the only geometry is a
+           handful of hairlines, and a grid reflows on a phone where a viewBox needs a swipe. -->
+      <div class="hp-stack" aria-label="How CanaryOne is put together">
+        <p class="micro hp-stack-cap">What people need</p>
+        <div class="hp-surfaces">
+          <div class="hp-surface">
+            <p class="hp-surface-name">Ask</p>
+            <p class="hp-surface-sub">chat and company knowledge</p>
+          </div>
+          <div class="hp-surface">
+            <p class="hp-surface-name">Build</p>
+            <p class="hp-surface-sub">coding and API access</p>
+          </div>
+          <div class="hp-surface">
+            <p class="hp-surface-name">Control</p>
+            <p class="hp-surface-sub">people, budgets, policy, audit</p>
           </div>
         </div>
 
-        <div class="hero__visual">
-          <div class="flywheel" aria-hidden="true">
-            <svg class="flywheel__svg" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <path id="fw-circuit" d="
-                  M 240  60
-                  L 360  60  Q 420  60, 420 120
-                  L 420 150
-                  L 420 180  Q 420 240, 360 240
-                  L 240 240
-                  L 120 240  Q  60 240,  60 180
-                  L  60 150
-                  L  60 120  Q  60  60, 120  60
-                  Z
-                "/>
-              </defs>
-              <use href="#fw-circuit" class="circuit-bg" />
-              <use href="#fw-circuit" class="circuit-travel" />
+        <div class="hp-bus" aria-hidden="true">
+          <span class="hp-bus-tick hp-bus-tick--l"></span>
+          <span class="hp-bus-tick hp-bus-tick--c"></span>
+          <span class="hp-bus-tick hp-bus-tick--r"></span>
+          <span class="hp-bus-line"></span>
+          <span class="hp-bus-drop"></span>
+        </div>
+
+        <div class="hp-core">
+          <p class="micro hp-core-label">One CanaryOne layer</p>
+          <ul class="hp-core-items">
+            <li>shared identity</li>
+            <li>company knowledge</li>
+            <li>policy and budgets</li>
+            <li>the model layer, measured</li>
+          </ul>
+        </div>
+
+        <div class="hp-drop" aria-hidden="true"></div>
+
+        <div class="hp-dests">
+          <p class="micro hp-stack-cap">Whatever runs underneath</p>
+          <div class="hp-dest-row">
+            <span class="hp-dest">Open-weight models</span>
+            <span class="hp-dest">The closed models you already pay for</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 2. ONE SYSTEM ───
+       Three surfaces, one sentence each. Every card opens on "we're building", because COPY.md
+       puts the register in the sentence rather than in a badge beside it, and because a visitor
+       who reads one card and leaves should still have been told the truth. -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-copy">
+        <p class="kicker">ONE SYSTEM</p>
+        <h2>AI people can use.<br />Infrastructure the company can control.</h2>
+        <p class="lede">
+          We&rsquo;re building three surfaces on one shared layer, so a company does not have to
+          buy them separately and then make them agree with each other.
+        </p>
+      </div>
+
+      <div class="hp-cards hp-cards-3">
+        <div class="panel hp-card">
+          <p class="micro">ASK</p>
+          <h3>Chat and company knowledge</h3>
+          <p>
+            We&rsquo;re building a chat surface that can answer from the company&rsquo;s own
+            documents, so an employee gets a useful answer without moving the document somewhere
+            else to get one.
+          </p>
+        </div>
+        <div class="panel hp-card">
+          <p class="micro">BUILD</p>
+          <h3>Coding and API access</h3>
+          <p>
+            We&rsquo;re building model access for engineers through an OpenAI-compatible API and
+            the coding tools they already work in.
+          </p>
+        </div>
+        <div class="panel hp-card">
+          <p class="micro">CONTROL</p>
+          <h3>One place for the organisation</h3>
+          <p>
+            We&rsquo;re building one admin surface for people, model access, budgets and the
+            audit record, rather than one console per tool.
+          </p>
+        </div>
+      </div>
+
+      <div class="evidence">
+        <p class="evidence-note">
+          None of the three ships yet. What ships today is the benchmarking tool underneath them,
+          which is open source and runs on your own machine.
+          {' '}<a href="/evals">See what it does &rarr;</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 3. THE STACK ───
+       The packaging thesis, as the purchase it replaces rather than as a second architecture
+       diagram. Six rows, named by category and never by vendor: naming five competitors here
+       would turn a packaging argument into a comparison we have not run. -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-copy">
+        <p class="kicker">THE STACK</p>
+        <h2>One system instead of five vendors.</h2>
+        <p class="lede">
+          The same identity, the same company knowledge, the same controls and the same model
+          layer sit under every surface. That is the whole reason to buy it as one thing.
+        </p>
+        <p class="claim">
+          Assembled the usual way, this is five purchases, five admin consoles and five bills
+          that know nothing about each other.
+        </p>
+      </div>
+
+      <div class="panel hp-swap">
+        <div class="hp-swap-side">
+          <p class="micro">Assembled yourself</p>
+          <ul class="hp-swap-parts">
+            <li>a chat tool</li>
+            <li>a knowledge search tool</li>
+            <li>a coding assistant</li>
+            <li>a gateway or router</li>
+            <li>an admin, budget and audit console</li>
+          </ul>
+          <p class="hp-swap-foot">plus the glue between them, which nobody sells</p>
+        </div>
+
+        <div class="hp-swap-arrow" aria-hidden="true">&rarr;</div>
+
+        <div class="hp-swap-side">
+          <p class="micro">One CanaryOne layer</p>
+          <div class="hp-swap-one">
+            <ul class="hp-swap-parts hp-swap-parts--in">
+              <li>chat, knowledge, coding and API</li>
+              <li>one identity across all of them</li>
+              <li>one company knowledge index</li>
+              <li>one set of budgets, policy and audit</li>
+              <li>one measured model layer</li>
+            </ul>
+          </div>
+          <p class="hp-swap-foot">one contract, one console, one bill</p>
+        </div>
+      </div>
+
+      <div class="evidence">
+        <p class="evidence-note">
+          We&rsquo;re building this as one product. The column on the right describes what we
+          intend to ship, not what a customer can buy today.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 4. INTELLIGENCE ───
+       The bridge between the company we are describing and the machinery that already exists.
+       Two modules, and they are different kinds of evidence on purpose: the market half is free
+       metadata read several times a day, the workload half is a measured run. The evidence
+       footer keeps them apart, because a sentence that mixes them is the specific error
+       CLAUDE.md in fantastic-dollop warns about.
+
+       Tinted, so the one section on the page carrying figures reads as its own block. -->
+  <section class="section hp-intel">
+    <div class="container">
+      <div class="sec-copy">
+        <p class="kicker">CANARYONE INTELLIGENCE</p>
+        <h2>The model layer is measured, not guessed.</h2>
+        <p class="lede">
+          A shelf of models picked off a public leaderboard is a guess about somebody else&rsquo;s
+          workload. We read what the market advertises every day, and we measure what real work
+          costs on each route.
+        </p>
+        <p class="claim">
+          Market intelligence tells us where to look. Workload benchmarking tells you what
+          actually wins.
+        </p>
+      </div>
+
+      <div class="hp-cards hp-cards-2">
+        <!-- Module A — the market. One model's listed price across every host serving it. -->
+        <div class="panel hp-mod">
+          <p class="micro">MARKET INTELLIGENCE</p>
+          <h3>
+            The same model, {mult(spreadModel.price_in.ratio)} the price
+            depending on where it runs.
+          </h3>
+          <p class="hp-mod-sub">
+            {spreadModel.short}, as advertised by the companies serving it. Each dot is one host.
+          </p>
+
+          <div class="hp-strip">
+            <svg viewBox="0 0 400 44" role="img"
+                 aria-label={`Listed input price for ${spreadModel.short} across ${spDots.length} hosts, from ${usd(spLo)} to ${usd(spHi)} per million tokens.`}>
+              {/* The median, drawn rather than only stated. A strip whose dots cluster at one
+                  end and whose copy names a midpoint the picture does not mark reads as two
+                  facts about different things — /market's ladder draws its mean for the same
+                  reason. */}
+              <line class="hp-strip-mid" x1={4 + (spX(spreadModel.price_in.median) / 100) * 392}
+                    y1="6" x2={4 + (spX(spreadModel.price_in.median) / 100) * 392} y2="38" />
+              <line class="hp-strip-axis" x1="4" y1="22" x2="396" y2="22" />
+              {spDots.map((p: number) => (
+                <circle class="hp-strip-dot" cx={4 + (spX(p) / 100) * 392} cy="22" r="4" />
+              ))}
+              {/* The dearest host is the finding, so it is the one mark that takes the ink. */}
+              <circle class="hp-strip-dot hp-strip-dot--hi" cx="396" cy="22" r="6" />
             </svg>
-            <!-- TEST — top center: 50% / 20% -->
-            <div class="fw-node fw-node--top">
-              <div class="fw-pill">Test</div>
+            <div class="hp-strip-ends">
+              <span>{usd(spLo)} per million</span>
+              <span>{usd(spHi)} per million</span>
             </div>
-            <!-- TUNE — right: 87.5% / 50% -->
-            <div class="fw-node fw-node--right">
-              <div class="fw-pill">Tune</div>
-            </div>
-            <!-- DEPLOY — bottom center: 50% / 80% -->
-            <div class="fw-node fw-node--bottom">
-              <div class="fw-pill">Deploy</div>
-            </div>
-            <!-- IMPROVE — left: 12.5% / 50% -->
-            <div class="fw-node fw-node--left">
-              <div class="fw-pill">Improve</div>
-            </div>
-            <!-- The dark-surface lockup, held well back. The wheel's own motion is the
-                 subject here, so the brand sits at its hub as a watermark rather than as a
-                 fifth thing competing with the four pills. Width is capped in CSS so it
-                 cannot grow into the IMPROVE and TUNE pills either side of it. -->
-            <img
-              class="fw-center"
-              src="/c1-logo-dark.svg"
-              alt=""
-              width="153"
-              height="28"
-            />
           </div>
-        </div>
-      </div>
-    </div>
-  </section>
+          <p class="hp-mod-note">
+            The rule marks the middle of the market. Half of the companies serving this model
+            charge under {priceWords(spreadModel.price_in.median)} per million tokens.
+          </p>
 
-  <!-- ─── PILLARS ─── -->
-  <section class="section pillar-cards-section">
-    <div class="container">
-      <div class="pillar-cards">
-
-        <div class="pillar-card">
-          <p class="kicker">TEST</p>
-          <h2 class="pillar-card__h">Find the route that wins<br />on your workload.</h2>
-          <p class="pillar-card__body">Point CanaryOne at your repository. It runs the tests you already have against routers and direct providers, and reports cost per completed task rather than a leaderboard someone else built.</p>
-          <a class="btn primary" href="/evals">Benchmark your workload →</a>
-        </div>
-
-        <div class="pillar-card">
-          <p class="kicker">TUNE</p>
-          <h2 class="pillar-card__h">Turn your traces into<br />a model you own.</h2>
-          <p class="pillar-card__body">We're building a pipeline that captures your production data, prepares the training set, and runs the fine-tuning. You get a model built on your use case — no ML expertise required.</p>
-          <a class="btn primary" href="#waitlist">Get early access →</a>
-        </div>
-
-        <div class="pillar-card">
-          <p class="kicker">DEPLOY</p>
-          <h2 class="pillar-card__h">Ship the fine-tuned model<br />without rewriting your app.</h2>
-          <p class="pillar-card__body">We're building canary deploys, so you can split traffic between your current model and the fine-tuned one, measure quality and cost in production, and roll back in one command.</p>
-          <a class="btn primary" href="#waitlist">Get early access →</a>
-        </div>
-
-        <div class="pillar-card">
-          <p class="kicker">IMPROVE</p>
-          <h2 class="pillar-card__h">Models drift.<br />Catch it before your users do.</h2>
-          <p class="pillar-card__body">We're building drift detection, so that a change in quality, behaviour, data distribution or cost starts a new cycle on its own.</p>
-          <a class="btn primary" href="#waitlist">Get early access →</a>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── 02 · TUNE ─── -->
-  <section class="section" id="tune">
-    <div class="container">
-      <p class="kicker">TUNE</p>
-      <h2>Turn your traces into<br /><span class="em">a model you own.</span></h2>
-      <p class="lede">
-        We're building a pipeline that captures your production data, prepares
-        the training set, and manages the fine-tuning end to end. You get a model
-        built on your use case — no ML expertise required.
-      </p>
-
-      <div class="tune-steps">
-        <div class="tune-step">
-          <h3 class="tune-step__title">Capture Traces</h3>
-          <p class="tune-step__desc">
-            We plan to read the traces your stack already writes, so nothing new
-            has to sit in front of your production traffic.
+          <p class="hp-mod-src">
+            {market.totals.models_published} models &middot;
+            {' '}{market.totals.host_endpoints} live endpoints &middot; read several times a day
+            <br />Captured {stamp(market.captured_at)}
+          </p>
+          <p class="hp-mod-link">
+            <a href="/market">Explore CanaryOne Market &rarr;</a>
           </p>
         </div>
-        <div class="tune-step">
-          <h3 class="tune-step__title">Prepare Dataset</h3>
-          <p class="tune-step__desc">
-            We plan to filter by outcome, deduplicate and curate a clean training
-            set, so there is no data wrangling on your end.
+
+        <!-- Module B — the workload. Three routes out of one run, lettered. -->
+        <div class="panel hp-mod">
+          <p class="micro">WORKLOAD BENCHMARKING</p>
+          <h3>The cheapest tokens can cost the most per finished task.</h3>
+          <p class="hp-mod-sub">
+            One workload, one model, {spell(run.totals.lanes)} routes. Three of them below, on
+            identical tasks.
           </p>
-        </div>
-        <div class="tune-step">
-          <h3 class="tune-step__title">Fine-tune</h3>
-          <p class="tune-step__desc">
-            We plan to run and manage the training job, and to hand back a model
-            tuned to your workload.
+
+          <div class="hp-routes-wrap">
+          <table class="tm-data-table hp-routes">
+            <caption class="sr-only">
+              Three of the {run.totals.lanes} routes measured in run {runId}, showing attempts
+              finished and cost per finished task.
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col">Route</th>
+                <th scope="col">Finished</th>
+                <th scope="col">Cost per finished task</th>
+              </tr>
+            </thead>
+            <tbody>
+              {shown.map((l, i) => (
+                <tr>
+                  <th scope="row">{LETTERS[i]}</th>
+                  <td>{l.passed} of {l.attempted}</td>
+                  <td>{usd4(l.costPerPass)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          </div>
+
+          <p class="hp-mod-src">
+            {runBar}
+            <br />Measured {day(run.startedAt)} &middot;
+            {' '}<a href={DEMO_REPORT} target="_blank" rel="noopener">open the full report &rarr;</a>
+          </p>
+          <p class="hp-mod-link">
+            <a href="/evals">Benchmark your workload &rarr;</a>
           </p>
         </div>
       </div>
 
-      <div class="tune-partners">
-        <div class="partner-row">
-          <span class="partner-label">Planned support · trace sources</span>
-          <div class="partner-logos">
-            <img src="/logos/langchain.svg"  alt="LangChain"  title="LangChain"  />
-            <img src="/logos/llamaindex.svg" alt="LlamaIndex" title="LlamaIndex" />
-          </div>
-        </div>
-        <div class="partner-row">
-          <span class="partner-label">Planned support · fine-tuning</span>
-          <div class="partner-logos">
-            <img src="/logos/together.svg"  alt="Together AI"  title="Together AI"  />
-            <img src="/logos/fireworks.svg" alt="Fireworks AI" title="Fireworks AI" />
-            <img src="/logos/baseten.svg"   alt="Baseten"      title="Baseten"      />
-          </div>
-        </div>
-      </div>
-
-      <div class="waitlist-row">
-        <a class="btn primary" href="#waitlist">Get early access →</a>
-        <span class="waitlist-note">we're building the fine-tuning pipeline</span>
+      <div class="evidence">
+        <p class="evidence-note">
+          <strong>The two halves are different kinds of evidence.</strong> The market figure is
+          what a host advertises, read from listed metadata, and it says nothing about how well
+          that host serves the model. The route figures are one measured run of our own tool
+          against one repository.
+        </p>
+        <p class="evidence-caveat">
+          The routes are lettered because one local run demonstrates what the measurement
+          produces and establishes nothing about a company. The size of a gap like this repeats
+          from run to run; which route sits at either end does not.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- ─── 03 · DEPLOY ─── -->
-  <section class="section" id="deploy">
+  <!-- ─── 5. MIGRATION ───
+       Control first, migrate second. The closed-model providers are named as a fact about what a
+       customer already pays for, never in judgement — COPY.md § Naming a host bans the second,
+       not the first. -->
+  <section class="section">
     <div class="container">
-      <p class="kicker">DEPLOY</p>
-      <h2>Ship the fine-tuned model<br /><span class="em">without rewriting your app.</span></h2>
-      <p class="lede">
-        We're building canary deploys, so you can split traffic between your
-        current model and the fine-tuned one, measure quality and cost in
-        production, and roll back in one command. CanaryOne writes the config;
-        your own stack keeps serving the traffic.
-      </p>
+      <div class="sec-copy">
+        <p class="kicker">MOVE AT YOUR PACE</p>
+        <h2>You do not have to switch everything at once.</h2>
+        <p class="lede">
+          We plan to sit over the models a company already pays for first, so that control and
+          measurement arrive before any migration does. Moving a workload to an open model is
+          then one decision per workload, taken when the numbers say so.
+        </p>
+      </div>
 
-      <div class="deploy-diagram">
-        <p class="app-label"><strong>your app</strong> → traffic split</p>
-        <div class="deploy-lanes">
-          <div class="deploy-lane">
-            <div class="deploy-lane__pct">90% · current model</div>
-            <div class="deploy-lane__label">gpt-4o-mini · OpenAI</div>
+      <div class="hp-flow">
+        <div class="hp-stage">
+          <p class="micro">Today</p>
+          <div class="panel hp-stage-card">
+            <ul>
+              <li>the OpenAI and Anthropic keys you already pay for</li>
+              <li>your existing integrations</li>
+              <li>no model change</li>
+            </ul>
           </div>
-          <div class="deploy-lane deploy-lane--yours">
-            <div class="deploy-lane__pct">10% · your model</div>
-            <div class="deploy-lane__label">glm-5.2 · fine-tuned</div>
+        </div>
+
+        <p class="hp-flow-arrow" aria-hidden="true">&rarr;</p>
+
+        <div class="hp-stage">
+          <p class="micro">Through CanaryOne</p>
+          <div class="panel hp-stage-card hp-stage-card--mid">
+            <ul>
+              <li>one identity across every surface</li>
+              <li>budgets and policy in one place</li>
+              <li>an audit record</li>
+              <li>measurement on your own workload</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="hp-flow-arrow" aria-hidden="true">&rarr;</p>
+
+        <div class="hp-stage">
+          <p class="micro">When one wins</p>
+          <div class="panel hp-stage-card">
+            <ul>
+              <li>an open-weight model</li>
+              <li>a regional or specialised host</li>
+              <li>one workload at a time</li>
+            </ul>
           </div>
         </div>
       </div>
 
-      <div class="deploy-targets">
-        <div class="partner-row">
-          <span class="partner-label">Planned support · EU</span>
-          <div class="partner-logos">
-            <img src="/logos/nebius.svg"   alt="Nebius"   title="Nebius"   />
-            <img src="/logos/nscale.svg"   alt="nscale"   title="nscale"   />
-            <img src="/logos/scaleway.svg" alt="Scaleway" title="Scaleway" />
-          </div>
-        </div>
-        <div class="partner-row">
-          <span class="partner-label">Planned support · US</span>
-          <div class="partner-logos">
-            <img src="/logos/coreweave.svg" alt="CoreWeave"   title="CoreWeave"   />
-            <img src="/logos/vultr.svg"     alt="Vultr"       title="Vultr"       />
-            <img src="/logos/lambda.svg"    alt="Lambda Labs" title="Lambda Labs" />
-          </div>
-        </div>
-      </div>
-
-      <div class="waitlist-row">
-        <a class="btn primary" href="#waitlist">Get early access →</a>
-        <span class="waitlist-note">we're building canary deploys</span>
+      <div class="evidence">
+        <p class="evidence-note">
+          We plan to work this way. None of the three stages ships today, and nothing here is a
+          judgement about the providers a company is already using.
+        </p>
       </div>
     </div>
   </section>
 
-  <!-- ─── 04 · IMPROVE ─── -->
-  <section class="section" id="improve">
+  <!-- ─── 6. YOUR COMPANY ───
+       Four things a company asks before it lets a tool near its documents. Every one of them is
+       intended, so every one of them says so. No connector names and no compliance acronyms: a
+       named connector is a "planned support" claim we would then have to keep true, and a
+       certification we do not hold is not a design decision, it is a false statement. -->
+  <section class="section">
     <div class="container">
-      <p class="kicker">IMPROVE</p>
-      <h2>Models drift.<br /><span class="em">Catch it before your users do.</span></h2>
-      <p class="lede">
-        We're building drift detection, so that a change in quality, behaviour,
-        data distribution or cost starts a new cycle on its own.
-      </p>
+      <div class="sec-copy">
+        <p class="kicker">YOUR COMPANY</p>
+        <h2>Your knowledge. Your region. Your rules.</h2>
+        <p class="lede">
+          These are the four questions that decide whether a company can use a tool like this at
+          all. We plan to answer them in the product rather than in a policy document.
+        </p>
+      </div>
 
-      <div class="drift-signals">
-        <div class="drift-signal">
-          <h3 class="drift-signal__title">Quality drift</h3>
-          <p class="drift-signal__desc">Output scores fall below your threshold.</p>
+      <div class="hp-cards hp-cards-4">
+        <div class="panel hp-card">
+          <h3>Connect your knowledge</h3>
+          <p>
+            We plan to read from the systems where company information already lives, so people
+            can ask about their own documents.
+          </p>
         </div>
-        <div class="drift-signal">
-          <h3 class="drift-signal__title">Behavioral drift</h3>
-          <p class="drift-signal__desc">A provider updates the model without saying so.</p>
+        <div class="panel hp-card">
+          <h3>Carry your permissions</h3>
+          <p>
+            We plan to carry the identity and the file permissions a company already has through
+            the AI layer, rather than creating a second set of them.
+          </p>
         </div>
-        <div class="drift-signal">
-          <h3 class="drift-signal__title">Data drift</h3>
-          <p class="drift-signal__desc">Your traffic moves away from what the fine-tune saw.</p>
+        <div class="panel hp-card">
+          <h3>Set policy and spend</h3>
+          <p>
+            We plan to put model access, spending limits and organisational usage in one place.
+          </p>
         </div>
-        <div class="drift-signal">
-          <h3 class="drift-signal__title">Cost drift</h3>
-          <p class="drift-signal__desc">Spend per correct answer starts rising.</p>
+        <div class="panel hp-card">
+          <h3>Choose where it runs</h3>
+          <p>
+            We plan to let a company choose the region and the model infrastructure its own
+            workloads run on.
+          </p>
         </div>
       </div>
 
-      <div class="waitlist-row">
-        <a class="btn primary" href="#waitlist">Get early access →</a>
-        <span class="waitlist-note">we're building drift detection</span>
+      <div class="evidence">
+        <p class="evidence-note">
+          Every line in this section is intended rather than built, and we hold no compliance
+          certification. What is true today is narrower and worth saying plainly: the
+          benchmarking tool runs on your machine, against your own tests, and nothing sits in
+          your request path. <a href="/evals">See exactly what leaves &rarr;</a>
+        </p>
       </div>
     </div>
   </section>
 
+  <!-- ─── 7. EVIDENCE ───
+       The compact enterprise-depth section, and the one place on the page where shipped and
+       planned sit in the same object — so they get a status column rather than a hedge. The
+       object is the artefact the measurement layer already produces. -->
+  <section class="section">
+    <div class="container">
+      <div class="sec-copy">
+        <p class="kicker">WHEN YOU NEED EVIDENCE</p>
+        <h2>Simple for users. Inspectable when it matters.</h2>
+        <p class="lede">
+          A buyer who has to justify the choice should be able to see the working. The
+          measurement layer is the part of this that already exists, and every run it does writes
+          an artefact you can open.
+        </p>
+      </div>
+
+      <div class="panel hp-shot">
+        <div class="hp-shot-bar">
+          <p class="micro hp-shot-id">{runBar}</p>
+          <a href={DEMO_REPORT} target="_blank" rel="noopener">Open example report &rarr;</a>
+        </div>
+        <div class="hp-shot-body">
+          <Image src={viewLeaderboard} widths={[760, 1100, viewLeaderboard.width]}
+                 sizes="min(1100px, 88vw)" loading="lazy" class="hp-shot-img"
+                 alt="A CanaryOne report: one row per route, with attempts finished, cost per finished task, judge score and latency percentiles beside each other." />
+        </div>
+      </div>
+
+      <dl class="hp-proof">
+        <div>
+          <dt>Workload benchmarking</dt>
+          <dd class="hp-proof-when">Today</dd>
+          <dd>Run it on your own repository and get one row per route.</dd>
+        </div>
+        <div>
+          <dt>Route and model evidence</dt>
+          <dd class="hp-proof-when">Today</dd>
+          <dd>Every figure on this site carries its date and links to the run behind it.</dd>
+        </div>
+        <div>
+          <dt>Audit and policy record</dt>
+          <dd class="hp-proof-when">Planned</dd>
+          <dd>Part of the admin surface we&rsquo;re building.</dd>
+        </div>
+        <div>
+          <dt>Regional and host choice</dt>
+          <dd class="hp-proof-when">Planned</dd>
+          <dd>Part of the model layer we&rsquo;re building.</dd>
+        </div>
+      </dl>
+
+      <div class="evidence">
+        <p class="evidence-src">
+          The report is one static file, written to
+          {' '}<code>&lt;repo&gt;/.c1/runs/&lt;runId&gt;/report/index.html</code>, so it opens
+          from disk and travels in a pull request.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── 8. CLOSE ───
+       One button and one link. .btn.ghost is a dark-surface component, so the second action here
+       is a text link rather than a second button. -->
+  <section class="section hp-close">
+    <div class="container">
+      <div class="hp-close-inner">
+        <h2>Stop assembling your AI stack.</h2>
+        <p class="lede">
+          Start with the models and the tools you already use. We&rsquo;re building one place for
+          a company to use them, control them, and improve what runs underneath.
+        </p>
+        <div class="hp-close-ctas">
+          <a class="btn primary" href="#waitlist">Get early access &rarr;</a>
+          <a class="hp-close-alt" href="/evals">Benchmark your workload &rarr;</a>
+        </div>
+        <p class="hp-close-links">
+          <a href="/market">Market</a> &middot;
+          <a href="/evals">Benchmarking</a> &middot;
+          <a href={GITHUB_URL} target="_blank" rel="noopener">GitHub</a>
+        </p>
+      </div>
+    </div>
+  </section>
 </Layout>
 
-<style is:global>
+<style>
+  /* Only what global.css has no equivalent for. The section shell, the buttons, the table, the
+     panel surface, the evidence footer and every label on this page are existing primitives.
+     Scoped rather than global: the live index.astro publishes its hero layout with
+     `is:global`, and two home pages fighting over `.hero__inner` is a promotion-day bug. */
 
-/* ─── Hero model logo strip ─── */
-.hero-models {
-  display: flex;
-  align-items: center;
-  gap: var(--space-5);
-  flex-wrap: wrap;
-}
-/* --logo-icon sets both dimensions because these files are square glyphs, not wordmarks, so
-   they do not belong to the --logo-h wordmark scale. The `width`/`height` attributes in the
-   markup carry the same number as the intrinsic size, which is what reserves the row's space
-   before the SVGs load; keep the two in step.
+  /* ---- hero ---- */
+  /* The copy holds the lede measure; the diagram below it runs the full container. */
+  .hp-hero-copy { max-width: var(--measure-lede); }
+  .hp-trust {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    line-height: var(--leading-relaxed);
+    color: var(--muted-on-dark);
+    margin: var(--space-6) 0 0;
+  }
 
-   The source is /logos/marks/, not /logos/models/. Both hold the same artwork, but the marks
-   are normalised by scripts/build-logos.mjs so that each one's longer side fills the same
-   share of its box. Straight from models/ the ink filled anywhere from 67% of the box (Meta's
-   wide infinity) to 100% (Gemma), so Gemma drew half again as large as Meta in a row that
-   sets one size for all six. models/ is left alone because sync-model-icons.mjs mirrors the
-   whole library there for the 16px icons on /prices, where the padding does no harm. */
-.hero-models img {
-  width: var(--logo-icon);
-  height: var(--logo-icon);
-  object-fit: contain;
-  opacity: 0.85;
-  transition: opacity var(--dur-base);
-  filter: var(--glow-icon-on-dark);
-}
-.hero-models img:hover {
-  opacity: 1;
-}
+  /* ---- the hero diagram ----
+     Many needs at the top, one layer in the middle, many models underneath. HTML and CSS, for
+     the reason /evals builds its fan-out the same way: the only geometry is a few hairlines,
+     and a grid reflows on a phone where an 800-unit viewBox needs a sideways swipe. */
+  .hp-stack { margin-top: clamp(48px, 7vw, 88px); }
+  .hp-stack-cap { text-align: center; }
+  .hp-surfaces {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+  /* One step darker than the band, which is what --dark-deep is for: a surface sitting on top
+     of a dark panel. */
+  .hp-surface {
+    background: var(--dark-deep);
+    border: 1px solid var(--line-dark);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-dark);
+    padding: var(--space-5) var(--space-5) var(--space-6);
+    text-align: center;
+  }
+  .hp-surface-name {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-on-dark);
+    margin: 0 0 var(--space-2);
+  }
+  .hp-surface-sub {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-normal);
+    color: var(--muted-on-dark);
+    margin: 0;
+  }
 
-/* ─── Hero: two-column layout ─── */
-.hero__inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-16);
-  align-items: center;
-}
-.hero__copy {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-7);
-}
-.hero__visual {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+  /* The three surfaces converging on one layer. Percentages rather than lengths, because each
+     tick has to land on the centre of its own column whatever the container is doing. */
+  .hp-bus { position: relative; height: var(--space-10); }
+  .hp-bus-tick,
+  .hp-bus-line,
+  .hp-bus-drop {
+    position: absolute;
+    background: var(--line-dark);
+  }
+  .hp-bus-tick { top: 0; height: 50%; width: 1px; }
+  .hp-bus-tick--l { left: 16.667%; }
+  .hp-bus-tick--c { left: 50%; }
+  .hp-bus-tick--r { left: 83.333%; }
+  .hp-bus-line { top: 50%; left: 16.667%; right: 16.667%; height: 1px; }
+  .hp-bus-drop { top: 50%; bottom: 0; left: 50%; width: 1px; }
 
-/* ─── Flywheel ───
-   The site's one looping animation, which DESIGN.md § Motion allows by name. Everything
-   below is tokenised except the SVG's own geometry — the stroke widths, the dash array and
-   the dash offset — which is a documented exception in DESIGN.md: 1075 and 1097 are measured
-   off the `#fw-circuit` path in the markup above and mean nothing anywhere else, so naming
-   them in :root would be a token that can never be reused. If the path changes, remeasure
-   with `path.getTotalLength()` and update both numbers together.
+  /* The one yellow in the diagram, and it is a hairline and a wash on a dark surface — which is
+     the only place either is legible, hence the -on-dark suffix on both tokens. */
+  .hp-core {
+    border: 1px solid var(--accent-line-on-dark);
+    background: var(--accent-bg-on-dark);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5) var(--space-6) var(--space-6);
+    text-align: center;
+  }
+  .hp-core-label { color: var(--accent-deep); }
+  .hp-core-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3) var(--space-6);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text-on-dark);
+  }
 
-   There is no local prefers-reduced-motion block. global.css already caps every animation on
-   the page at one iteration of 0.01ms, which lands the dot at dashoffset 0 and every pill in
-   its unlit state — the same frame a local `animation: none` would show. */
-.flywheel {
-  position: relative;
-  width: 100%;
-  max-width: var(--figure-max);
-  aspect-ratio: 8 / 5;
-}
-.flywheel__svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-.circuit-bg {
-  fill: none;
-  stroke: var(--accent);
-  stroke-opacity: 0.18;
-  stroke-width: 1.5;
-}
-.circuit-travel {
-  fill: none;
-  stroke: var(--accent);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-dasharray: 22 1075;
-  stroke-dashoffset: 0;
-  animation: fw-travel var(--dur-cycle) linear infinite;
-  filter: var(--glow-accent);
-}
-@keyframes fw-travel {
-  from { stroke-dashoffset: 0; }
-  to   { stroke-dashoffset: -1097; }
-}
+  .hp-drop {
+    width: 1px;
+    height: var(--space-10);
+    background: var(--line-dark);
+    margin: 0 auto;
+  }
 
-.fw-node {
-  position: absolute;
-  transform: translate(-50%, -50%);
-}
-.fw-node--top    { left: 50%;    top: 20%; }
-.fw-node--right  { left: 87.5%; top: 50%; }
-.fw-node--bottom { left: 50%;   top: 80%; }
-.fw-node--left   { left: 12.5%; top: 50%; }
+  .hp-dests { text-align: center; }
+  .hp-dest-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+  .hp-dest {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--muted-on-dark);
+    border: 1px solid var(--line-dark);
+    border-radius: var(--radius-full);
+    padding: var(--space-2) var(--space-4);
+  }
 
-.fw-pill {
-  background: var(--accent);
-  color: var(--dark);
-  font-family: var(--font-sans);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-bold);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  padding: var(--space-2) var(--space-5);
-  border-radius: var(--radius-full);
-  white-space: nowrap;
-  transition: background var(--dur-base), box-shadow var(--dur-base);
-}
+  /* ---- card grids ----
+     One card component at three widths. .panel carries the section's copy-to-object gap in its
+     own top margin, which is wrong inside a grid — the grid owns the gap. */
+  .hp-cards {
+    display: grid;
+    gap: var(--space-5);
+    margin-top: var(--space-12);
+  }
+  .hp-cards-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hp-cards-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .hp-cards-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hp-cards > .panel { margin-top: 0; }
+  .hp-card { padding: var(--space-8) var(--space-7); }
+  .hp-card h3 {
+    font-size: var(--text-xl);
+    font-weight: var(--weight-semibold);
+    line-height: var(--leading-snug);
+    letter-spacing: var(--tracking-tight);
+    margin: 0 0 var(--space-3);
+  }
+  .hp-card p:last-child {
+    font-size: var(--text-md);
+    line-height: var(--leading-relaxed);
+    color: var(--muted);
+    margin: 0;
+  }
 
-/* Staggered glow: each pill lights up as the dot passes it. The delays are quarters of the
-   cycle expressed as calc(), so retiming --dur-cycle keeps all four pills in step with the
-   dot instead of silently desynchronising them. */
-.fw-node--top    .fw-pill { animation: fw-glow var(--dur-cycle) 0s ease-in-out infinite; }
-.fw-node--right  .fw-pill { animation: fw-glow var(--dur-cycle) calc(var(--dur-cycle) / 4) ease-in-out infinite; }
-.fw-node--bottom .fw-pill { animation: fw-glow var(--dur-cycle) calc(var(--dur-cycle) / 2) ease-in-out infinite; }
-.fw-node--left   .fw-pill { animation: fw-glow var(--dur-cycle) calc(var(--dur-cycle) * 3 / 4) ease-in-out infinite; }
-@keyframes fw-glow {
-  0%, 14%, 100% { background: var(--accent); box-shadow: none; }
-  7% { background: var(--accent-soft); box-shadow: var(--shadow-pill-lit); }
-}
+  /* ---- 3. the stack: five parts against one ----
+     The picture is the count. Five separate bordered rows on the left, one bordered block on the
+     right, at the same width — nothing else has to be said for the contrast to land. */
+  .hp-swap {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--space-6);
+    padding: var(--space-8) var(--space-7);
+  }
+  .hp-swap-parts { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-2); }
+  .hp-swap-parts > li {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    padding: var(--space-3) var(--space-4);
+    background: var(--bg);
+  }
+  /* Inside the one block the parts stop being purchases, so they lose their own borders. */
+  .hp-swap-one {
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-lg);
+    background: var(--bg-tint);
+    padding: var(--space-4);
+  }
+  .hp-swap-parts--in > li { border: 0; background: transparent; padding: var(--space-2) 0; }
+  .hp-swap-foot {
+    font-size: var(--text-base);
+    color: var(--muted);
+    margin: var(--space-4) 0 0;
+  }
+  .hp-swap-arrow {
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    color: var(--muted);
+    margin: 0;
+  }
 
-/* The lockup at the hub of the wheel. 30% is the setting where the wordmark is still
-   readable as CanaryOne but does not compete with the four pills or the travelling dot; the
-   text it replaced sat at 0.14, which was too faint for artwork carrying a coloured mark.
-   Width is a percentage of the flywheel rather than a fixed size, so it scales with the
-   diagram and clears the side pills at every viewport the wheel is shown at. */
-.fw-center {
-  position: absolute;
-  left: 50%; top: 50%;
-  transform: translate(-50%, -50%);
-  width: 30%;
-  height: auto;
-  opacity: 0.3;
-  pointer-events: none;
-}
+  /* ---- 4. intelligence ----
+     The one tinted section on the page, because it is the one carrying figures. */
+  .hp-intel { background: var(--bg-tint); }
+  /* On the tint, a panel's own cream keeps the modules reading as objects on a surface. */
+  .hp-mod { padding: var(--space-8) var(--space-7); display: flex; flex-direction: column; }
+  .hp-mod h3 {
+    font-size: var(--display-md);
+    font-weight: var(--weight-medium);
+    line-height: var(--leading-tight);
+    letter-spacing: var(--tracking-display);
+    margin: 0 0 var(--space-4);
+  }
+  .hp-mod-sub {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--muted);
+    margin: 0 0 var(--space-6);
+  }
+  /* Pushed to the foot of the card so both modules' source lines sit on one line, whatever the
+     object above them is. */
+  .hp-mod-src {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    line-height: var(--leading-relaxed);
+    color: var(--muted);
+    margin: auto 0 0;
+    padding-top: var(--space-5);
+  }
+  .hp-mod-src a { color: var(--text); border-bottom: 1px solid var(--line-strong); }
+  .hp-mod-src a:hover { border-bottom-color: currentColor; }
+  /* The sentence that reads the strip, at note weight rather than lede weight: it explains a
+     mark, which is what .sec-note does for a chart in the section shell. */
+  .hp-mod-note {
+    font-size: var(--text-base);
+    line-height: var(--leading-relaxed);
+    color: var(--muted);
+    margin: var(--space-4) 0 0;
+  }
+  .hp-mod-link { margin: var(--space-4) 0 0; }
+  .hp-mod-link a {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .hp-mod-link a:hover { border-bottom-color: currentColor; }
 
-/* ─── Pillar cards grid ─── */
-.pillar-cards-section {
-  background: var(--bg-tint);
-}
-.pillar-cards {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-6);
-}
-.pillar-card {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-xl);
-  padding: var(--space-10) var(--space-8);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-  box-shadow: var(--shadow-sm);
-  transition: transform var(--dur-slow), box-shadow var(--dur-slow), border-color var(--dur-slow);
-}
-.pillar-card:hover {
-  transform: translateY(-2px);
-  border-color: var(--line-strong);
-  box-shadow: var(--shadow-md);
-}
-.pillar-card .kicker {
-  margin: 0;
-  color: var(--accent-deep);
-}
-/* The headline's own <br /> does the breaking; --measure-display is the backstop that keeps
-   it breaking somewhere sane if the copy changes and the <br /> is dropped. */
-.pillar-card__h {
-  font-size: var(--display-md);
-  font-weight: var(--weight-medium);
-  line-height: var(--leading-tight);
-  letter-spacing: var(--tracking-display);
-  margin: 0;
-  max-width: var(--measure-display);
-}
-.pillar-card__body {
-  font-size: var(--text-md);
-  line-height: var(--leading-normal);
-  color: var(--muted);
-  margin: 0;
-  flex: 1;
-}
-.pillar-card .btn {
-  align-self: flex-start;
-  margin-top: auto;
-}
-@media (max-width: 900px) {
-  .pillar-cards { grid-template-columns: 1fr; }
-}
+  /* The price strip. One dot per host on a log axis, because the range is past tenfold and a
+     linear axis piles every host but the dearest into the first tenth of the track. Two dot
+     sizes and no third, matching /market: the dearest host is the finding and takes the ink,
+     everything else recedes. */
+  .hp-strip { margin: 0 0 var(--space-2); }
+  .hp-strip svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .hp-strip-axis { stroke: var(--line-strong); stroke-width: 1; }
+  .hp-strip-mid { stroke: var(--line-strong); stroke-width: 1; }
+  .hp-strip-dot { fill: var(--muted); opacity: 0.5; }
+  .hp-strip-dot--hi { fill: var(--text); opacity: 1; }
+  .hp-strip-ends {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    font-variant-numeric: tabular-nums;
+    color: var(--muted);
+    margin-top: var(--space-2);
+  }
 
-/* ─── TUNE step cards ─── */
-.tune-steps {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-12);
-}
-.tune-step {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  box-shadow: var(--shadow-sm);
-}
-.tune-step__num {
-  font-family: var(--font-mono);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--accent-deep);
-}
-.tune-step__title {
-  font-size: var(--text-xl);
-  font-weight: var(--weight-semibold);
-  line-height: var(--leading-snug);
-  letter-spacing: var(--tracking-tight);
-  color: var(--text);
-  margin: 0;
-}
-.tune-step__desc {
-  font-size: var(--text-base);
-  color: var(--muted);
-  line-height: var(--leading-normal);
-  margin: 0;
-}
+  /* .tm-data-table, which right-aligns everything and left-aligns its row headers. Only the
+     first column's width needs saying. */
+  .hp-routes th[scope='row'] { width: 34%; }
+  /* The table holds its width and its own wrapper scrolls, which is what .tm-table-scroll does
+     for a wide table elsewhere. Every cell in the contract is nowrap, so without this the
+     table's min-content width becomes the grid column's floor and the whole page scrolls
+     sideways on a phone. */
+  .hp-routes-wrap { overflow-x: auto; }
 
-.tune-partners {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-5);
-  margin-bottom: var(--space-12);
-}
-.partner-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-6);
-  flex-wrap: wrap;
-}
-.partner-label {
-  font-family: var(--font-mono);
-  font-size: var(--text-xs);
-  text-transform: uppercase;
-  letter-spacing: var(--tracking-label);
-  color: var(--muted);
-  white-space: nowrap;
-  min-width: var(--measure-label);
-}
-.partner-logos {
-  display: flex;
-  align-items: center;
-  gap: var(--space-6);
-  flex-wrap: wrap;
-}
-/* One rule for every third-party logo on this page, and the only one. The partner rows and
-   the deploy rows used to carry different heights and a width clamp between them; every
-   file in public/logos/ is now cropped to its own ink, so a single height is all it takes.
-   No opacity: these were at 0.75, which reads as deliberate restraint on a solid black
-   wordmark and as a printing fault on a two-colour mark. */
-.partner-logos img {
-  height: var(--logo-h);
-  width: auto;
-}
+  /* ---- 5. migration ---- */
+  .hp-flow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: var(--space-4);
+    margin-top: var(--space-12);
+  }
+  .hp-stage { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+  .hp-stage-card {
+    margin-top: 0;
+    flex: 1;
+    padding: var(--space-5);
+  }
+  /* The middle stage is us, so it carries the weight the two ends do not. */
+  .hp-stage-card--mid { border-color: var(--line-strong); box-shadow: var(--shadow-sm); }
+  .hp-stage-card ul { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-3); }
+  .hp-stage-card li {
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    color: var(--muted);
+  }
+  .hp-stage-card--mid li { color: var(--text); }
+  /* Ornament inside a diagram, which is where COPY.md allows an arrow a row of its own. */
+  .hp-flow-arrow {
+    align-self: center;
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    color: var(--muted);
+    margin: var(--space-6) 0 0;
+  }
 
-/* ─── DEPLOY diagram ─── */
-.deploy-diagram {
-  background: var(--dark);
-  border-radius: var(--radius-xl);
-  border: 1px solid var(--line-dark);
-  box-shadow: var(--shadow-dark);
-  padding: var(--space-10) var(--space-8);
-  font-family: var(--font-mono);
-  font-size: var(--text-sm);
-  color: var(--text-on-dark);
-  max-width: var(--panel-max);
-  margin-bottom: var(--space-12);
-}
-.deploy-diagram .app-label {
-  color: var(--muted-on-dark);
-  margin-bottom: var(--space-6);
-}
-.deploy-diagram .app-label strong {
-  color: var(--text-on-dark);
-  font-weight: var(--weight-semibold);
-}
-.deploy-lanes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
-}
-.deploy-lane {
-  border: 1px solid var(--line-dark);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-}
-.deploy-lane__pct {
-  font-size: var(--text-2xs);
-  letter-spacing: var(--tracking-label);
-  text-transform: uppercase;
-  color: var(--muted-on-dark);
-  margin-bottom: var(--space-2);
-}
-.deploy-lane__label {
-  color: var(--text-on-dark);
-  font-weight: var(--weight-semibold);
-}
-/* Yellow as a hairline and a wash, which is only legible on a dark surface — hence the
-   token names, and hence this treatment staying inside .deploy-diagram. */
-.deploy-lane--yours {
-  border-color: var(--accent-line-on-dark);
-  background: var(--accent-bg-on-dark);
-}
-.deploy-lane--yours .deploy-lane__pct { color: var(--accent-deep); }
-.deploy-lane--yours .deploy-lane__label { color: var(--accent); }
+  /* ---- 7. evidence ---- */
+  .hp-shot { margin-top: var(--space-12); }
+  .hp-shot-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-5);
+    border-bottom: 1px solid var(--line);
+    background: var(--bg-tint);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+  .hp-shot-id { margin: 0; }
+  .hp-shot-bar a {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--text);
+    border-bottom: 1px solid var(--line-strong);
+    white-space: nowrap;
+  }
+  .hp-shot-bar a:hover { border-bottom-color: currentColor; }
+  /* The crop holds its width and the panel scrolls, for the reason /evals' report views do: a
+     nine-column table squeezed into a phone is not a smaller image, it is an unreadable one. */
+  .hp-shot-body { padding: var(--space-5); overflow-x: auto; }
+  .hp-shot-img {
+    display: block;
+    width: 100%;
+    min-width: var(--chart-min);
+    height: auto;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+  }
 
-/* ─── IMPROVE drift signals ─── */
-.drift-signals {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--space-4);
-  margin-bottom: var(--space-12);
-}
-.drift-signal {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
-  box-shadow: var(--shadow-sm);
-}
-.drift-signal__title {
-  font-size: var(--text-base);
-  font-weight: var(--weight-semibold);
-  color: var(--text);
-  margin: 0 0 var(--space-2);
-}
-.drift-signal__desc {
-  font-size: var(--text-base);
-  color: var(--muted);
-  margin: 0;
-  line-height: var(--leading-normal);
-}
+  /* Four proof points, with the status in a column of its own rather than hedged into the
+     sentence beside it. */
+  .hp-proof { margin: var(--space-8) 0 0; display: grid; gap: var(--space-3); }
+  .hp-proof > div {
+    display: grid;
+    grid-template-columns: minmax(0, var(--col-label)) auto minmax(0, 1fr);
+    gap: var(--space-4);
+    align-items: baseline;
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--line);
+  }
+  .hp-proof > div:last-child { border-bottom: 0; padding-bottom: 0; }
+  .hp-proof dt, .hp-proof dd { margin: 0; font-size: var(--text-sm); }
+  .hp-proof dt { font-family: var(--font-mono); color: var(--text); }
+  .hp-proof dd { color: var(--muted); }
+  .hp-proof-when {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-full);
+    padding: var(--space-0-5) var(--space-3);
+    white-space: nowrap;
+  }
 
-/* ─── Deploy target logo strips ─── */
-.deploy-targets {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  margin-bottom: var(--space-12);
-}
-/* The deploy rows' labels are short region names rather than category names, so they do not
-   need the reserved label column the partner rows use. `auto` rather than a smaller measure:
-   the labels are nowrap and already wider than any floor worth setting, so a literal here
-   would only have looked like it was doing something. */
-.deploy-targets .partner-label {
-  min-width: auto;
-}
+  /* ---- 8. close ---- */
+  .hp-close { background: var(--bg-tint); text-align: center; }
+  .hp-close-inner { max-width: var(--measure-prose); margin: 0 auto; }
+  .hp-close h2 { margin-inline: auto; }
+  .hp-close .lede { margin: 0 auto var(--space-10); }
+  .hp-close-ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-6);
+  }
+  /* A link rather than a second button: .btn.ghost is a dark-surface component and this section
+     is cream. */
+  .hp-close-alt {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    color: var(--text);
+    border-bottom: 1px solid var(--line-strong);
+  }
+  .hp-close-alt:hover { border-bottom-color: currentColor; }
+  .hp-close-links {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--muted);
+    margin: var(--space-10) 0 0;
+  }
+  .hp-close-links a { color: var(--muted); }
+  .hp-close-links a:hover { color: var(--text); }
 
-/* ─── Waitlist CTA row ─── */
-.waitlist-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-}
-.waitlist-note {
-  font-size: var(--text-base);
-  color: var(--muted);
-  font-family: var(--font-mono);
-}
-
-/* ─── Responsive ─── */
-@media (max-width: 900px) {
-  .hero__inner { grid-template-columns: 1fr; }
-  .hero__visual { display: none; }
-  .tune-steps { grid-template-columns: 1fr; }
-  .drift-signals { grid-template-columns: 1fr; }
-  .deploy-lanes { grid-template-columns: 1fr; }
-}
-@media (max-width: 640px) {
-  .partner-row { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
-}
-
+  /* LAST IN THE BLOCK, because these override base rules of equal specificity and source order
+     decides. A media query placed above them does nothing at all. */
+  @media (max-width: 900px) {
+    /* The diagram simplifies rather than scrolling: the three surfaces stack, so the converging
+       bus becomes one straight line down. */
+    .hp-surfaces { grid-template-columns: minmax(0, 1fr); }
+    .hp-bus { height: var(--space-8); }
+    .hp-bus-tick--l, .hp-bus-tick--r, .hp-bus-line { display: none; }
+    .hp-bus-tick--c { height: 100%; }
+    .hp-cards-2, .hp-cards-3 { grid-template-columns: minmax(0, 1fr); }
+    /* Five rows beside one block needs the width; stacked, the arrow turns to point down. */
+    .hp-swap { grid-template-columns: minmax(0, 1fr); }
+    .hp-swap-arrow { text-align: center; transform: rotate(90deg); }
+    .hp-flow { grid-template-columns: minmax(0, 1fr); }
+    .hp-flow-arrow { margin: 0; text-align: center; transform: rotate(90deg); }
+  }
+  @media (max-width: 640px) {
+    .hp-cards-4 { grid-template-columns: minmax(0, 1fr); }
+    /* The status label and its sentence stack rather than sharing three fixed columns. */
+    .hp-proof > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-2); }
+    .hp-proof-when { justify-self: start; }
+    .hp-core-items { gap: var(--space-2) var(--space-4); }
+  }
 </style>

@@ -28,7 +28,7 @@ The documented exceptions, all deliberate:
 | `0.01ms` in the reduced-motion block | A conventional near-zero, not a duration. |
 | `font-size: 0.88em` on inline code | Relative to its parent on purpose, so a code chip scales with whatever text surrounds it. |
 | `INK` in `prices.astro` | Chart.js takes colour strings and cannot read CSS variables. Each value carries a comment naming the token it mirrors, and they must be kept in step by hand. |
-| The flywheel's SVG geometry in `index.astro` — two `stroke-width`s, `stroke-dasharray: 22 1075` and `stroke-dashoffset: -1097` | These are measured off the `#fw-circuit` path with `path.getTotalLength()` and mean nothing away from it, so a token holding one of them could never be reused. The dash array and the offset have to move together when the path changes. |
+| The flywheel's SVG geometry in `archive/home-flywheel.astro` — two `stroke-width`s, `stroke-dasharray: 22 1075` and `stroke-dashoffset: -1097` | These are measured off the `#fw-circuit` path with `path.getTotalLength()` and mean nothing away from it, so a token holding one of them could never be reused. The dash array and the offset have to move together when the path changes. Archived rather than live since 2026-08-14; the row stays because the file is meant to be restorable. |
 | `1px` hairlines and SVG `stroke-width`s | The scale has no token for the thickness of a mark, and a one-pixel rule is not layout rhythm. Every chart mark, panel border and table rule is 1px. |
 | `3px` on a decorative rule | The one width canary is allowed to be on cream — the callout rule and the top rule on a numbered step. It is a fixed idiom rather than a value with a range, so a token would only be used by rules that must all match anyway. |
 | Transform nudges of 1px and 2px on hover lifts | A one-pixel optical nudge is not layout rhythm, and `global.css` already does this at three sites. If it ever wants a token it should become one `--lift` used by both files, not a spacing token pressed into service. |
@@ -63,10 +63,10 @@ is near-black keeps an edge against the hero panel. Those marks are other compan
 and cannot be recoloured, so the separation has to come from underneath them.
 
 **Two component widths sit outside both the spacing scale and the measures**, because they cap
-artwork rather than text and a `ch` value is meaningless for artwork. `--figure-max` is the
-hero flywheel, whose pills collide with the diagram's edges if it fills its grid column, and
-`--panel-max` is a standalone dark diagram, which reads as a schematic at that width and as an
-empty band at full width.
+artwork rather than text and a `ch` value is meaningless for artwork. `--figure-max` capped the
+flywheel, whose pills collided with the diagram's edges if it filled its grid column, and has no
+live user since that page was archived; `--panel-max` is a standalone dark diagram, which reads
+as a schematic at that width and as an empty band at full width.
 
 **Type has two tracks**, because that is what this site is. Monospace marks anything that is a
 fact, a path, a number or a label. Sans marks prose. The 1px gap between `--text-sm` (14px,
@@ -190,7 +190,8 @@ illegible.
 
 **Low-alpha yellow gets its own tokens, and their names carry the constraint.**
 `--accent-line-on-dark` at 25% is a yellow hairline and `--accent-bg-on-dark` at 4% is a yellow
-wash; today only the highlighted lane in the home page's deploy diagram uses them. The
+wash; today only the CanaryOne layer in the home page's hero diagram uses them, having inherited
+them from the highlighted lane of the archived page's deploy diagram. The
 `-on-dark` suffix is a rule rather than a description — on cream the hairline fails the
 contrast above and the wash is invisible — so a use site that reaches for one of these on cream
 is reaching for the wrong token. Alpha belongs in `:root` here for the same reason the
@@ -258,10 +259,14 @@ site.
 
 ## Third-party logos
 
-Other companies' logos appear in four places: two partner rows in the home page's TUNE section,
-two deploy-target rows in its DEPLOY section, the six open-weight model marks in the home hero,
-and the seventeen provider cells in the `/evals` coverage grid. They are the one part of the page
-whose artwork we do not control, which is why they get a pipeline rather than a rule.
+**Since 2026-08-14 there is exactly one live logo row: the seventeen provider cells in the
+`/evals` coverage grid.** The other three — two partner rows and two deploy-target rows in the old
+home page's TUNE and DEPLOY sections, and the six open-weight model marks in its hero — went to
+`archive/home-flywheel.astro` with that page. `pnpm build:logos` still generates every file,
+because the archive is meant to be restorable and because a wordmark strip is the obvious thing a
+future page reaches for. Everything below still governs the moment one comes back. They are the one
+part of a page whose artwork we do not control, which is why they get a pipeline rather than a
+rule.
 
 **The tokens mean ink rather than box.** `--logo-h` at 26px is the bare wordmark strips on the
 home page, `--logo-icon` at 32px is the square hero marks, and `--logo-icon-sm` at 26px is a
@@ -349,26 +354,34 @@ green background plate so it read as a green pill among black wordmarks.
 ## Motion
 
 Four durations. `--dur-fast` is a button press, `--dur-base` is hover and colour and border,
-`--dur-slow` is lifts and frames, and `--dur-cycle` at 4s is one turn of the hero flywheel.
+`--dur-slow` is lifts and frames, and `--dur-cycle` at 4s is one turn of the flywheel, which is
+no longer on the site — see below.
 
-**There is exactly one looping animation on the site: the hero flywheel.** Everything else is
-interaction-triggered, and that is the rule — a second loop is a design change to argue for,
-not a detail to add. The site is a dense technical page and a page that moves in several places
-at once reads as a template rather than as a tool. One deliberate loop in the hero, above the
-fold, is the whole motion budget, and it spends it on the thing the four pillars are trying to
-explain: that this is a cycle rather than a checklist.
+**There is no looping animation on the site, and every remaining movement is
+interaction-triggered.** That is the rule, and a loop is a design change to argue for rather than
+a detail to add. The site is dense technical content, and a page that moves in several places at
+once reads as a template rather than as a tool.
 
-The loop is three animations sharing one duration — the travelling dot plus four pill glows
-offset by a quarter cycle each. Those offsets are `calc()` expressions off `--dur-cycle` rather
-than four literal delays, so retiming the cycle cannot leave the pills lighting up out of step
-with the dot.
+**This changed on 2026-08-14 and the reasoning is worth keeping.** Until then there was exactly
+one loop, the home page's flywheel, and the budget was defensible because the loop was doing
+work: it explained the thing the four pillars were trying to say, which is that testing, tuning,
+deploying and improving is a cycle rather than a checklist. The company-level home page that
+replaced it makes no cyclical claim — its hero says that many needs meet one system, which is a
+structure rather than a process — so animating it would have been motion for its own sake. The
+budget was not spent elsewhere; it was given up. **A page that wants the loop back has to argue
+that its own diagram means something a still frame cannot show.**
+
+The flywheel itself is intact at `archive/home-flywheel.astro`, outside `src/pages/` and
+therefore not built. Its four tokens — `--dur-cycle`, `--figure-max`, `--shadow-pill-lit` and
+`--glow-accent` — stay in `:root` with no live user, so restoring that page is a `git mv` rather
+than a reconstruction. **They are the documented exception to deleting an unused token**, and a
+second unused token needs its own reason rather than this one.
 
 `prefers-reduced-motion` unwinds the global `scroll-behavior: smooth` along with all transitions
-and animations, and that global block is what stops the flywheel — it caps every animation on
-the page at one iteration of `0.01ms`, which lands the dot at `stroke-dashoffset: 0` and every
-pill unlit, exactly the frame a local `animation: none` would show. **Do not add a local
-reduced-motion block for a new animation.** Two of them existed in `index.astro` and neither
-did anything the global block was not already doing.
+and animations. **Do not add a local reduced-motion block for a new animation** — the global block
+caps every animation on the page at one iteration of `0.01ms`, which lands any loop on its first
+frame, exactly what a local `animation: none` would show. Two local blocks existed in the old
+`index.astro` and neither did anything the global block was not already doing.
 
 ## Breakpoints
 
@@ -377,7 +390,7 @@ condition, so these are documentation rather than something the queries referenc
 
 | Width | What changes |
 |---|---|
-| 380px | The nav stacks: lockup on its own row, links beneath. |
+| 480px | The nav stacks: lockup on its own row, links beneath. Was 380px until 2026-08-14, which was an unmeasured guess — the four links and the lockup stop fitting one row at about 455px, so the band between the two numbers showed the ragged wrap this breakpoint exists to prevent. |
 | 640px | Type steps down, the band gives back a third of its depth, and a dense grid halves its columns — the coverage grid goes to one column here, because two leaves about 90px for a company name and truncates four of them. |
 | 900px | Multi-column sections stack and horizontal chains go vertical: the hero's three stages, the three numbered steps, the machine diagram's three nodes. |
 | 1024px | Reserved. |

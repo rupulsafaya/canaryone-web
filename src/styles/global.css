@@ -33,7 +33,8 @@
   --accent-soft: #fef08a;
   --accent-deep: #EAB308;
   /* Canary 300 at low alpha, for a yellow hairline or a yellow wash on a dark surface — the
-     highlighted lane in the home page's deploy diagram is the only user today. Both names
+     CanaryOne layer in the home page's hero diagram is the only user today, having inherited them
+     from the highlighted lane of the deploy diagram on the page it replaced. Both names
      carry -on-dark because that is a hard constraint rather than a description: on cream a
      yellow hairline fails the contrast rule below, and a 4% yellow wash on cream is
      invisible. Alpha lives here rather than at the use site for the same reason the semantic
@@ -118,7 +119,8 @@
   /* ---------- Elevation ----------
      Three levels plus three special cases. --shadow-cta is the yellow CTA glow,
      --shadow-dark carries the inset white hairline that reads as a lit top edge on
-     the near-black panels, and --shadow-pill-lit is the lit state of a flywheel pill.
+     the near-black panels, and --shadow-pill-lit is the lit state of a flywheel pill — one of the
+     four tokens kept for archive/home-flywheel.astro, which has no live user.
      Shadow rgba is always neutral black except where the shadow is deliberately a yellow
      glow: a slate rgba tints a black shadow cool, which is README § Brand palette rule 3. */
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
@@ -130,9 +132,10 @@
 
   /* ---------- Glows ----------
      A drop-shadow filter is a shadow, so it belongs in the token layer for the same reason
-     box-shadows do. --glow-accent trails the flywheel's travelling dot and is two stacked
-     shadows because one wide soft yellow reads as a blur rather than as light. Both are
-     for dark surfaces only, where yellow may be a foreground.
+     box-shadows do. --glow-accent trailed the flywheel's travelling dot and is two stacked
+     shadows because one wide soft yellow reads as a blur rather than as light. It has no live use
+     site; see --dur-cycle below for why the flywheel's tokens are kept. Both are for dark surfaces
+     only, where yellow may be a foreground.
 
      --glow-icon-on-dark is the opposite job: a tight black shadow under a third-party model
      mark, so a logo whose own artwork is near-black does not disappear into the hero panel.
@@ -190,7 +193,7 @@
 
   /* The weight rule, which the file did not have: display and page headings are medium,
      UI and card titles and table heads are semibold, and bold is reserved for the
-     home page's flywheel hub, which reads as a mark rather than as text. The old 650 was a
+     archived flywheel's hub, which reads as a mark rather than as text. The old 650 was a
      synthetic weight the system stack approximates differently per platform. */
   --weight-normal: 400;
   --weight-medium: 500;
@@ -247,7 +250,7 @@
 
   /* ---------- Component widths ----------
      Two elements are capped below --content-max because they are artwork rather than text,
-     so a ch measure is the wrong unit for them: --figure-max is the hero flywheel, whose
+     so a ch measure is the wrong unit for them: --figure-max capped the archived flywheel, whose
      pills would collide with the diagram's edges if it filled its grid column, and
      --panel-max is a standalone dark diagram, which reads as a schematic at this width and
      as an empty band at full width. The 640px is the same number as the phone breakpoint by
@@ -267,7 +270,7 @@
      Custom properties cannot be used inside a media query condition, so these are
      documentation rather than something the queries reference. Four is three too many to
      leave unnamed, which is why they are written down here:
-       380px  small phones — the nav stacks below this
+       480px  small phones — the nav stacks below this (was 380px until 2026-08-14)
        640px  phone/tablet boundary — type steps down and dense grids halve their columns
        900px  tablet — multi-column sections stack and horizontal chains go vertical
       1024px  the page band's tall variant stops being worth the vertical space
@@ -278,11 +281,15 @@
   --dur-base: 120ms;   /* hover, colour, border */
   --dur-slow: 200ms;   /* lifts, frames, chart updates */
   --ease: ease;
-  /* The one looping duration on the site: one turn of the hero flywheel. The four pill glows
-     run at this duration offset by a quarter of it each, and those offsets are calc()
-     expressions off this token so the stagger cannot fall out of step with the travelling
-     dot when the cycle is retimed. See DESIGN.md § Motion for why exactly one loop is
-     allowed. */
+  /* One turn of the flywheel, which is no longer on the site. THERE IS NO LOOPING ANIMATION
+     ANY MORE — the home page that carried the site's one loop was archived on 2026-08-14 and
+     the page that replaced it makes no cyclical claim, so the budget was given up rather than
+     spent elsewhere. See DESIGN.md § Motion before adding one back.
+
+     This token, --figure-max, --shadow-pill-lit and --glow-accent are kept with no live use site
+     so that archive/home-flywheel.astro can be restored with a `git mv` rather than
+     reconstructed. They are the documented exception to deleting an unused token, and a fifth
+     one needs its own reason rather than this one. */
   --dur-cycle: 4s;
 
   /* ---------- Where yellow is allowed ----------
@@ -1269,12 +1276,20 @@ code, pre, .mono {
   .install .terminal-body { padding: var(--space-6) var(--space-5); }
 }
 
-/* Below about 380px there is no width left to win: the lockup plus four links cannot share
+/* Below about 480px there is no width left to win: the lockup plus four links cannot share
    a line without shrinking the mark past legibility. So the nav stacks on purpose instead
    of wrapping by accident — lockup on its own row, then all four links on one row beneath
    it, left-aligned. The ragged version this replaces put the two word links on one line and
-   the two icons on the next, which read as a bug. */
-@media (max-width: 380px) {
+   the two icons on the next, which read as a bug.
+
+   MOVED FROM 380px TO 480px ON 2026-08-14, and the old number was wrong rather than merely
+   tight. The rule was written for a threshold nobody measured: at 430px the lockup needs 120px
+   and the four links need 292px inside about 387px of content box, so the icons dropped to a
+   second row and the exact failure this block exists to prevent was showing across the whole
+   380-to-430 band. Renaming the nav to Benchmarking and Market widened that band by about 25px,
+   which is what surfaced it. 480px is measured: above it the row fits with room to spare, below
+   it the stack is deliberate. Re-measure this if a nav label changes length again. */
+@media (max-width: 480px) {
   .topnav .inner {
     flex-direction: column;
     align-items: flex-start;

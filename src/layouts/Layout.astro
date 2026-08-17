@@ -71,9 +71,12 @@ const canonical = `${SITE_URL}${path}`;
           <img src="/c1-logo-dark.svg" alt="CanaryOne" width="153" height="28" />
         </a>
         <div class="links">
-          <a href="/evals"><span>Evals</span></a>
+          {/* Labels renamed 2026-08-14 with the company home page. "Evals" was the tool's own
+               word and the home page never uses it; "Model Market" said twice what the page
+               says once. The routes are unchanged, so nothing inbound breaks. */}
+          <a href="/evals"><span>Benchmarking</span></a>
           <a href="/market">
-            <span>Model Market</span>
+            <span>Market</span>
           </a>
           <!-- Icon-only in the nav. `aria-label` carries the accessible name that the
                removed <span> used to provide, and `title` gives a sighted reader the same
@@ -97,8 +100,8 @@ const canonical = `${SITE_URL}${path}`;
           <img src="/c1-logo.svg" alt="CanaryOne" width="109" height="20" />
         </a>
         <span class="spacer"></span>
-        <a href="/evals">Evals</a>
-        <a href="/market">Model Market</a>
+        <a href="/evals">Benchmarking</a>
+        <a href="/market">Market</a>
         <!-- Icon-only, same as the nav. `aria-label` carries the accessible name the removed
              <span> used to provide, and `title` gives a sighted reader the same name on
              hover. Both share the .icon-only component with the nav. -->
